@@ -487,7 +487,8 @@ class Signal{
             $this->valid    = false;
         }
 
-        $release        = SIM\getLatestRelease('AsamK', 'signal-cli');
+        $github         = new SIM\GITHUB\Github();
+        $release        = $github->getLatestRelease('AsamK', 'signal-cli');
 
         if(is_wp_error($release)){
             return false;

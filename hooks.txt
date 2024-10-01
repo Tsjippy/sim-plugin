@@ -1,0 +1,150 @@
+Admin module
+$description = apply_filters('sim_submenu_description', '', $moduleSlug, $moduleName);
+$options	= apply_filters('sim_submenu_options', '', $moduleSlug, $settings, $moduleName);
+$html	= apply_filters('sim_email_settings', '', $moduleSlug, $settings, $moduleName);
+$html	= apply_filters('sim_module_data', '', $moduleSlug, $settings, $moduleName);
+$html	= apply_filters('sim_module_functions', '', $moduleSlug, $settings, $moduleName);
+$Modules[$moduleSlug]	= apply_filters('sim_module_updated', $options, $moduleSlug, $Modules[$moduleSlug]);
+$Modules[$slug]	= apply_filters('sim_module_updated', $options, $slug, $Modules[$slug]);
+
+Bookings
+$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $name, $this, $this->forms->submission);
+
+
+Content Filter
+$urls	= apply_filters('sim_allowed_rest_api_urls', $urls);
+
+
+Embed page
+$content    = apply_filters( 'the_content', $content );
+
+Fancy E-mail
+$footerUrl     = apply_filters('sim_email_footer_url', [
+	'url'   => SITEURL,
+	'text'  => SITEURL
+])
+
+echo apply_filters('sim_email_footer', $this->footer, $this->message);
+
+Forms
+$elements				= apply_filters("sim_{$type}_elements_filter", $elements, $userId);
+$html	= apply_filters("sim_{$type}_html_filter", $html, $userId);
+$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $elementName, $oldValue, $newValue);
+$html	= apply_filters('sim-forms-before-showing-form', '', $this);
+$html	.=  apply_filters('sim_before_form', '', $this->formName);
+$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this);
+apply_filters('sim_retrieved_formdata', $results, $userId, $this);
+$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this);
+$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this);
+$shouldRemove	= apply_filters('sim_remove_formdata', true, $userId, $submission);
+$output = apply_filters('sim_transform_formtable_data', $output, $elementName);
+$actions = apply_filters('sim_form_actions', $actions);
+$cellOpeningTag	= apply_filters('sim-formresult-cell-opening-tag', $cellOpeningTag, $this, $columnSetting, $values);
+$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $subId, $this);
+$shouldShow	= apply_filters('sim-formstable-should-show', true, $this, $type);
+$actions = apply_filters('sim_form_actions', $actions);
+$elements	= apply_filters('sim-forms-elements', $this->formElements, $this, true);
+$options	= apply_filters('sim-special-form-elements', $options);
+$newSettings	= apply_filters('sim-forms-before-saving-settings', $newSettings, $this, $formId);
+$this->formElements 		=  apply_filters('sim-forms-elements', $wpdb->get_results($query), $this, false);
+$replaceValue	= apply_filters('sim-forms-transform-empty', $replaceValue, $this, $match);
+$replaceValue	= apply_filters('sim-forms-transform-array', implode(',', $replaceValue), $replaceValue, $this, $match);
+$this->submission->formresults 					= apply_filters('sim_before_saving_formdata', $this->submission->formresults, $this);
+$message	= apply_filters('sim_after_saving_formdata', $message, $this);
+$extraJs   = apply_filters('sim_form_extra_js', '', $this->formName, false);
+$minifiedJs     .= "\n\n".apply_filters('sim_form_extra_js', '', $this->formName, true);
+$this->defaultValues		= apply_filters('sim_add_form_defaults', $this->defaultValues, $this->userId, $this->formName);
+			$this->defaultArrayValues	= apply_filters('sim_add_form_multi_defaults', $this->defaultArrayValues, $this->userId, $this->formName);
+$this->usermeta	= apply_filters('sim_forms_load_userdata', $this->usermeta, $this->userId);
+$html	= apply_filters('sim-forms-element-html', $html, $element, $this);
+return apply_filters('sim-form-element-html', $html, $element, $this);
+
+frontend posting
+apply_filters('sim_frontend_content_edit_rights', false, $postCategory)	
+$buttonHtml	= apply_filters('post-edit-button', $buttonHtml, $post, $content);
+$template 		= apply_filters( "content_template", $baseTemplate, 'content' );
+$dependables    = apply_filters('sim-frontend-content-js', array('sim_fileupload_script', 'sim_forms_script'));
+echo apply_filters('sim_attachment_preview', $image, $this->postId);
+echo apply_filters('sim-frontend-buttons', ob_get_clean(), $this);
+$this->editRight	= apply_filters('sim_frontend_content_edit_rights', $this->editRight, $this->postCategory);
+$postTypes		= apply_filters('sim_frontend_posting_modals', ['attachment']);
+$postContent	= apply_filters('sim_post_content', $postContent);
+$error	= apply_filters('sim_frontend_content_validation', '', $this);
+$url            = apply_filters('sim_media_gallery_download_url', $url, $id);
+$fileName   = apply_filters('sim_media_gallery_download_filename', '', $type, $id);
+
+locations
+$locations	= apply_filters('sim-locations-array', []);
+<?php echo apply_filters('sim-empty-taxonomy', 'There are no locations submitted yet.', 'location'); ?>
+echo apply_filters('sim_empty_description', 'No content found...', $post);
+echo apply_filters('sim-single-template-bottom', '', 'location');
+echo apply_filters('sim-single-template-bottom', '', 'location');
+echo apply_filters('sim-empty-taxonomy', "There are no $name locations yet", 'location'); ?>
+
+LOGIN
+$shouldAdd  = apply_filters('sim_add_login_button', true, $args->menu->term_id, $loginMenus);
+$errors = apply_filters( 'lostpassword_errors', $errors, $user );
+$errors = apply_filters( 'registration_errors', $errors, $userdata );
+
+MAILCHIMP
+$emails = apply_filters('sim-mailchimp-from', []);
+$mailContent		= apply_filters('sim_before_mailchimp_send', $mailContent, $post);
+
+MANDATORY
+return apply_filters('sim_mandatory_audience_param', $keys);
+$mustRead	= apply_filters('sim_should_read_mandatory_page', $mustRead, $audience, $userId);
+
+MEDIAGGALLERY
+$categories = apply_filters('sim-media-gallery-categories', $categories);
+$iconUrl       = apply_filters( 'wp_mime_type_icon', SITEURL."/wp-includes/images/media/video.png", get_post_mime_type(), $id);
+ echo apply_filters('sim_media_gallery_item_html', $mediaHtml, $type, $id);
+ echo apply_filters('sim-media-edit-link', "<a href='".SITEURL."/wp-admin/upload.php?item=$id' class='button editmedia'>Edit</a>", $id);
+$url            = apply_filters('sim_media_gallery_download_url', $url, $id);
+$fileName   = apply_filters('sim_media_gallery_download_filename', '', $type, $id);
+
+PAGEGALLERY
+$args	= apply_filters('sim-frontpage-post-gallery-posts', $args, $postTypes);
+
+PDF
+$cellText	= apply_filters('sim_before_pdf_text', $cellText, $temp);
+$cellText	= apply_filters('sim_before_pdf_text', $cellText, $this);
+
+PRAYER
+$message        = SIM\userPageLinks(apply_filters('sim_prayer_message', $prayerRequest['message']));
+$params	= apply_filters('sim_after_bot_payer', $params);
+
+PROJECTS
+echo apply_filters('sim-empty-taxonomy', 'There are no projects submitted yet.', 'project'); 
+echo apply_filters('sim_empty_description', 'No content found...', $post);
+echo apply_filters('sim-single-template-bottom', '', 'project');
+echo apply_filters('sim-empty-taxonomy', "There are no $name projects yet", 'project');
+
+
+RECIPIES
+echo apply_filters('sim-empty-taxonomy', 'There are no recipes submitted yet.', 'recipe');
+echo apply_filters('sim-single-template-bottom', '', 'recipe');
+echo apply_filters('sim-empty-taxonomy', "There are no ".get_queried_object()->slug." recipies yet.", 'recipe');
+
+
+SIGNAL
+$excerpt = apply_filters('sim_signal_post_notification_message', $excerpt, $post);
+echo apply_filters('sim_personal_signal_settings', '', $user, $prefs);
+$expirationDuration	= apply_filters( 'password_reset_expiration', DAY_IN_SECONDS );
+
+USERMANAGEMENT
+$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
+echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>'
+echo apply_filters('sim_role_description', '', $key);
+$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
+$filteredHtml	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $showCurrentUserData, $user, $userAge);
+
+VIMEO
+$files      = apply_filters('sim-local-vimeo-files', $files);
+
+
+GENERIC
+$templateFile	= apply_filters('sim-template-filter', $templateFile);
+echo '   <i>'.apply_filters('sim_role_description', '', $role).'</i>';
+$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount);
+$excerptMore 		= apply_filters('excerpt_more', ' ' . $excerptEnd);
+return apply_filters('wp_trim_excerpt', $excerpt, $rawExcerpt);

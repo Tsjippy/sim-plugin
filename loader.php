@@ -1,34 +1,29 @@
 <?php
 namespace SIM;
 
-$defaultModules = [
-    'admin'         => 'admin',
-    'fileupload'    => 'fileUpload'
-];
-
 // Store all modulefolders
-
-$dirs       = scandir(MODULESPATH);
 $moduleDirs = [];
-if($dirs){
-    $dirs    = array_merge($dirs, scandir(MODULESPATH.'/__defaults'));
-    foreach($dirs as $key=>$dir){
-        if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
-            unset($dirs[$key]);
-        }
+
+// normal modules
+foreach(scandir(MODULESPATH) as $key=>$dir){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+        continue;
     }
 
-    //Sort alphabeticalyy, ignore case
-    sort($dirs, SORT_STRING | SORT_FLAG_CASE);
-
-    foreach($dirs as $dir){
-        if(in_array($dir, $defaultModules)){
-            $moduleDirs[strtolower($dir)] = "__defaults/$dir";
-        }else{
-            $moduleDirs[strtolower($dir)] = $dir;
-        }
-    }
+    $moduleDirs[strtolower($dir)] = $dir;
 }
+
+// default modules
+foreach(scandir(MODULESPATH.'/__defaults') as $dir){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+        continue;
+    }
+
+    $moduleDirs[strtolower($dir)] = "__defaults/$dir";
+}
+
+//Sort alphabeticalyy, ignore case
+ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);
 
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');

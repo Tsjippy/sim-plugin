@@ -10,6 +10,9 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 
 == Description ==
+This plugin has the following hooks:
+apply_filters('sim-template-filter', $templateFile)
+apply_filters('sim_role_description', '', $role)
 
 == Setup ==
 Install VSCode
