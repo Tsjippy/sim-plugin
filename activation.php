@@ -33,14 +33,16 @@ add_action( 'activated_plugin', function ( $plugin ) {
 } );
 
 //Add setting link
-add_filter("plugin_action_links_".PLUGIN, function ($links) {
+add_filter("plugin_action_links_".PLUGIN, __NAMESPACE__.'\addExtraPluginLinks', 10, 3);
+function addExtraPluginLinks($links, $plugin, $data) {
     // Settings Link
-    $url            = admin_url( 'admin.php?page=sim' );
+    $slug           = $data['TextDomain'];
+    $url            = admin_url( "admin.php?page=$slug" );
     $link           = "<a href='$url'>Settings</a>";
     array_unshift($links, $link);
 
     // Details link
-    $url            = admin_url( 'plugin-install.php?tab=plugin-information&plugin=sim-plugin&section=changelog' );
+    $url            = admin_url( "plugin-install.php?tab=plugin-information&plugin=$slug&section=changelog" );
     $link  = "<a href='$url'>Details</a>";
     array_unshift($links, $link);
 
@@ -55,10 +57,10 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
         $updates    = get_site_transient( 'update_plugins' );
         if(is_wp_error($updates)){
             $link = "<div class='error'>".$updates->get_error_message()."</div>";
-        }elseif(isset($updates->response[PLUGIN])){
-            $url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( PLUGIN ) );
+        }elseif(isset($updates->response[$plugin])){
+            $url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( $plugin ) );
             $url    = wp_nonce_url( $url, 'bulk-update-plugins' );
-            $link   = "<a href='$url' class='update-link'>Update to ".$updates->response[PLUGIN]->new_version."</a>";
+            $link   = "<a href='$url' class='update-link'>Update to ".$updates->response[$plugin]->new_version."</a>";
         }else{
             $url   = admin_url( 'plugins.php?update=check' );
             $link  = "Up to date <a href='$url'>Check again</a>";
@@ -70,7 +72,7 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
     array_unshift($links, $link);
 
     return $links;
-});
+}
 
 add_action( 'schedule_sim_plugin_update_action', function($oldVersion){
     printArray('Running update actions');

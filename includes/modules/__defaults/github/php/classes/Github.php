@@ -40,7 +40,7 @@ class Github{
      *
      * @return	array	Array containing information about the latest release
      */
-    public function getLatestRelease($author='tsjippy', $repo=PLUGINNAME, $force=false){
+    public function getLatestRelease($author='tsjippy', $repo=SIM\PLUGINNAME, $force=false){
         if(isset($_GET['update']) || $force){
             $release	= false;
         }else{
@@ -86,7 +86,7 @@ class Github{
      * 
      * @return	true|WP_Error       True on success, WP_Error object on failure
      */
-    public function downloadFromGithub($author='Tsjippy', $repo=PLUGINNAME, $path){
+    public function downloadFromGithub($author='Tsjippy', $repo=SIM\PLUGINNAME, $path){
         // Get latest release info
         $release	= $this->getLatestRelease($author, $repo, true);
 
@@ -122,12 +122,12 @@ class Github{
      *
      * @param   string  $pluginFilePath     The main file of the plugin you want to have info of
      * @param   string  $author             The github author
-     * @param   string  $repo               The github repository, default PLUGINNAME
+     * @param   string  $repo               The github repository, default SIM\PLUGINNAME
      * @param   array   $extraData          Extra data to include an array of active_installs, donate_link, rating, ratings banners, tested
      * 
      * @return  object                      The details object
      */
-    public function pluginData($pluginFilePath, $author, $repo=PLUGINNAME, $extraData=[]){
+    public function pluginData($pluginFilePath, $author, $repo=SIM\PLUGINNAME, $extraData=[]){
         if( ! function_exists('get_plugin_data') ){
             require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         }
@@ -225,7 +225,7 @@ class Github{
             'new_version'   => $pluginVersion,
             'url'           => 'https://api.github.com/repos/Tsjippy/sim-plugin',
             'package'       => '',
-            'plugin'		=> PLUGIN
+            'plugin'		=> SIM\PLUGIN
         );
 
         if(version_compare($gitVersion, $pluginVersion) && !empty($release['assets'][0]['browser_download_url'])){

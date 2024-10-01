@@ -53,14 +53,14 @@ add_action( 'admin_menu', function() {
 		$moduleName	= getModuleName($folderName);
 		
 		//check module page exists
-		if(!file_exists(MODULESPATH.$folderName.'/php/__module_menu.php')){
+		if(!file_exists(SIM\MODULESPATH.$folderName.'/php/__module_menu.php')){
 			SIM\printArray("Module page does not exist for module $moduleName");
-			SIM\printArray("File: ".MODULESPATH.$folderName.'/php/__module_menu.php');
+			SIM\printArray("File: ".SIM\MODULESPATH.$folderName.'/php/__module_menu.php');
 			continue;
 		}
 
 		//load the menu page php file
-		require_once(MODULESPATH.$folderName.'/php/__module_menu.php');
+		require_once(SIM\MODULESPATH.$folderName.'/php/__module_menu.php');
 
 		if(in_array($moduleName, $active)){
 			add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");

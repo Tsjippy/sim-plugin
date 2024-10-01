@@ -32,8 +32,8 @@ if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 
 //only call it once
 //remove_action( 'wp_head', 'adjacent_posts_rel_link');
-define('PLUGIN', plugin_basename(__FILE__));
-define('PLUGIN_PATH', __FILE__);
+define(__NAMESPACE__ .'\PLUGIN', plugin_basename(__FILE__));
+define(__NAMESPACE__ .'\PLUGIN_PATH', __FILE__);
 
 $files = glob(__DIR__  . '/*.php');
 foreach ($files as $file) {

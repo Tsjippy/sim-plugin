@@ -12,19 +12,19 @@ use Github\Client;
  */
 add_filter( 'plugins_api', function ( $res, $action, $args ) {
 	// do nothing if you're not getting plugin information or this is not our plugin
-	if( 'plugin_information' !== $action || PLUGINNAME !== $args->slug) {
+	if( 'plugin_information' !== $action || SIM\PLUGINNAME !== $args->slug) {
 		return $res;
 	}
 
 	$github 	    		= new Github();
-	return $github->pluginData(PLUGIN_PATH, 'Tsjippy', 'sim-plugin', [
+	return $github->pluginData(SIM\PLUGIN_PATH, 'Tsjippy', 'sim-plugin', [
 		'active_installs'	=> 2, 
 		'donate_link'		=> 'harmseninnigeria.nl', 
 		'rating'			=> 5, 
 		'ratings'			=> [4,5,5,5,5,5], 
 		'banners'			=> [
-			'high'	=> PICTURESURL."/banner-1544x500.jpg",
-			'low'	=> PICTURESURL."/banner-772x250.jpg"
+			'high'	=> SIM\PICTURESURL."/banner-1544x500.jpg",
+			'low'	=> SIM\PICTURESURL."/banner-772x250.jpg"
 		], 
 		'tested'			=> '6.6.2'		
 	]);
@@ -36,13 +36,13 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 	$github			= new Github();
 
-	$item			= $github->pluginVersionInfo(PLUGIN_PATH);
+	$item			= $github->pluginVersionInfo(SIM\PLUGIN_PATH);
 
 	// Git has a newer version
 	if(isset($item->new_version)){
-		$transient->response[PLUGIN]	= $item;
+		$transient->response[SIM\PLUGIN]	= $item;
 	}else{
-		$transient->no_update[PLUGIN]	= $item;
+		$transient->no_update[SIM\PLUGIN]	= $item;
 	}
 
 	return $transient;

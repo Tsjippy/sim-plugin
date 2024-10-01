@@ -19,7 +19,7 @@ function showVimeoVideo($vimeoId){
 	ob_start();
 	?>
 	<div class="vimeo-wrapper">
-		<div class='vimeo-embed-container' style='background:url(<?php echo LOADERIMAGEURL;?>) center center no-repeat;'>
+		<div class='vimeo-embed-container' style='background:url(<?php echo SIM\LOADERIMAGEURL;?>) center center no-repeat;'>
 			<?php echo $html;?>
 		</div>
 	</div>

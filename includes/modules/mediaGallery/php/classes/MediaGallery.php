@@ -249,7 +249,7 @@ class MediaGallery{
                     Audio
                 </label>
                 <input class="searchtext" type="text" placeholder="Search..">
-                <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
+                <img class='search' src="<?php echo SIM\PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
 
                 <button id='category-options' class='button small <?php if(!empty($this->cats)){ echo 'hidden'; }?>'>Categories</button>
             </div>
@@ -273,7 +273,7 @@ class MediaGallery{
             </div>
 
             <div id="medialoaderwrapper" class="hidden">
-                <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
+                <img src="<?php echo SIM\LOADERIMAGEURL;?>" loading='lazy' alt=''>
                 <div>Loading more...</div>
             </div>
 

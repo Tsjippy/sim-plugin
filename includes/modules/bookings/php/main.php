@@ -78,7 +78,7 @@ add_action('sim-after-formbuilder-element-options', function($element){
                                     <div class="infobox" name="info">
                                         <div>
                                             <p class="info_icon" style='float:right'>
-                                                <img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>" loading='lazy' >
+                                                <img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo SIM\PICTURESURL."/info.png";?>" loading='lazy' >
                                             </p>
                                         </div>
                                         <span class="info_text">

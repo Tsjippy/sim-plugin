@@ -1318,7 +1318,7 @@ class DisplayFormResults extends DisplayForm{
 							}else{
 								$visibility	= 'visible';
 							}
-							$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png' width='20px' loading='lazy' style='min-width:20px;'>";
+							$icon			= "<img class='visibilityicon $visibility' src='".SIM\PICTURESURL."/$visibility.png' width='20px' loading='lazy' style='min-width:20px;'>";
 							
 							?>
 							<tr class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>">
@@ -1615,7 +1615,7 @@ class DisplayFormResults extends DisplayForm{
 						<div class="infobox" name="info">
 							<div>
 								<p class="info_icon">
-									<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>" loading='lazy' >
+									<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo SIM\PICTURESURL."/info.png";?>" loading='lazy' >
 								</p>
 							</div>
 							<span class="info_text">
@@ -2447,7 +2447,7 @@ class DisplayFormResults extends DisplayForm{
 					if(!empty($this->hiddenColumns[$columnSetting['name']])){
 						$class	.= ' hidden';
 					}
-					$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
+					$icon			= "<img class='visibilityicon visible' src='".SIM\PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
 					
 					//Add a heading for each column
 					$style			= '';

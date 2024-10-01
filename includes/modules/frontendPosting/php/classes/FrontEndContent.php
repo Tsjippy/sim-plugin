@@ -266,7 +266,7 @@ class FrontEndContent{
 
 					echo "<div class='submit_wrapper' style='display: flex;'>";
 						echo "<button type='button' class='button savedraft' name='draft_post'>$buttonText</button>";
-						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."' loading='lazy'>";
+						echo "<img class='loadergif hidden' src='".SIM\LOADERIMAGEURL."' loading='lazy'>";
 					echo "</div>";
 
 				}
@@ -276,7 +276,7 @@ class FrontEndContent{
 					?>
 					<div class='submit_wrapper' style='display: flex;'>
 						<button type='button' name='publish_post' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
-						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt=''>
+						<img class='loadergif hidden' src='<?php echo SIM\LOADERIMAGEURL;?>' loading='lazy' alt=''>
 					</div>
 					<?php
 				}
@@ -288,7 +288,7 @@ class FrontEndContent{
 						<button type='button' class='button' name='delete_post' data-post_id='<?php echo  esc_html($this->postId); ?>'>
 							Delete <?php echo  esc_html($this->post->post_type); ?>
 						</button>
-						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
+						<img class='loadergif hidden' src='<?php echo SIM\LOADERIMAGEURL; ?>' alt='' loading='lazy'>
 					</div>
 					<?php
 				}

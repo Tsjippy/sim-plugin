@@ -22,7 +22,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		if(empty(shell_exec('javac -version'))){
 			?>
 			An external Signal Bot can read and delete these messages and send them on Signal.<br>
-			Get an example from <a href="<?php echo SIM\pathToUrl(PLUGINFOLDER.'/other/SignalBot.py');?>">here</a><br>
+			Get an example from <a href="<?php echo SIM\pathToUrl(SIM\PLUGINFOLDER.'/other/SignalBot.py');?>">here</a><br>
 			<br>
 			Adds one shortcode: 'signal_messages'.<br>
 			Use this shortcode to display all pending Signal messages and delete them if needed.<br>

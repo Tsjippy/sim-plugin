@@ -8,7 +8,7 @@ add_action( 'admin_enqueue_scripts', function(){
 	wp_localize_script( 'sim_vimeo_admin_script',
 		'sim',
 		array(
-			'loadingGif' 	=> LOADERIMAGEURL,
+			'loadingGif' 	=> SIM\LOADERIMAGEURL,
 			'baseUrl' 		=> get_home_url(),
 			'restNonce'		=> wp_create_nonce('wp_rest')
 		)
@@ -28,7 +28,7 @@ function enqueueVimeoScripts(){
 	wp_localize_script('sim_vimeo_script',
 		'media_vars',
 		array(
-			'loadingGif' 	=> LOADERIMAGEURL
+			'loadingGif' 	=> SIM\LOADERIMAGEURL
 		)
 	);
 
