@@ -123,7 +123,7 @@ class Github{
      * @param   string  $pluginFilePath     The main file of the plugin you want to have info of
      * @param   string  $author             The github author
      * @param   string  $repo               The github repository, default PLUGINNAME
-     * @param   array   $extraData          Extra data to include an array of active_installs, donate_link, rating, ratings, slug, banners, tested
+     * @param   array   $extraData          Extra data to include an array of active_installs, donate_link, rating, ratings banners, tested
      * 
      * @return  object                      The details object
      */
@@ -140,14 +140,12 @@ class Github{
             return $res;
         }
 
-        $res->Version 			= $release['tag_name'];
-        $res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
-
+        // Add available Sections
         $res->sections = [];
         foreach(['description', 'installation', 'faq', 'changelog', 'screenshots', 'reviews', 'hooks'] as $item){
             $content    = get_transient("sim-git-$item");
             // if not in transient
-            if($content === ''){
+            if($content === false){
                 try{
                     $file   = $this->client->api('repo')->contents()->show($author, $repo, $item.'.md');
                     
@@ -171,16 +169,22 @@ class Github{
             }
 
             if(!empty($content)){
-                $res->sections[$item]    = trim($content);
+                // do not use h2 for layout purposes
+                $content    = str_replace('h4', 'h5', trim($content));
+                $content    = str_replace('h3', 'h4', trim($content));
+                $content    = str_replace('h2', 'h3', trim($content));
+                $res->sections[$item]    = str_replace('h2', 'h3', trim($content));
             }
         }
 
-        $res->version           = $res->Version;
+        // Add meta's
+        $res->version 			= $release['tag_name'];
+        $res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
         $res->author            = $res->Author;
-        $res->last_updated      = $res->last_updated;
         $res->requires          = $res->RequiresWP;
         $res->requires_php      = $res->RequiresPhp;
         $res->homepage          = $res->PluginURI;
+        $res->slug              = $args->slug;
 
         foreach($extraData  as $key=>$data){
             $res->$key  = $data;

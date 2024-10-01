@@ -22,7 +22,6 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 		'donate_link'		=> 'harmseninnigeria.nl', 
 		'rating'			=> 5, 
 		'ratings'			=> [4,5,5,5,5,5], 
-		'slug'				=> 'sim-plugin', 
 		'banners'			=> [
 			'high'	=> PICTURESURL."/banner-1544x500.jpg",
 			'low'	=> PICTURESURL."/banner-772x250.jpg"
