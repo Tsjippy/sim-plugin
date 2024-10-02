@@ -27,37 +27,7 @@ $footerUrl     = apply_filters('sim_email_footer_url', [
 echo apply_filters('sim_email_footer', $this->footer, $this->message);
 
 Forms
-$elements				= apply_filters("sim_{$type}_elements_filter", $elements, $userId);
-$html	= apply_filters("sim_{$type}_html_filter", $html, $userId);
-$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $elementName, $oldValue, $newValue);
-$html	= apply_filters('sim-forms-before-showing-form', '', $this);
-$html	.=  apply_filters('sim_before_form', '', $this->formName);
-$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this);
-apply_filters('sim_retrieved_formdata', $results, $userId, $this);
-$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this);
-$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this);
-$shouldRemove	= apply_filters('sim_remove_formdata', true, $userId, $submission);
-$output = apply_filters('sim_transform_formtable_data', $output, $elementName);
-$actions = apply_filters('sim_form_actions', $actions);
-$cellOpeningTag	= apply_filters('sim-formresult-cell-opening-tag', $cellOpeningTag, $this, $columnSetting, $values);
-$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $subId, $this);
-$shouldShow	= apply_filters('sim-formstable-should-show', true, $this, $type);
-$actions = apply_filters('sim_form_actions', $actions);
-$elements	= apply_filters('sim-forms-elements', $this->formElements, $this, true);
-$options	= apply_filters('sim-special-form-elements', $options);
-$newSettings	= apply_filters('sim-forms-before-saving-settings', $newSettings, $this, $formId);
-$this->formElements 		=  apply_filters('sim-forms-elements', $wpdb->get_results($query), $this, false);
-$replaceValue	= apply_filters('sim-forms-transform-empty', $replaceValue, $this, $match);
-$replaceValue	= apply_filters('sim-forms-transform-array', implode(',', $replaceValue), $replaceValue, $this, $match);
-$this->submission->formresults 					= apply_filters('sim_before_saving_formdata', $this->submission->formresults, $this);
-$message	= apply_filters('sim_after_saving_formdata', $message, $this);
-$extraJs   = apply_filters('sim_form_extra_js', '', $this->formName, false);
-$minifiedJs     .= "\n\n".apply_filters('sim_form_extra_js', '', $this->formName, true);
-$this->defaultValues		= apply_filters('sim_add_form_defaults', $this->defaultValues, $this->userId, $this->formName);
-			$this->defaultArrayValues	= apply_filters('sim_add_form_multi_defaults', $this->defaultArrayValues, $this->userId, $this->formName);
-$this->usermeta	= apply_filters('sim_forms_load_userdata', $this->usermeta, $this->userId);
-$html	= apply_filters('sim-forms-element-html', $html, $element, $this);
-return apply_filters('sim-form-element-html', $html, $element, $this);
+
 
 frontend posting
 apply_filters('sim_frontend_content_edit_rights', false, $postCategory)	
