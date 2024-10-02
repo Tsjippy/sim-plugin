@@ -3,3 +3,5 @@ node_modules/
 **/package-lock.json
 includes/modules/vimeo/lib/vendor/ankitpokhrel/tus-php/.cache/tus_php.client.cache
 includes/php/test.php
+**/signal/
+debug.log

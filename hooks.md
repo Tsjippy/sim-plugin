@@ -2,6 +2,7 @@
 ## GENERIC
 - apply_filters('sim-template-filter', $templateFile);
 - apply_filters('sim_role_description', '', $role);
+- apply_filters('sim-moduledirs', $moduleDirs);
 
 ## Admin module
 - apply_filters('sim_submenu_description', '', $moduleSlug, $moduleName);

@@ -5,7 +5,7 @@ use SIM;
 //load js and css
 add_action( 'admin_enqueue_scripts', function ($hook) {
 	//Only load on sim settings pages
-	if(!str_contains($hook, '_sim_')) {
+	if(!str_contains($hook, '_sim')) {
 		return;
 	}
 

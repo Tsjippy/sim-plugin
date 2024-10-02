@@ -21,6 +21,7 @@ foreach(scandir(MODULESPATH.'/__defaults') as $dir){
 
     $moduleDirs[strtolower($dir)] = "__defaults/$dir";
 }
+$moduleDirs = apply_filters('sim-moduledirs', $moduleDirs);
 
 //Sort alphabeticalyy, ignore case
 ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);

@@ -10,7 +10,7 @@ DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
  * Gets the module name based on the slug
  */
 function getModuleName($slug){
-	$slug		= str_replace('__defaults/', '', $slug);
+	$slug		= end(explode('/', $slug));
 	$pieces 	= preg_split('/(?=[A-Z])/', ucwords($slug));
 	return trim(implode(' ', $pieces));
 }
@@ -99,10 +99,9 @@ function handlePost(){
  *Builds the submenu for each module
  */
 function buildSubMenu(){
-	global $plugin_page;
 	global $Modules;
 
-	$moduleSlug	= str_replace('sim_', '', $plugin_page);
+	$moduleSlug	= str_replace('sim_', '', $_GET['page']);
 	$moduleName	= str_replace(' module', '', get_admin_page_title());
 	if(empty($moduleName)){
 		$moduleName	= ucfirst(str_replace('_', ' ', $moduleSlug));
