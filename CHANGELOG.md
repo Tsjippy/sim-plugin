@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- repeated events
 
 ### Updated
+
+## [4.0.0] - 2024-10-02
+
+
+### Fixed
+- repeated events
 
 ## [2.46,9] - 2024-09-23
 
