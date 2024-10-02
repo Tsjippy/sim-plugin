@@ -7,15 +7,6 @@ const MODULE_VERSION		= '7.0.8';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 /**
- * Gets the module name based on the slug
- */
-function getModuleName($slug){
-	$slug		= end(explode('/', $slug));
-	$pieces 	= preg_split('/(?=[A-Z])/', ucwords($slug));
-	return trim(implode(' ', $pieces));
-}
-
-/**
  * Register a custom menu page.
  */
 add_action( 'admin_menu', function() {
@@ -35,8 +26,8 @@ add_action( 'admin_menu', function() {
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
 
 	$active		= [];
-	foreach($moduleDirs as $moduleSlug=>$moduleName){
-		$moduleName	= getModuleName($moduleName);
+	foreach($moduleDirs as $moduleSlug=>$modulePath){
+		$moduleName	= SIM\getModuleName($modulePath);
 		if(!in_array($moduleSlug, ["__template", "admin", "__defaults"])){
 			if(in_array($moduleSlug, array_keys($Modules))){
 				$active[$moduleSlug]	= $moduleName;
@@ -50,7 +41,7 @@ add_action( 'admin_menu', function() {
 			continue;
 		}
 
-		$moduleName	= getModuleName($folderName);
+		$moduleName	= SIM\getModuleName($folderName, ' ');
 		
 		//check module page exists
 		if(!file_exists(SIM\MODULESPATH.$folderName.'/php/__module_menu.php')){
@@ -62,7 +53,7 @@ add_action( 'admin_menu', function() {
 		//load the menu page php file
 		require_once(SIM\MODULESPATH.$folderName.'/php/__module_menu.php');
 
-		if(in_array($moduleName, $active)){
+		if(in_array(strtolower($moduleName), $active)){
 			add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 		}else{
 			add_submenu_page(null, "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
@@ -100,9 +91,10 @@ function handlePost(){
  */
 function buildSubMenu(){
 	global $Modules;
+	global $moduleDirs;
 
-	$moduleSlug	= str_replace('sim_', '', $_GET['page']);
-	$moduleName	= str_replace(' module', '', get_admin_page_title());
+	$moduleSlug	= str_replace('sim_', '', $_GET['page']); 
+	$moduleName	= SIM\getModuleName($moduleDirs[$moduleSlug], ' ');
 	if(empty($moduleName)){
 		$moduleName	= ucfirst(str_replace('_', ' ', $moduleSlug));
 	}
@@ -208,9 +200,9 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<form action="" method="post">
 			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
 			<?php
-			if(isset($defaultModules[$moduleSlug])){
+			if(in_array($moduleSlug, $defaultModules)){
 				echo "<input type='hidden' name='enable' value='on'>";
-				echo "This module is enabled by default<br>";
+				echo "This module is enabled by default<br><br>";
 			}else{
 				?>
 				Enable <?php echo $moduleName;?> module
@@ -341,8 +333,9 @@ function mainMenu(){
 	$active		= [];
 	$inactive	= [];
 	foreach($moduleDirs as $moduleSlug=>$moduleName){
-		$moduleName	= getModuleName($moduleName);
 		if(!in_array($moduleSlug, ["__template", "admin", "__defaults"])){
+			$moduleName	= SIM\getModuleName($moduleName, ' ');
+
 			if(in_array($moduleSlug, array_keys($Modules))){
 				$active[$moduleSlug]	= $moduleName;
 			}else{

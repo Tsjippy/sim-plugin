@@ -2,7 +2,6 @@
 namespace SIM\CONTENTFILTER;
 use SIM;
 
-use function SIM\ADMIN\getModuleName;
 use function SIM\getModuleOption;
 
 //function to redirect user to login page if they are not allowed to see it

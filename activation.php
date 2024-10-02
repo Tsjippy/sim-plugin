@@ -73,23 +73,3 @@ function addExtraPluginLinks($links, $plugin, $data) {
 
     return $links;
 }
-
-add_action( 'schedule_sim_plugin_update_action', function($oldVersion){
-    printArray('Running update actions');
-    do_action('sim_plugin_update', $oldVersion);
-});
-
-add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) {
-    // If an update has taken place and the updated type is plugins and the plugins element exists
-    if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
-        foreach( $options['plugins'] as $plugin ) {
-            // Check to ensure it's my plugin
-            if( $plugin == PLUGIN ) {
-                printArray('Scheduling update actions');
-                $oldVersion = $upgraderObject->skin->plugin_info['Version'];
-
-                wp_schedule_single_event(time() + 10, 'schedule_sim_plugin_update_action', [ $oldVersion ]);
-            }
-        }
-    }
-}, 10, 2 );

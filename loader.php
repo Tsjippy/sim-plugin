@@ -1,8 +1,42 @@
 <?php
 namespace SIM;
 
+/**
+ * Gets the module name based on the slug
+ *
+ * @param   string  $slug       string containing the raw name
+ * @param   string  $seperator  the symbol to use in between words. Default ''
+ * 
+ * @return  string              the name
+ */
+function getModuleName($slug, $seperator=''){
+    // get the module name from the path
+    $folderName = explode('/', $slug);
+	$slug		= end($folderName);
+	$pieces 	= preg_split('/(?=[A-Z])/', ucwords($slug));
+    $name       = trim(implode($seperator, $pieces));
+
+    if($seperator == ''){
+        $name   = strtolower($name);
+    }
+	return $name;
+}
+
 // Store all modulefolders
-$moduleDirs = [];
+$moduleDirs     = [];
+$defaultModules = [];
+
+// default modules
+foreach(scandir(MODULESPATH.'/__defaults') as $dir){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+        continue;
+    }
+
+    $moduleDirs[strtolower($dir)]   = "__defaults/$dir";
+
+    $moduleName                     = getModuleName($dir);
+    $defaultModules[]               = $moduleName;
+}
 
 // normal modules
 foreach(scandir(MODULESPATH) as $key=>$dir){
@@ -13,14 +47,6 @@ foreach(scandir(MODULESPATH) as $key=>$dir){
     $moduleDirs[strtolower($dir)] = $dir;
 }
 
-// default modules
-foreach(scandir(MODULESPATH.'/__defaults') as $dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
-        continue;
-    }
-
-    $moduleDirs[strtolower($dir)] = "__defaults/$dir";
-}
 $moduleDirs = apply_filters('sim-moduledirs', $moduleDirs);
 
 //Sort alphabeticalyy, ignore case
@@ -30,6 +56,7 @@ ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
 $Modules		= get_option('sim_modules', []);
+ksort($Modules);
 
 spl_autoload_register(function ($classname) {
     global $moduleDirs;
@@ -42,9 +69,7 @@ spl_autoload_register(function ($classname) {
     }
 
     $module     = $moduleDirs[strtolower($path[1])];
-    // get the module name from the path
-    $folderName = explode('/', $module);
-    $moduleName = strtolower(end($folderName));
+    $moduleName = getModuleName($module);
 
     if(!isset($Modules[$moduleName]) && (empty($_GET['page']) || $_GET['page'] != "sim_$moduleName")){
         return; // module is not activated
@@ -68,7 +93,7 @@ spl_autoload_register(function ($classname) {
 
 //Make sure the default modules are enabled always
 foreach($defaultModules as $module){
-    $module = strtolower($module);
+    $module = $module;
     if(!isset($Modules[$module])){
         $Modules[$module]  = [
             'enable'    => 'on'

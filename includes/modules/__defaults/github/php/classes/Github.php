@@ -6,12 +6,14 @@ use Github\Client;
 use WP_Error;
 
 class Github{
-    public $client;
-    public $token;
+    public  $client;
+    public  $token;
+    private $authenticated;
 
     public function __construct() {
-        $this->client 	    = new \Github\Client(); 
-        $this->token        = '';               
+        $this->client 	        = new \Github\Client(); 
+        $this->token            = '';   
+        $this->authenticated   = false;            
     }
 
     /**
@@ -21,6 +23,11 @@ class Github{
      * @param   string  $token  The token
      */
     private function authenticate(){
+        if($this->authenticated){
+            // Already authenticated
+            return true;
+        }
+
         if(empty($this->token)){
             $this->token    = SIM\getModuleOption(MODULE_SLUG, 'token');
 
@@ -29,6 +36,8 @@ class Github{
             }
         }
         $this->client->authenticate($this->token, null, \Github\AuthMethod::ACCESS_TOKEN);
+
+        $this->authenticated    = true;
     }
 
     /**
@@ -49,22 +58,28 @@ class Github{
         }
         
         // if not in transient
-        if(!$release){
+        if($release === false){
+            $release    = '';
+
             try{
                 $release 	    = $this->client->api('repo')->releases()->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
-                SIM\printArray('Rate limit reached, please try again in an hour');
-                return new \WP_Error('update', 'Rate limit reached, please try again in an hour');
-            }catch(\Exception $exception){
-                SIM\printArray($exception);
-                if($exception->getMessage() == 'Not Found'){
-                    // authenticate
+                if(!$this->authenticated){
                     $this->authenticate();
-                    
-                    // rerun
-                    return $this->getLatestRelease($author, $repo);
-                }else{
-                    return new \WP_Error('update', $exception->getMessage());
+
+                    if($this->authenticated){
+                        return $this->getLatestRelease($author, $repo, $force);
+                    }
+                }
+            }catch(\Exception $exception){
+                if($exception->getMessage() == 'Not Found'){
+                    if(!$this->authenticated){
+                        // authenticate
+                        $this->authenticate();
+                        
+                        // rerun
+                        return $this->getLatestRelease($author, $repo, $force);
+                    }
                 }
             }            
 
@@ -73,6 +88,11 @@ class Github{
             
             // Store for 1 hours
             set_transient( "$author-$repo", $release, HOUR_IN_SECONDS );
+
+            if(isset($exception)){
+                SIM\printArray($exception);
+                return new \WP_Error('update', $exception->getMessage());
+            }
         }
         return $release;
     }
@@ -88,14 +108,33 @@ class Github{
      */
     public function downloadFromGithub($author='Tsjippy', $repo=SIM\PLUGINNAME, $path){
         // Get latest release info
-        $release	= $this->getLatestRelease($author, $repo, true);
+        $release	= $this->getLatestRelease($author, $repo);
 
-        if(is_wp_error($release)){
+        if(is_wp_error($release) || empty($release)){
             return $release;
         }
 
         // download latest release
-        $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+        try{
+            $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+        }catch (\Exception $e){
+            if($e->getCode() == 404){
+                // Get a new download link, bypass transient
+                $release	= $this->getLatestRelease($author, $repo, true);
+                try{
+                    $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+                }catch (\Exception $e){
+                    SIM\printArray("Could not find asset with id {$release['assets'][0]['id']} for $author-$repo");
+                    SIM\printArray($release['assets']);
+                }
+            }else{
+                SIM\printArray($e);
+            }
+
+            if(!$zipContent){
+                return new WP_Error('Github', 'Downloading zip failed');
+            }
+        }
         
         $tmpZipFile = tmpfile();
         fwrite($tmpZipFile, $zipContent);
