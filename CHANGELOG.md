@@ -5,6 +5,7 @@
 
 ### Changed
 - moved vimeo to dedicaged repo
+- readme
 
 ### Fixed
 
