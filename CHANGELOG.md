@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- download missing modules
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [4.0.3] - 2024-10-03
+
+
+### Added
+- download missing modules
 
 ## [4.0.2] - 2024-10-03
 
