@@ -43,7 +43,7 @@ function addExtraPluginLinks($links, $plugin, $data) {
 
     // Details link
     $url            = admin_url( "plugin-install.php?tab=plugin-information&plugin=$slug&section=changelog" );
-    $link  = "<a href='$url'>Details</a>";
+    $link           = "<a href='$url'>Details</a>";
     array_unshift($links, $link);
 
     // Update links

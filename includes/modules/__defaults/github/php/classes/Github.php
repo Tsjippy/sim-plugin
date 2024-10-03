@@ -106,7 +106,11 @@ class Github{
      * 
      * @return	true|WP_Error       True on success, WP_Error object on failure
      */
-    public function downloadFromGithub($author='Tsjippy', $repo=SIM\PLUGINNAME, $path){
+    public function downloadFromGithub($author='Tsjippy', $repo=SIM\PLUGINNAME, $path=''){
+        if(empty($path)){
+            return new WP_Error('Github', 'Path canot be empty');
+        }
+        
         // Get latest release info
         $release	= $this->getLatestRelease($author, $repo);
 

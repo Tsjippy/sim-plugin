@@ -330,6 +330,28 @@ function mainMenu(){
 	global $Modules;
 	global $moduleDirs;
 
+	if(!empty($_GET['download'])){
+		$slug		= sanitize_text_field($_GET['download']);
+
+		$github		= new SIM\GITHUB\Github();
+
+		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug);
+
+		if($result){
+			?>
+			<div class="success">
+				Module succesfully downloaded
+			</div>
+			<?php
+		}else{
+			?>
+			<div class="error">
+				Module <?php echo $slug;?> not found on github
+			</div>
+			<?php
+		}
+	}
+
 	$active		= [];
 	$inactive	= [];
 	foreach($moduleDirs as $moduleSlug=>$moduleName){
@@ -343,32 +365,50 @@ function mainMenu(){
 			}
 		}
 	}
+
+	$missing	= [];
+	foreach(array_keys($Modules) as $moduleName){
+		if(!in_array($moduleName, array_keys($moduleDirs))){
+			$missing	= [$moduleName];
+		}
+	}
 	
 	ob_start();
-
 	?>
 	<div>
 		<strong>Current active modules</strong><br>
 		<ul class="sim-list">
-		<?php
-		foreach($active as $slug=>$name){
-			$url	= admin_url("admin.php?page=sim_$slug");
-			echo "<li><a href='$url'>$name</a></li>";
-		}
-		?>
+			<?php
+			foreach($active as $slug=>$name){
+				$url	= admin_url("admin.php?page=sim_$slug");
+				echo "<li><a href='$url'>$name</a></li>";
+			}
+			?>
 		</ul>
+
 		<strong>Current inactive modules</strong><br>
 		<ul class="sim-list">
-		<?php
-		if(empty($inactive)){
-			echo "All modules are activated";
-		}
-		foreach($inactive as $slug=>$name){
-			$url	= admin_url("admin.php?page=sim_$slug");
-			echo "<li><a href='$url'>$name</a></li>";
-		}
-		?>
+			<?php
+			if(empty($inactive)){
+				echo "All modules are activated";
+			}
+			foreach($inactive as $slug=>$name){
+				$url	= admin_url("admin.php?page=sim_$slug");
+				echo "<li><a href='$url'>$name</a></li>";
+			}
+			?>
 		</ul>
+
+		<strong>Current uninstalled modules</strong><br>
+			<?php
+			if(empty($missing)){
+				echo "No missing modules";
+			}
+			foreach($missing as $slug){
+				$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
+				echo "<a href='$url' class='button sim small'>Download $slug</a>";
+			}
+			?>
 	</div>
 	<?php
 	echo ob_get_clean();
