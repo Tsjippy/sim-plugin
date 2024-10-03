@@ -36,7 +36,7 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 	$github			= new Github();
 
-	$item			= $github->pluginVersionInfo(SIM\PLUGIN_PATH);
+	$item			= $github->getVersionInfo(SIM\PLUGIN_PATH);
 
 	// Git has a newer version
 	if(isset($item->new_version)){

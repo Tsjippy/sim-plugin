@@ -11,8 +11,7 @@ namespace SIM;
  * Requires PHP: 		8.0
  * Tested up to: 		6.6.2
  * Plugin URI:			https://github.com/Tsjippy/sim-plugin/
- * Tested:				6.5.0
- * author_profile:		test	
+ * Tested:				6.5.0	
  *
  * @author Ewald Harmsen
  */

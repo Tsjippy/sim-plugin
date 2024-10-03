@@ -239,19 +239,24 @@ class Github{
     /**
      * Checks for update from github
      *
-     * @param   string  $pluginPath     The fullpath to the plugin main file
+     * @param   string  $path     The fullpath to the plugin or thmes main file
      *
-     * @return  object                  Version information
+     * @return  object            Version information
      */
-    public function pluginVersionInfo($pluginPath){
-        $plugin = explode('/', $pluginPath)[0];
+    public function getVersionInfo($path, $author='Tsjippy', $repo='sim-plugin'){
 
-        if( !function_exists('get_plugin_data') ){
-            require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        if(str_contains($path, 'themes')){
+            $slug       = pathinfo($path, PATHINFO_BASENAME);
+            $oldVersion = wp_get_theme($slug)->get('Version');
+        }else{
+            $slug = explode('/', $path)[0];
+            if( !function_exists('get_plugin_data') ){
+                require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+            }
+            $oldVersion = get_plugin_data($path)['Version'];
         }
-        $pluginVersion  = get_plugin_data($pluginPath)['Version'];
 
-        $release		= $this->getLatestRelease();
+        $release    = $this->getLatestRelease($author, $repo);
 
         if(is_wp_error($release)){
             return $release;
@@ -260,14 +265,14 @@ class Github{
         $gitVersion     = $release['tag_name'];
 
         $item			= (object) array(
-            'slug'          => $plugin,
-            'new_version'   => $pluginVersion,
-            'url'           => 'https://api.github.com/repos/Tsjippy/sim-plugin',
+            'slug'          => $slug,
+            'new_version'   => $oldVersion,
+            'url'           => "https://api.github.com/repos/$author/$repo",
             'package'       => '',
-            'plugin'		=> SIM\PLUGIN
+            'plugin'		=> $path
         );
 
-        if(version_compare($gitVersion, $pluginVersion) && !empty($release['assets'][0]['browser_download_url'])){
+        if(version_compare($gitVersion, $oldVersion) && !empty($release['assets'][0]['browser_download_url'])){
             $item->new_version	= $gitVersion;
             $item->package		= $release['assets'][0]['browser_download_url'];
         }
