@@ -5,6 +5,7 @@
 - auto module update
 
 ### Changed
+- github functions
 
 ### Fixed
 
