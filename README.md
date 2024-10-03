@@ -1,1 +1,3 @@
-Plugin which includes plenty modules including a forms, module Signal messenger integration and more
+Base plugin to add capabilities to wordpress with the use of modules.
+
+Download available modules to add functionality

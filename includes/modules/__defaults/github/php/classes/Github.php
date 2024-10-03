@@ -186,7 +186,7 @@ class Github{
 
         // Add available Sections
         $res->sections = [];
-        foreach(['description', 'installation', 'faq', 'changelog', 'screenshots', 'reviews', 'hooks'] as $item){
+        foreach(['README', 'INSTALLATION', 'FAQ', 'CHANGELOG', 'screenshots', 'reviews', 'hooks'] as $item){
             $content    = get_transient("sim-git-$item");
             // if not in transient
             if($content === false){
@@ -217,7 +217,7 @@ class Github{
                 $content    = str_replace('h4', 'h5', trim($content));
                 $content    = str_replace('h3', 'h4', trim($content));
                 $content    = str_replace('h2', 'h3', trim($content));
-                $res->sections[$item]    = str_replace('h2', 'h3', trim($content));
+                $res->sections[strtolower(ucfirst($item))]    = str_replace('h2', 'h3', trim($content));
             }
         }
 
