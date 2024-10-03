@@ -335,7 +335,7 @@ function mainMenu(){
 
 		$github		= new SIM\GITHUB\Github();
 
-		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug);
+		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug, true);
 
 		if($result){
 			?>
@@ -343,13 +343,22 @@ function mainMenu(){
 				Module succesfully downloaded
 			</div>
 			<?php
+
+			$moduleDirs[$slug]	= $slug;
 		}else{
-			?>
-			<div class="error">
-				Module <?php echo $slug;?> not found on github
-			</div>
-			<?php
+			echo '<div class="error">';
+				echo "Module $slug not found on github";
+				if(!$github->authenticated){
+					echo " maybe you should supply a github token so I can try again while logged in.";
+				}
+			echo "</div>";
 		}
+	}
+
+	if(!empty($_GET['remove'])){
+		unset($Modules[$_GET['remove']]);
+
+		update_option('sim_modules', $Modules);
 	}
 
 	$active		= [];
@@ -369,7 +378,7 @@ function mainMenu(){
 	$missing	= [];
 	foreach(array_keys($Modules) as $moduleName){
 		if(!in_array($moduleName, array_keys($moduleDirs))){
-			$missing	= [$moduleName];
+			$missing[]	= $moduleName;
 		}
 	}
 	
@@ -399,14 +408,15 @@ function mainMenu(){
 			?>
 		</ul>
 
-		<strong>Current uninstalled modules</strong><br>
+		<strong>Current uninstalled but active modules</strong><br>
 			<?php
 			if(empty($missing)){
 				echo "No missing modules";
 			}
 			foreach($missing as $slug){
 				$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
-				echo "<a href='$url' class='button sim small'>Download $slug</a>";
+				$url2	= admin_url("admin.php?page={$_GET['page']}&remove=$slug");
+				echo "<span style='line-height: 2;'>$slug</span>: <a href='$url' class='button sim small'>Download</a> <a href='$url2' class='button sim small'>Delete</a><br><br>";
 			}
 			?>
 	</div>

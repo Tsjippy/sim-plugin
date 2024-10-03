@@ -8,7 +8,7 @@ use WP_Error;
 class Github{
     public  $client;
     public  $token;
-    private $authenticated;
+    public $authenticated;
 
     public function __construct() {
         $this->client 	        = new \Github\Client(); 
@@ -103,16 +103,17 @@ class Github{
      * @param	string	$author		The github author. Default 'Tsjippy'
      * @param	string	$repo	    The github repo name
      * @param	string	$path		The destination path
+     * @param   bool    $force      Whether to skip the cached result. Default false
      * 
      * @return	true|WP_Error       True on success, WP_Error object on failure
      */
-    public function downloadFromGithub($author='Tsjippy', $repo=SIM\PLUGINNAME, $path=''){
+    public function downloadFromGithub($author='Tsjippy', $repo=SIM\PLUGINNAME, $path='', $force=false){
         if(empty($path)){
             return new WP_Error('Github', 'Path canot be empty');
         }
-        
+
         // Get latest release info
-        $release	= $this->getLatestRelease($author, $repo);
+        $release	= $this->getLatestRelease($author, $repo, $force);
 
         if(is_wp_error($release) || empty($release)){
             return $release;

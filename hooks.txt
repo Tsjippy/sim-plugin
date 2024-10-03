@@ -26,9 +26,6 @@ $footerUrl     = apply_filters('sim_email_footer_url', [
 
 echo apply_filters('sim_email_footer', $this->footer, $this->message);
 
-Forms
-
-
 frontend posting
 apply_filters('sim_frontend_content_edit_rights', false, $postCategory)	
 $buttonHtml	= apply_filters('post-edit-button', $buttonHtml, $post, $content);
@@ -97,9 +94,7 @@ echo apply_filters('sim-empty-taxonomy', "There are no ".get_queried_object()->s
 
 
 SIGNAL
-$excerpt = apply_filters('sim_signal_post_notification_message', $excerpt, $post);
-echo apply_filters('sim_personal_signal_settings', '', $user, $prefs);
-$expirationDuration	= apply_filters( 'password_reset_expiration', DAY_IN_SECONDS );
+
 
 USERMANAGEMENT
 $userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
@@ -107,9 +102,6 @@ echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>'
 echo apply_filters('sim_role_description', '', $key);
 $userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
 $filteredHtml	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $showCurrentUserData, $user, $userAge);
-
-VIMEO
-$files      = apply_filters('sim-local-vimeo-files', $files);
 
 
 GENERIC
