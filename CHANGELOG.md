@@ -2,13 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- auto module update
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [4.0.2] - 2024-10-03
+
+
+### Added
+- auto module update
+
+### Changed
+- github functions
 
 ## [4.0.0] - 2024-10-02
 
