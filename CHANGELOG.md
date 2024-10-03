@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- moved vimeo to dedicaged repo
 
 ### Fixed
 
