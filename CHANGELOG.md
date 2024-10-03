@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- auto module update
 
 ### Changed
 
