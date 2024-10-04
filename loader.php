@@ -109,7 +109,7 @@ $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . "/includes/blocks/*.php"));
 
 foreach($Modules as $slug=>$settings){
-    if(isset($moduleDirs[$slug])){
+    if(isset($moduleDirs[$slug]) && !empty($settings['enable'])){
         $files = array_merge($files, glob(__DIR__  . "/includes/modules/{$moduleDirs[$slug]}/php/*.php"));
         $files = array_merge($files, glob(__DIR__  . "/includes/modules/{$moduleDirs[$slug]}/blocks/*.php"));
     }
