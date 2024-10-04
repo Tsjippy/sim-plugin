@@ -38,6 +38,10 @@ add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 
 	$item			= $github->getVersionInfo(SIM\PLUGIN_PATH);
 
+	if(!is_object($item)){
+		return $transient;
+	}
+
 	// Git has a newer version
 	if(isset($item->new_version)){
 		$transient->response[SIM\PLUGIN]	= $item;

@@ -171,9 +171,16 @@ function buildSubMenu(){
 }
 
 function descriptionsTab($moduleSlug, $moduleName, $tab){
-	ob_start();
-	$description = apply_filters('sim_submenu_description', '', $moduleSlug, $moduleName);
+	$description	= file_get_contents(SIM\MODULESPATH."/$moduleSlug/README.md");
+	if($description){
+		//convert to html
+		$parser 	= new \Michelf\MarkdownExtra;
+		$description	= $parser->transform($description);
+	}
 
+	$description = apply_filters('sim_submenu_description', $description, $moduleSlug, $moduleName);
+
+	ob_start();
 	if(!empty($description)){
 		?>
 		<div class='tabcontent <?php if($tab != 'description'){echo 'hidden';}?>' id='description'>
@@ -347,31 +354,39 @@ function mainMenu(){
 			$moduleDirs[$slug]	= $slug;
 		}else{
 			echo '<div class="error">';
-				echo "Module $slug not found on github";
+				echo "Module $slug not found on github.<br><br>";
 				if(!$github->authenticated){
-					echo " maybe you should supply a github token so I can try again while logged in.";
+					$url            = admin_url( "admin.php?page=sim_github&main_tab=settings" );
+					echo " maybe you <a href='$url'>should supply a github token</a> so I can try again while logged in.";
 				}
 			echo "</div>";
 		}
 	}
 
 	if(!empty($_GET['remove'])){
-		unset($Modules[$_GET['remove']]);
+		$slug		= sanitize_text_field($_GET['remove']);
 
-		update_option('sim_modules', $Modules);
+		if(isset($Modules[$slug])){
+			unset($Modules[$slug]);
+
+			update_option('sim_modules', $Modules);
+		}
+
+		if(isset($moduleDirs[$slug])){
+			unlink(SIM\MODULESPATH."/$moduleDirs[$slug]");
+		}
 	}
 
 	$active		= [];
 	$inactive	= [];
-	foreach($moduleDirs as $moduleSlug=>$moduleName){
-		if(!in_array($moduleSlug, ["__template", "admin", "__defaults"])){
-			$moduleName	= SIM\getModuleName($moduleName, ' ');
+	foreach(SIM\MODULELIST as $moduleName){
+		$moduleSlug	= strtolower($moduleName);
+		$moduleName	= SIM\getModuleName($moduleName, ' ');
 
-			if(in_array($moduleSlug, array_keys($Modules))){
-				$active[$moduleSlug]	= $moduleName;
-			}else{
-				$inactive[$moduleSlug]	= $moduleName;
-			}
+		if(in_array($moduleSlug, array_keys($Modules))){
+			$active[$moduleSlug]	= $moduleName;
+		}else{
+			$inactive[$moduleSlug]	= $moduleName;
 		}
 	}
 
@@ -396,27 +411,56 @@ function mainMenu(){
 		</ul>
 
 		<strong>Current inactive modules</strong><br>
-		<ul class="sim-list">
-			<?php
+		<?php
 			if(empty($inactive)){
 				echo "All modules are activated";
-			}
-			foreach($inactive as $slug=>$name){
-				$url	= admin_url("admin.php?page=sim_$slug");
-				echo "<li><a href='$url'>$name</a></li>";
+			}else{
+				?>
+				<table class="sim-list">
+					<?php
+					foreach($inactive as $slug=>$name){
+						echo "<tr>";
+							echo "<td>$name</td>";
+							// Module is downloaded but inactive
+							if(in_array($slug, array_keys($moduleDirs))){
+								$url	= admin_url("admin.php?page=sim_$slug");
+								$url2	= admin_url("admin.php?page={$_GET['page']}&remove=$slug");
+								echo "<td><a href='$url'>Activate</a></td><td><a href='$url2' class='button sim small'>Delete</a></td>";
+							}else{
+								// Available for download
+								$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
+								echo "</d><a href='$url' class='button sim small'>Download</a></td>";
+							}
+						echo "</tr>";
+					}
+					?>
+				</table>
+				<?php
 			}
 			?>
-		</ul>
 
 		<strong>Current uninstalled but active modules</strong><br>
 			<?php
 			if(empty($missing)){
 				echo "No missing modules";
-			}
-			foreach($missing as $slug){
-				$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
-				$url2	= admin_url("admin.php?page={$_GET['page']}&remove=$slug");
-				echo "<span style='line-height: 2;'>$slug</span>: <a href='$url' class='button sim small'>Download</a> <a href='$url2' class='button sim small'>Delete</a><br><br>";
+			}else{
+				?>
+				<table class="sim-list">
+					<?php
+					foreach($missing as $slug){
+						$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
+						$url2	= admin_url("admin.php?page={$_GET['page']}&remove=$slug");
+						?>
+						<tr>
+							<td><?php echo $slug;?></td>
+							<td><a href='$url' class='button sim small'>Download</a></td>
+							<td><a href='$url2' class='button sim small'>Delete</a></td>
+						</tr>
+						<?php
+					}
+					?>
+				</table>
+				<?php
 			}
 			?>
 	</div>

@@ -263,7 +263,7 @@ class Github{
 
         $release    = $this->getLatestRelease($author, $repo);
 
-        if(is_wp_error($release)){
+        if(is_wp_error($release) || empty($release)){
             return $release;
         }
 
