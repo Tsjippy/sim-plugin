@@ -12,6 +12,7 @@
 - bulkchange module to dedicated repo
 - captcha module to dedicated repo
 - cloud module to dedicated repo
+- comments module to dedicated repo
 
 ### Fixed
 
