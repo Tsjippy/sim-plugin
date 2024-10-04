@@ -14,6 +14,7 @@
 - cloud module to dedicated repo
 - comments module to dedicated repo
 - content filter module to dedicated repo
+- defaultPictures module to dedicated repo
 
 ### Fixed
 
