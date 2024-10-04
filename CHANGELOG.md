@@ -18,6 +18,7 @@
 - embedpage module to dedicated repo
 - fancyEmail module to dedicated repo
 - forms module to dedicated repo
+- heicToJpeg module to dedicated repo
 
 ### Fixed
 
