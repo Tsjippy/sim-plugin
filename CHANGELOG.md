@@ -6,6 +6,7 @@
 ### Changed
 - moved vimeo to dedicaged repo
 - readme
+- ADMIN MENU
 
 ### Fixed
 
