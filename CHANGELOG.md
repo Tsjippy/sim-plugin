@@ -27,7 +27,7 @@
 - media gallery module to dedicated repo
 - page gallery module to dedicated repo
 - pdf to excel module to dedicated repo
-- querier module to dedicated repo
+- statistics module to dedicated repo
 
 ### Fixed
 
