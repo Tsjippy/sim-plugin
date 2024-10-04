@@ -10,6 +10,7 @@
 - moved frontendContent to a dedicated repo
 - banking module to dedicated repo
 - bulkchange module to dedicated repo
+- captcha module to dedicated repo
 
 ### Fixed
 
