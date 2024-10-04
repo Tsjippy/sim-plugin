@@ -7,6 +7,7 @@
 - moved vimeo to dedicaged repo
 - readme
 - ADMIN MENU
+- moved frontendContent to a dedicated repo
 
 ### Fixed
 
