@@ -28,6 +28,7 @@
 - page gallery module to dedicated repo
 - pdf to excel module to dedicated repo
 - statistics module to dedicated repo
+- welcome message module to dedicated repo
 
 ### Fixed
 
