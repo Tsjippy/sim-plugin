@@ -16,6 +16,7 @@
 - content filter module to dedicated repo
 - defaultPictures module to dedicated repo
 - embedpage module to dedicated repo
+- fancyEmail module to dedicated repo
 
 ### Fixed
 
