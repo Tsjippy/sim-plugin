@@ -24,6 +24,7 @@
 - mailchimp module to dedicated repo
 - mailposting module to dedicated repo
 - mandatory module to dedicated repo
+- media gallery module to dedicated repo
 
 ### Fixed
 
