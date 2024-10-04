@@ -19,6 +19,7 @@
 - fancyEmail module to dedicated repo
 - forms module to dedicated repo
 - heicToJpeg module to dedicated repo
+- locations module to dedicated repo
 
 ### Fixed
 
