@@ -15,6 +15,7 @@
 - comments module to dedicated repo
 - content filter module to dedicated repo
 - defaultPictures module to dedicated repo
+- embedpage module to dedicated repo
 
 ### Fixed
 
