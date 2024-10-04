@@ -23,6 +23,7 @@
 - login module to dedicated repo
 - mailchimp module to dedicated repo
 - mailposting module to dedicated repo
+- mandatory module to dedicated repo
 
 ### Fixed
 
