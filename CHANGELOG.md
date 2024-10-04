@@ -20,6 +20,7 @@
 - forms module to dedicated repo
 - heicToJpeg module to dedicated repo
 - locations module to dedicated repo
+- login module to dedicated repo
 
 ### Fixed
 
