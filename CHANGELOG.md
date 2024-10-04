@@ -13,6 +13,7 @@
 - captcha module to dedicated repo
 - cloud module to dedicated repo
 - comments module to dedicated repo
+- content filter module to dedicated repo
 
 ### Fixed
 
