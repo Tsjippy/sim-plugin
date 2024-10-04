@@ -31,7 +31,14 @@ add_action( 'schedule_sim_plugin_update_action', function($oldVersion){
     // Reinstall any missing modules
     foreach(array_keys($Modules) as $module){
         if(!file_exists(MODULESPATH.$module) && !file_exists(MODULESPATH."__defaults/$module")){
-            $github->downloadFromGithub('Tsjippy', $module, MODULESPATH.$module);
+            $result = $github->downloadFromGithub('Tsjippy', $module, MODULESPATH.$module);
+
+            if($result && !is_wp_error($result)){
+                printArray("Succesfully installed module $module");
+            }else{
+                printArray($result);
+            }
+
         }
     }
 });
