@@ -8,6 +8,7 @@
 - readme
 - ADMIN MENU
 - moved frontendContent to a dedicated repo
+- banking module to dedicated repo
 
 ### Fixed
 
