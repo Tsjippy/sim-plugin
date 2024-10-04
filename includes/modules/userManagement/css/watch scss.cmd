@@ -1,1 +1,0 @@
-sass --watch --style=compressed ".\account.scss" "account.min.css"
