@@ -282,6 +282,19 @@ class FrontEndContent{
 				}
 
 				ob_start();
+				// Add archive button
+				if(!empty($this->post) && $this->post->post_status != 'archived'){
+					?>
+					<div class='submit_wrapper'>
+						<button type='submit' class='button' name='archive_post' data-post_id='<?php echo  esc_html($this->postId); ?>'>
+							Archive <?php echo  esc_html($this->post->post_type); ?>
+						</button>
+						<img class='loadergif hidden' src='<?php echo SIM\LOADERIMAGEURL; ?>' alt='' loading='lazy' style='max-height:30px;margin-top:0px;'>
+					</div>
+					<?php
+				}
+
+				// Add delete button
 				if(!empty($this->post) && $this->post->post_status != 'trash'){
 					?>
 					<div class='submit_wrapper'>
@@ -292,6 +305,7 @@ class FrontEndContent{
 					</div>
 					<?php
 				}
+
 				echo apply_filters('sim-frontend-buttons', ob_get_clean(), $this);
 				?>
 			</form>

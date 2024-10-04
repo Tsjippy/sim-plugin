@@ -16,19 +16,6 @@ $gray_lighter: #f6f6f6 !default;
 $primary_light: $gray !default;
 $arrow_color: $gray !default;
 
-@media (prefers-color-scheme: dark) {
-	.nice-select {
-		background-color: black;
-		color: white;
-
-		.nice-select-dropdown,
-		.nice-select-search{
-			background-color: black;
-			color: white;
-		}
-	}
-}
-
 // Style the dropdown
 .nice-select {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -246,6 +233,19 @@ $arrow_color: $gray !default;
 
 	&.inline{
 		display: inline-block;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.nice-select {
+		background-color: black;
+		color: white;
+
+		.nice-select-dropdown,
+		.nice-select-search{
+			background-color: black;
+			color: white;
+		}
 	}
 }
 

@@ -44,8 +44,25 @@ function expiredPostsCheck(){
 	));
 	
 	foreach($posts as $post){
-		SIM\printArray("Moving '{$post->post_title}' to trash as it has expired");
-		wp_trash_post($post->ID);
+		$status	= SIM\getModuleOption(MODULE_SLUG, 'expired-post-type');
+		if(!$status){
+			$status	= 'trash';
+		}
+
+		if($status == 'trash'){
+			wp_trash_post($post->ID);
+		}else{
+			wp_update_post(
+				array(
+					'ID'             => $post->ID,
+					'post_status'    => 'archived',
+				),
+				false,
+				false
+			);
+		}
+		SIM\printArray("Moving '{$post->post_title}' to $status as it has expired");
+
 	}
 }
 

@@ -24,6 +24,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		If anyone without publish rights tries to add or edit a page, it will be stored as pending.<br>
 		An overview of pending content can be shown using the <code>[pending_pages]</code> shortcode.<br>
 		You can use the <code>[pending_post_icon]</code> shortcode as an indicator, displaying the amount of pending posts in menu items.<br>
+		This module also adds a custom post status: archived. Meaning a post is not visible but still kept for reference
 	</p>
 
 	<?php
@@ -108,6 +109,18 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		?>
 	</select>
 	<br>
+	<label>
+		Post status after expiry<br>
+		<label>
+			<input type='radio' name='expired-post-type' id='expired-post-type' value='trash' <?php if($settings['expired-post-type'] == 'trash'){echo 'checked';}?>>
+			Trashed
+		</label>
+
+		<label>
+			<input type='radio' name='expired-post-type' id='expired-post-type' value='archived' <?php if($settings['expired-post-type'] == 'archived'){echo 'checked';}?>>
+			Archived
+		</label>
+	</label>
 	<?php
 	return ob_get_clean();
 }, 10, 3);

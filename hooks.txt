@@ -27,18 +27,7 @@ $footerUrl     = apply_filters('sim_email_footer_url', [
 echo apply_filters('sim_email_footer', $this->footer, $this->message);
 
 frontend posting
-apply_filters('sim_frontend_content_edit_rights', false, $postCategory)	
-$buttonHtml	= apply_filters('post-edit-button', $buttonHtml, $post, $content);
-$template 		= apply_filters( "content_template", $baseTemplate, 'content' );
-$dependables    = apply_filters('sim-frontend-content-js', array('sim_fileupload_script', 'sim_forms_script'));
-echo apply_filters('sim_attachment_preview', $image, $this->postId);
-echo apply_filters('sim-frontend-buttons', ob_get_clean(), $this);
-$this->editRight	= apply_filters('sim_frontend_content_edit_rights', $this->editRight, $this->postCategory);
-$postTypes		= apply_filters('sim_frontend_posting_modals', ['attachment']);
-$postContent	= apply_filters('sim_post_content', $postContent);
-$error	= apply_filters('sim_frontend_content_validation', '', $this);
-$url            = apply_filters('sim_media_gallery_download_url', $url, $id);
-$fileName   = apply_filters('sim_media_gallery_download_filename', '', $type, $id);
+
 
 locations
 $locations	= apply_filters('sim-locations-array', []);

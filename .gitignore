@@ -3,7 +3,6 @@ node_modules/
 **/package-lock.json
 includes/php/test.php
 **/__template/*
-**/archive/*
 **/banking/*
 **/bookings/*
 **/bulkChange/*
@@ -16,7 +15,7 @@ includes/php/test.php
 **/events/*
 **/fancyEmail/
 **/forms/
-**/frontendPosting/
+frontendPosting/
 **/heicToJpeg/
 **/locations/
 **/login/

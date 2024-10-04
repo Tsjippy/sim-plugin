@@ -1,5 +1,6 @@
-@use '../../css/scss/nice-select2' as *;
-@use '../../css/scss/table' as *;
+@use '../../../../css/scss/global' as *;
+@use '../../../../css/scss/nice-select2' as *;
+@use '../../../../css/scss/table' as *;
 
 .success{
 	border: 3px solid yellowgreen;
@@ -88,9 +89,13 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
-ul.sim-list{
+.sim-list{
     list-style: disc;
     padding-left: 20px;
+
+    td{
+        min-width: 80px;
+    }
 }
 
 .tablink.active{

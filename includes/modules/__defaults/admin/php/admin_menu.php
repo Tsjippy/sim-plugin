@@ -452,9 +452,9 @@ function mainMenu(){
 						$url2	= admin_url("admin.php?page={$_GET['page']}&remove=$slug");
 						?>
 						<tr>
-							<td><?php echo $slug;?></td>
-							<td><a href='$url' class='button sim small'>Download</a></td>
-							<td><a href='$url2' class='button sim small'>Delete</a></td>
+							<td><?php echo ucfirst($slug);?></td>
+							<td><a href='<?php echo $url; ?>' class='button sim small'>Download</a></td>
+							<td><a href='<?php echo $url2; ?>' class='button sim small'>Delete</a></td>
 						</tr>
 						<?php
 					}

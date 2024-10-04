@@ -5,6 +5,9 @@
 }
 
 #postform{
+	display: inline-block;
+	min-width: 700px;
+
 	input[type="text"]{
         width: 100%;
     }
@@ -35,12 +38,12 @@
 		margin-top:15px;
 		
 		.infobox{
+			float: unset;
+			
 			/* Only non ios devices */
 			@supports not (-webkit-touch-callout: none) {
 				margin-top: -70px;
 			}
-
-			float: unset;
 			
 			&:hover{
 				display: contents;
@@ -83,19 +86,17 @@
 	{
 		width: 100%;
 	}
-
-	display: inline-block;
 }
 
 .post-button-wrapper{
+	display: flex;
+	z-index: 1;
+    position: relative;
+	
 	@media (min-width: 1250px){
 		margin-top:-77px;
 		float: right;
 	}
-
-	display: flex;
-	z-index: 1;
-    position: relative;
 
 	.submit_wrapper:not(:last-child){
 		margin-right: 20px;
