@@ -28,6 +28,7 @@
 - page gallery module to dedicated repo
 - pdf to excel module to dedicated repo
 - trello module to dedicated repo
+- removed deps
 
 ### Fixed
 
