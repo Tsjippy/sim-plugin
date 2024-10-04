@@ -21,6 +21,7 @@
 - heicToJpeg module to dedicated repo
 - locations module to dedicated repo
 - login module to dedicated repo
+- mailchimp module to dedicated repo
 
 ### Fixed
 
