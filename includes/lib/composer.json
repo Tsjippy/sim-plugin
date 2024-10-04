@@ -1,9 +1,7 @@
 {
     "require": {
-        "phpoffice/phpspreadsheet": "^1.16",
         "phpoffice/phpword": "^0.18.0",
-        "guzzlehttp/guzzle": "7.4.5",
-        "http-interop/http-factory-guzzle": "1.0"
+        "guzzlehttp/guzzle": "7.4.5"
     },
     "config": {
         "allow-plugins": {
