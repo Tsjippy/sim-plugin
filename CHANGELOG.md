@@ -4,6 +4,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.0.0] - 2024-10-07
+
+
+### Changed
 - moved vimeo to dedicaged repo
 - readme
 - ADMIN MENU
@@ -30,10 +39,6 @@
 - trello module to dedicated repo
 - removed deps
 - code clean up
-
-### Fixed
-
-### Updated
 
 ## [4.0.3] - 2024-10-03
 
