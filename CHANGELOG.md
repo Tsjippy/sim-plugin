@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- admin menu active module list
 
 ### Updated
 
