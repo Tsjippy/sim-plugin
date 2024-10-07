@@ -344,7 +344,7 @@ function mainMenu(){
 
 		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug, true);
 
-		if($result){
+		if($result && !is_wp_error($result)){
 			?>
 			<div class="success">
 				Module succesfully downloaded
@@ -383,7 +383,8 @@ function mainMenu(){
 		$moduleSlug	= strtolower($moduleName);
 		$moduleName	= SIM\getModuleName($moduleName, ' ');
 
-		if(in_array($moduleSlug, array_keys($Modules))){
+		// activated and files downloaded
+		if(isset($Modules[$moduleSlug]) && isset($moduleDirs[$moduleSlug])){
 			$active[$moduleSlug]	= $moduleName;
 		}else{
 			$inactive[$moduleSlug]	= $moduleName;
