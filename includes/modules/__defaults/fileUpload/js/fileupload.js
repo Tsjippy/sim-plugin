@@ -55,7 +55,10 @@ async function fileUpload(target){
 	}
 
 	// prevent form submission
-	target.closest('form').querySelector('.button.form_submit').disabled	= true;
+	let form	= target.closest('form');
+	if(form != undefined){
+		form.querySelector('.button.form_submit').disabled	= true;
+	}
 	
 	//Create a formData element
 	let formData = new FormData();
@@ -239,7 +242,7 @@ function fileUploadSucces(result){
 	const event = new Event('uploadfinished');
 	fileUploadWrap.dispatchEvent(event);
 
-	document.querySelector('.file_upload.active').classList.remove('active');
+	document.querySelectorAll('.file_upload.active').forEach(el => el.classList.remove('active'));
 }
 
 async function removeDocument(target){
@@ -290,14 +293,6 @@ async function removeDocument(target){
 
 		Main.displayMessage(response);
 	}
-}
-
-function refreshVimeoiFrame(){
-	// Show the vimeo video after 60 seconds when the video is hopefully rendered
-	document.querySelectorAll('.vimeo-embed-container.loading iframe').forEach(el=>{
-		// replace the src with itself to refresh the iframe
-		el.src	= el.src;
-	});
 }
 
 async function uploadVideo(file){

@@ -7,6 +7,7 @@ add_action ( 'wp_ajax_upload_files', function (){
 	if (empty($_FILES["files"])) {
 		// Set http header error
 		header('HTTP/1.0 422 Unprocessable Entity');
+		
 		// Return error message
 		die(json_encode(array('error' => 'No files found')));
 	}
