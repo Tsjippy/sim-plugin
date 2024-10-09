@@ -7,6 +7,7 @@
 
 ### Fixed
 - admin menu active module list
+- change previous uploaded files
 
 ### Updated
 
