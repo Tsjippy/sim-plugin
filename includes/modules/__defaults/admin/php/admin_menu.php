@@ -331,11 +331,36 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
 }
 
 /**
- * The main plugin menu
+ * Download new modules or delete them
  */
-function mainMenu(){
-	global $Modules;
-	global $moduleDirs;
+function mainMenuActions(){
+	if(!empty($_GET['update'])){
+		$slug		= sanitize_text_field($_GET['update']);
+
+		$github		= new SIM\GITHUB\Github();
+
+		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug, true);
+
+		if(is_wp_error($result)){
+			echo "<div class='error'>".$result->get_error_message()."</div>";
+		}elseif($result){
+			?>
+			<div class="success">
+				Module succesfully downloaded
+			</div>
+			<?php
+
+			$moduleDirs[$slug]	= $slug;
+		}else{
+			echo '<div class="error">';
+				echo "Module $slug not found on github.<br><br>";
+				if(!$github->authenticated){
+					$url            = admin_url( "admin.php?page=sim_github&main_tab=settings" );
+					echo " maybe you <a href='$url'>should supply a github token</a> so I can try again while logged in.";
+				}
+			echo "</div>";
+		}
+	}
 
 	if(!empty($_GET['download'])){
 		$slug		= sanitize_text_field($_GET['download']);
@@ -376,6 +401,16 @@ function mainMenu(){
 			unlink(SIM\MODULESPATH."/$moduleDirs[$slug]");
 		}
 	}
+}
+
+/**
+ * The main plugin menu
+ */
+function mainMenu(){
+	global $Modules;
+	global $moduleDirs;
+
+	mainMenuActions();
 
 	$active		= [];
 	$inactive	= [];
@@ -397,6 +432,8 @@ function mainMenu(){
 			$missing[]	= $moduleName;
 		}
 	}
+
+	$github		= new SIM\GITHUB\Github();
 	
 	ob_start();
 	?>
@@ -405,8 +442,17 @@ function mainMenu(){
 		<ul class="sim-list">
 			<?php
 			foreach($active as $slug=>$name){
-				$url	= admin_url("admin.php?page=sim_$slug");
-				echo "<li><a href='$url'>$name</a></li>";
+				$url		= admin_url("admin.php?page=".$_GET['page']);
+
+				$update		= '';
+
+				// Check if update available
+				$release	= $github->getLatestRelease('tsjippy', $slug, true);
+		
+				if(version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))){
+					$update	= "<a href='$url&update=$slug' class='button sim small'>Update to version {$release['tag_name']}</a>";
+				}
+				echo "<li><a href='{$url}_$slug'>$name</a>$update</li>";
 			}
 			?>
 		</ul>

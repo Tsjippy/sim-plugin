@@ -137,7 +137,7 @@ class Github{
             }
 
             if(!$zipContent){
-                return new WP_Error('Github', 'Downloading zip failed');
+                return new WP_Error('Github', "Failed to download the latest release for $author-$repo<br><br>".$e->getMessage());
             }
         }
         
@@ -151,6 +151,8 @@ class Github{
         }
         $result = $zip->extractTo($path);
         if(!$result){
+            SIM\printArray("Unzip failed to $path");
+            
             return new WP_Error('Github', 'Unzip failed');
         }
 
