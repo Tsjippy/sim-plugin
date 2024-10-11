@@ -251,12 +251,10 @@ class Github{
      * @return  object            Version information
      */
     public function getVersionInfo($path, $author='Tsjippy', $repo='sim-plugin'){
-
+        $slug       = pathinfo($path, PATHINFO_FILENAME);
         if(str_contains($path, 'themes')){
-            $slug       = pathinfo($path, PATHINFO_BASENAME);
             $oldVersion = wp_get_theme($slug)->get('Version');
         }else{
-            $slug = explode('/', $path)[0];
             if( !function_exists('get_plugin_data') ){
                 require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
             }
