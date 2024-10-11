@@ -338,6 +338,7 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
  */
 function mainMenuActions(){
 	global $Modules;
+	global $moduleDirs;
 
 	if(!empty($_GET['update'])){
 		$slug		= sanitize_text_field($_GET['update']);
@@ -351,7 +352,7 @@ function mainMenuActions(){
 		}elseif($result){
 			?>
 			<div class="success">
-				Module succesfully downloaded
+				Module <?php echo $slug;?> succesfully updated
 			</div>
 			<?php
 
@@ -377,7 +378,7 @@ function mainMenuActions(){
 		if($result && !is_wp_error($result)){
 			?>
 			<div class="success">
-				Module succesfully downloaded
+				Module <?php echo $slug;?> succesfully downloaded
 			</div>
 			<?php
 
@@ -403,7 +404,23 @@ function mainMenuActions(){
 		}
 
 		if(isset($moduleDirs[$slug])){
-			unlink(SIM\MODULESPATH."/$moduleDirs[$slug]");
+			WP_Filesystem();
+			global $wp_filesystem;
+			$result				= $wp_filesystem->rmdir($moduleDirs[$slug], true);
+
+			if($result){
+				?>
+				<div class="success">
+					Module <?php echo $slug;?> succesfully removed
+				</div>
+				<?php
+			}else{
+				?>
+				<div class="error">
+					Module <?php echo $slug;?> removal unsuccesfull
+				</div>
+				<?php
+			}
 		}
 	}
 }
