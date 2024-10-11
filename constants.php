@@ -40,7 +40,7 @@ define(__NAMESPACE__.'\MODULELIST', [
     'mediaGallery',
     'pageGallery',
     'pdf',
-    'pdftoexcel',
+    'pdfToExcel',
     'prayer',
     'projects',
     'querier',
@@ -50,7 +50,6 @@ define(__NAMESPACE__.'\MODULELIST', [
     'userManagement',
     'userPages',
     'welcomeMessage',
-    'simNigeria',
     'signal',
     'vimeo',
 ]);

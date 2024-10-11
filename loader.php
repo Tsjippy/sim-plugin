@@ -66,8 +66,8 @@ foreach(scandir(INCLUDESPATH.'default_modules') as $dir){
 
     $moduleDirs[strtolower($dir)]   = INCLUDESPATH."default_modules/$dir";
 
-    $moduleName                     = getModuleName($dir);
-    $defaultModules[]               = $moduleName;
+    $moduleName         = getModuleName($dir);
+    $defaultModules[]   = $moduleName;
 }
 
 // normal modules

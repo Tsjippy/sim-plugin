@@ -2,7 +2,10 @@
 namespace SIM\ADMIN;
 use SIM;
 
-const MODULE_VERSION		= '7.0.8';
+const MODULE_VERSION		= '8.0.0';
+
+DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
+
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
@@ -334,6 +337,8 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
  * Download new modules or delete them
  */
 function mainMenuActions(){
+	global $Modules;
+	
 	if(!empty($_GET['update'])){
 		$slug		= sanitize_text_field($_GET['update']);
 
@@ -414,7 +419,20 @@ function mainMenu(){
 
 	$active		= [];
 	$inactive	= [];
-	foreach(SIM\MODULELIST as $moduleName){
+
+	// merge the available modules and the installed modules to allow custom modules
+	$moduleList	= SIM\MODULELIST;
+	foreach($moduleDirs as $path){
+		$moduleName	= basename($path);
+
+		if(!in_array($moduleName, $moduleList)){
+			$moduleList[]	= $moduleName;
+		}
+	}
+
+	sort($moduleList);
+
+	foreach($moduleList as $moduleName){
 		$moduleSlug	= strtolower($moduleName);
 		$moduleName	= SIM\getModuleName($moduleName, ' ');
 
@@ -439,7 +457,14 @@ function mainMenu(){
 	?>
 	<div>
 		<strong>Current active modules</strong><br>
-		<table class="sim-list">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Version</th>
+				</tr>
+			</thead>
+			
 			<?php
 			foreach($active as $slug=>$name){
 				$url		= admin_url("admin.php?page=".$_GET['page']);
@@ -470,17 +495,18 @@ function mainMenu(){
 			?>
 		</table>
 
+		<br>
 		<strong>Current inactive modules</strong><br>
 		<?php
 			if(empty($inactive)){
 				echo "All modules are activated";
 			}else{
 				?>
-				<table class="sim-list">
+				<table class="table">
 					<?php
 					foreach($inactive as $slug=>$name){
 						echo "<tr>";
-							echo "<td>$name</td>";
+							echo "<td><a href='https://github.com/Tsjippy/$slug' target='_blank'>$name</a></td>";
 							// Module is downloaded but inactive
 							if(in_array($slug, array_keys($moduleDirs))){
 								$url	= admin_url("admin.php?page=sim_$slug");
@@ -499,13 +525,14 @@ function mainMenu(){
 			}
 			?>
 
+		<br>
 		<strong>Current uninstalled but active modules</strong><br>
 			<?php
 			if(empty($missing)){
 				echo "No missing modules";
 			}else{
 				?>
-				<table class="sim-list">
+				<table class="table">
 					<?php
 					foreach($missing as $slug){
 						$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
