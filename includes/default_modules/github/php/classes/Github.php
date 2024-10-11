@@ -47,7 +47,7 @@ class Github{
      * @param	string	$repo	    The github repo name
      * @param   bool    $force      Whether to skip the cached result. Default false
      *
-     * @return	array	Array containing information about the latest release
+     * @return	array|WP_Error	    Array containing information about the latest release or an WP_Error object
      */
     public function getLatestRelease($author='tsjippy', $repo=SIM\PLUGINNAME, $force=false){
         if(isset($_GET['update']) || $force){

@@ -449,7 +449,12 @@ function mainMenu(){
 				// Check if update available
 				$release	= $github->getLatestRelease('tsjippy', $slug, true);
 		
-				if(version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))){
+				if(
+					!is_wp_error($release) && 														// no error during the getting the release info
+					defined("SIM\\$slug\\MODULE_VERSION") && 										// the module version for this module is set
+					version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))	// the release version is bigger than the current version
+				){
+					// Add update link
 					$update	= "<a href='$url&update=$slug' class='button sim small'>Update to version {$release['tag_name']}</a>";
 				}
 				echo "<li><a href='{$url}_$slug'>$name</a>$update</li>";
@@ -476,7 +481,7 @@ function mainMenu(){
 							}else{
 								// Available for download
 								$url	= admin_url("admin.php?page={$_GET['page']}&download=$slug");
-								echo "</d><a href='$url' class='button sim small'>Download</a></td>";
+								echo "<td><a href='$url' class='button sim small'>Download</a></td>";
 							}
 						echo "</tr>";
 					}

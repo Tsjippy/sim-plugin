@@ -11,8 +11,7 @@ namespace SIM;
  */
 function getModuleName($slug, $seperator=''){
     // get the module name from the path
-    $folderName = explode('/', $slug);
-	$slug		= end($folderName);
+	$slug		= basename($slug);
 	$pieces 	= preg_split('/(?=[A-Z])/', ucwords($slug));
     $name       = trim(implode($seperator, $pieces));
 
@@ -22,42 +21,7 @@ function getModuleName($slug, $seperator=''){
 	return $name;
 }
 
-// Store all modulefolders
-$moduleDirs     = [];
-$defaultModules = [];
-
-// default modules
-foreach(scandir(MODULESPATH.'/__defaults') as $dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
-        continue;
-    }
-
-    $moduleDirs[strtolower($dir)]   = "__defaults/$dir";
-
-    $moduleName                     = getModuleName($dir);
-    $defaultModules[]               = $moduleName;
-}
-
-// normal modules
-foreach(scandir(MODULESPATH) as $key=>$dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
-        continue;
-    }
-
-    $moduleDirs[strtolower($dir)] = $dir;
-}
-
-$moduleDirs = apply_filters('sim-moduledirs', $moduleDirs);
-
-//Sort alphabeticalyy, ignore case
-ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);
-
-//load all libraries
-require( __DIR__  . '/includes/lib/vendor/autoload.php');
-
-$Modules		= get_option('sim_modules', []);
-ksort($Modules);
-
+// Class loader function
 spl_autoload_register(function ($classname) {
     global $moduleDirs;
     global $Modules;
@@ -68,8 +32,8 @@ spl_autoload_register(function ($classname) {
         return;
     }
 
-    $module     = $moduleDirs[strtolower($path[1])];
-    $moduleName = getModuleName($module);
+    $moduleDir  = $moduleDirs[strtolower($path[1])];
+    $moduleName = getModuleName($moduleDir);
 
     if(!isset($Modules[$moduleName]) && (empty($_GET['page']) || $_GET['page'] != "sim_$moduleName")){
         return; // module is not activated
@@ -77,7 +41,7 @@ spl_autoload_register(function ($classname) {
 
     $fileName   = $path[2];
 
-    $modulePath = MODULESPATH."$module/php";
+    $modulePath = "$moduleDir/php";
 
 	$classFile	= "$modulePath/classes/$fileName.php";
     $traitFile	= "$modulePath/traits/$fileName.php";
@@ -90,6 +54,41 @@ spl_autoload_register(function ($classname) {
     }
 });
 
+// Store all modulefolders
+$moduleDirs     = [];
+$defaultModules = [];
+
+// default modules
+foreach(scandir(INCLUDESPATH.'default_modules') as $dir){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+        continue;
+    }
+
+    $moduleDirs[strtolower($dir)]   = INCLUDESPATH."default_modules/$dir";
+
+    $moduleName                     = getModuleName($dir);
+    $defaultModules[]               = $moduleName;
+}
+
+// normal modules
+foreach(scandir(MODULESPATH) as $key=>$dir){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+        continue;
+    }
+
+    $moduleDirs[strtolower($dir)] = MODULESPATH.$dir;
+}
+
+$moduleDirs = apply_filters('sim-moduledirs', $moduleDirs);
+
+//Sort alphabeticalyy, ignore case
+ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);
+
+//load all libraries
+require( __DIR__  . '/includes/lib/vendor/autoload.php');
+
+$Modules		= get_option('sim_modules', []);
+ksort($Modules);
 
 //Make sure the default modules are enabled always
 foreach($defaultModules as $module){
@@ -110,8 +109,8 @@ $files = array_merge($files, glob(__DIR__  . "/includes/blocks/*.php"));
 
 foreach($Modules as $slug=>$settings){
     if(isset($moduleDirs[$slug]) && !empty($settings['enable'])){
-        $files = array_merge($files, glob(__DIR__  . "/includes/modules/{$moduleDirs[$slug]}/php/*.php"));
-        $files = array_merge($files, glob(__DIR__  . "/includes/modules/{$moduleDirs[$slug]}/blocks/*.php"));
+        $files = array_merge($files, glob("{$moduleDirs[$slug]}/php/*.php"));
+        $files = array_merge($files, glob("{$moduleDirs[$slug]}/blocks/*.php"));
     }
 }
 
