@@ -7,6 +7,7 @@
 - code clean up
 
 ### Fixed
+- active module listing
 
 ### Updated
 
