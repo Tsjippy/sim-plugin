@@ -7,6 +7,7 @@
 
 ### Fixed
 - admin sub menu bug
+- user pages
 
 ### Updated
 
