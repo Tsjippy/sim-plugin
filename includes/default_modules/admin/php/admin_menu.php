@@ -409,6 +409,9 @@ function mainMenuActions(){
 			$result				= $wp_filesystem->rmdir($moduleDirs[$slug], true);
 
 			if($result){
+
+				unset($moduleDirs[$slug]);
+				
 				?>
 				<div class="success">
 					Module <?php echo $slug;?> succesfully removed
@@ -515,7 +518,7 @@ function mainMenu(){
 		</table>
 
 		<br>
-		<strong>Current inactive modules</strong><br>
+		<strong>Current uninstalled modules</strong><br>
 		<?php
 			if(empty($inactive)){
 				echo "All modules are activated";
