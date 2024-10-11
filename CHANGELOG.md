@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- better download error message
 
 ### Updated
 
