@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- admin sub menu bug
 
 ### Updated
 
