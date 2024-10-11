@@ -6,9 +6,11 @@
 ### Changed
 
 ### Fixed
-- get version info
 
 ### Updated
+
+## [5.0.5] - 2024-10-11
+
 
 ## [5.0.4] - 2024-10-11
 
