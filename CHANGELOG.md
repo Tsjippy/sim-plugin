@@ -6,10 +6,15 @@
 ### Changed
 
 ### Fixed
-- better download error message
-- bug in admin sub menus
 
 ### Updated
+
+## [5.0.8] - 2024-10-11
+
+
+### Fixed
+- better download error message
+- bug in admin sub menus
 
 ## [5.0.7] - 2024-10-11
 
