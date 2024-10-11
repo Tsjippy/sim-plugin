@@ -6,7 +6,7 @@ define(__NAMESPACE__ .'\PLUGINNAME', 'sim-plugin');
 define('SITEURL', site_url( '', 'https' ));
 define('SITEURLWITHOUTSCHEME', str_replace(['https://', 'http://'], '', SITEURL));
 define('SITENAME', get_bloginfo());
-define(__NAMESPACE__ .'\INCLUDESURL', plugins_url('includes',__FILE__));
+define(__NAMESPACE__ .'\INCLUDESURL', plugins_url('includes', __FILE__));
 define(__NAMESPACE__ .'\PICTURESURL', INCLUDESURL.'/pictures');
 define(__NAMESPACE__ .'\LOADERIMAGEURL', PICTURESURL.'/loading.gif');
 define(__NAMESPACE__ .'\PLUGINFOLDER', plugin_dir_path(__FILE__));
