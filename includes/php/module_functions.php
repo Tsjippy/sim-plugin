@@ -24,8 +24,8 @@ function getModuleOption($moduleName, $option, $returnBoolean=true){
 function maybeGetUserPageId($userId){
     $userPageId	= false;
 
-    if(function_exists('SIM\USERPAGE\getUserPageId')){
-        $userPageId = USERPAGE\getUserPageId($userId);
+    if(function_exists('SIM\USERPAGES\getUserPageId')){
+        $userPageId = USERPAGES\getUserPageId($userId);
     }
 
     return $userPageId;
@@ -34,8 +34,8 @@ function maybeGetUserPageId($userId){
 function maybeGetUserPageUrl($userId){
 	$url	= false;
 
-	if(function_exists('SIM\USERPAGE\getUserPageUrl')){
-		$url = USERPAGE\getUserPageUrl($userId);
+	if(function_exists('SIM\USERPAGES\getUserPageUrl')){
+		$url = USERPAGES\getUserPageUrl($userId);
 	}
 
 	return $url;
