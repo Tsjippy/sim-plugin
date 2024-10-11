@@ -7,6 +7,7 @@
 
 ### Fixed
 - details screen
+- plugin screen issues
 
 ### Updated
 
