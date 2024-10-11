@@ -7,6 +7,7 @@
 
 ### Fixed
 - better download error message
+- bug in admin sub menus
 
 ### Updated
 
