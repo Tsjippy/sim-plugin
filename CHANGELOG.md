@@ -6,10 +6,18 @@
 ### Changed
 
 ### Fixed
-- admin menu active module list
-- change previous uploaded files
 
 ### Updated
+
+## [5.0.1] - 2024-10-09
+
+
+### Added
+- update buttons for modules
+
+### Fixed
+- admin menu active module list
+- change previous uploaded files
 
 ## [5.0.0] - 2024-10-07
 
