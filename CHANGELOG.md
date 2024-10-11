@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- do not check for an update of an just updated module
 
 ### Fixed
 - list of inactive modules
