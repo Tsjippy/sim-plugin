@@ -8,6 +8,7 @@
 
 ### Fixed
 - active module listing
+- auto module downloader
 
 ### Updated
 
