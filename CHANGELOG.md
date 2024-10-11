@@ -6,10 +6,18 @@
 ### Changed
 
 ### Fixed
-- list of inactive modules
-- module removal
 
 ### Updated
+
+## [5.0.6] - 2024-10-11
+
+
+### Changed
+- do not check for an update of an just updated module
+
+### Fixed
+- list of inactive modules
+- module removal
 
 ## [5.0.5] - 2024-10-11
 
