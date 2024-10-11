@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- list of inactive modules
 
 ### Updated
 
