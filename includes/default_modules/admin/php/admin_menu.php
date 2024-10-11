@@ -375,7 +375,9 @@ function mainMenuActions(){
 
 		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug, true);
 
-		if($result && !is_wp_error($result)){
+		if(is_wp_error($result)){
+			echo "<div class='error'>".$result->get_error_message()."</div>";
+		}elseif($result){
 			?>
 			<div class="success">
 				Module <?php echo $slug;?> succesfully downloaded
@@ -523,7 +525,7 @@ function mainMenu(){
 		</table>
 
 		<br>
-		<strong>Current uninstalled modules</strong><br>
+		<strong>Currently not installed modules</strong><br>
 		<?php
 			if(empty($inactive)){
 				echo "All modules are activated";

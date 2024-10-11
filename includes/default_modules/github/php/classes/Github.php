@@ -8,12 +8,15 @@ use WP_Error;
 class Github{
     public  $client;
     public  $token;
-    public $authenticated;
+    public  $authenticated;
+    private $repo;
 
     public function __construct() {
         $this->client 	        = new \Github\Client(); 
         $this->token            = '';   
-        $this->authenticated   = false;            
+        $this->authenticated    = false; 
+        /** @var \Github\Api\Repository $repo **/
+        $this->repo             = $this->client->api('repo');          
     }
 
     /**
@@ -62,8 +65,7 @@ class Github{
             $release    = '';
 
             try{
-                /** @var Github\Api\Repository\Releases **/
-                $release 	    = $this->client->api('repo')->releases()->latest($author, $repo);
+                $release 	    = $this->repo->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
                 if(!$this->authenticated){
                     $this->authenticate();
@@ -124,13 +126,13 @@ class Github{
 
         // download latest release
         try{
-            $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+            $zipContent = $this->repo->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
         }catch (\Exception $e){
             if($e->getCode() == 404){
                 // Get a new download link, bypass transient
                 $release	= $this->getLatestRelease($author, $repo, true);
                 try{
-                    $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+                    $zipContent = $this->repo->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
                 }catch (\Exception $e){
                     SIM\printArray("Could not find asset with id {$release['assets'][0]['id']} for $author-$repo");
                     SIM\printArray($release['assets']);
@@ -196,7 +198,7 @@ class Github{
             // if not in transient
             if($content === false){
                 try{
-                    $file   = $this->client->api('repo')->contents()->show($author, $repo, $item.'.md');
+                    $file   = $this->repo->contents()->show($author, $repo, $item.'.md');
                     
                     if(!empty($file)){
                         $content	= base64_decode($file['content']);
