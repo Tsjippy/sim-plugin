@@ -491,8 +491,11 @@ function mainMenu(){
 			foreach($active as $slug=>$name){
 				$url		= admin_url("admin.php?page=".$_GET['page']);
 
-				// Check if update available
-				$release	= $github->getLatestRelease('tsjippy', $slug, true);
+				// Skip the update check if just updated
+				if(empty($_GET['update']) || $_GET['update'] != $slug){
+					// Check if update available
+					$release	= $github->getLatestRelease('tsjippy', $slug, true);
+				}
 
 				echo "<tr>";
 					echo "<td><a href='{$url}_$slug'>$name</a></td>";
