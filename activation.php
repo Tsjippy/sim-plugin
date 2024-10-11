@@ -36,7 +36,7 @@ add_action( 'activated_plugin', function ( $plugin ) {
 add_filter("plugin_action_links_".PLUGIN, __NAMESPACE__.'\addExtraPluginLinks', 10, 3);
 function addExtraPluginLinks($links, $plugin, $data) {
     // Settings Link
-    $slug           = $data['TextDomain'];
+    $slug           = 'sim';
     $url            = admin_url( "admin.php?page=$slug" );
     $link           = "<a href='$url'>Settings</a>";
     array_unshift($links, $link);
