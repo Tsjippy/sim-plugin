@@ -12,6 +12,7 @@ namespace SIM;
  * Tested up to: 		6.6.2
  * Plugin URI:			https://github.com/Tsjippy/sim-plugin/
  * Tested:				6.5.0	
+ * TextDomain:			sim-plugin
  *
  * @author Ewald Harmsen
  */
