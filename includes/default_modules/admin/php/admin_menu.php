@@ -56,7 +56,7 @@ add_action( 'admin_menu', function() {
 		//load the menu page php file
 		require_once($path.'/php/__module_menu.php');
 
-		if(in_array(strtolower($moduleName), $active)){
+		if(in_array($moduleSlug, $active)){
 			add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 		}else{
 			add_submenu_page(null, "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
