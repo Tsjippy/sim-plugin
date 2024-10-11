@@ -62,6 +62,7 @@ class Github{
             $release    = '';
 
             try{
+                /** @var \Github\Api\Repo **/
                 $release 	    = $this->client->api('repo')->releases()->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
                 if(!$this->authenticated){
@@ -90,7 +91,9 @@ class Github{
             set_transient( "$author-$repo", $release, HOUR_IN_SECONDS );
 
             if(isset($exception)){
-                SIM\printArray($exception);
+                if($exception->getCode() != 404){
+                    SIM\printArray($exception);
+                }
                 return new \WP_Error('update', $exception->getMessage());
             }
         }

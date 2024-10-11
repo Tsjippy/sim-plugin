@@ -490,6 +490,7 @@ function mainMenu(){
 			<?php
 			foreach($active as $slug=>$name){
 				$url		= admin_url("admin.php?page=".$_GET['page']);
+				$release	= '';
 
 				// Skip the update check if just updated
 				if(empty($_GET['update']) || $_GET['update'] != $slug){
@@ -504,6 +505,7 @@ function mainMenu(){
 					if( defined("SIM\\$slug\\MODULE_VERSION")){
 						if( 
 							!is_wp_error($release) &&														// no error during the getting the release info
+							isset($release['tag_name']) &&													// release has a tagname
 							version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))	// the release version is bigger than the current version
 						){
 							// Add update link
