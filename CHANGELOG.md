@@ -4,12 +4,20 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.0.3] - 2024-10-11
+
+
+### Changed
 - code clean up
 
 ### Fixed
 - active module listing
-
-### Updated
+- auto module downloader
 
 ## [5.0.1] - 2024-10-09
 
