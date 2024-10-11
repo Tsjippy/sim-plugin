@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- bug in admin menu
 
 ### Updated
+
+## [5.0.7] - 2024-10-11
+
+
+### Fixed
+- bug in admin menu
 
 ## [5.0.6] - 2024-10-11
 
