@@ -65,7 +65,7 @@ class Github{
             $release    = '';
 
             try{
-                $release 	    = $this->repo->latest($author, $repo);
+                $release 	    = $this->repo->releases()->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
                 if(!$this->authenticated){
                     $this->authenticate();
@@ -74,8 +74,8 @@ class Github{
                         return $this->getLatestRelease($author, $repo, $force);
                     }
                 }
-            }catch(\Exception $exception){
-                if($exception->getMessage() == 'Not Found'){
+            }catch(\Exception $e){
+                if($e->getMessage() == 'Not Found'){
                     if(!$this->authenticated){
                         // authenticate
                         $this->authenticate();
@@ -92,11 +92,11 @@ class Github{
             // Store for 1 hours
             set_transient( "$author-$repo", $release, HOUR_IN_SECONDS );
 
-            if(isset($exception)){
-                if($exception->getCode() != 404){
-                    SIM\printArray($exception);
+            if(isset($e)){
+                if($e->getCode() != 404){
+                    SIM\printArray($e);
                 }
-                return new \WP_Error('update', $exception->getMessage());
+                return new \WP_Error('update', $e->getMessage());
             }
         }
         return $release;

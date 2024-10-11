@@ -38,23 +38,23 @@ add_action( 'admin_menu', function() {
 		}
 	}
 
-	foreach($moduleDirs as $moduleSlug=>$folderName){
+	foreach($moduleDirs as $moduleSlug => $path){
 		//do not load admin and template menu
 		if(in_array($moduleSlug, ['__template', 'admin'])){
 			continue;
 		}
 
-		$moduleName	= SIM\getModuleName($folderName, ' ');
+		$moduleName	= SIM\getModuleName($path, ' ');
 		
 		//check module page exists
-		if(!file_exists(SIM\MODULESPATH.$folderName.'/php/__module_menu.php')){
+		if(!file_exists($path.'/php/__module_menu.php')){
 			SIM\printArray("Module page does not exist for module $moduleName");
-			SIM\printArray("File: ".SIM\MODULESPATH.$folderName.'/php/__module_menu.php');
+			SIM\printArray("File: $path/php/__module_menu.php" );
 			continue;
 		}
 
 		//load the menu page php file
-		require_once(SIM\MODULESPATH.$folderName.'/php/__module_menu.php');
+		require_once($path.'/php/__module_menu.php');
 
 		if(in_array(strtolower($moduleName), $active)){
 			add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
