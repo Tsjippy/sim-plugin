@@ -6,10 +6,15 @@
 ### Changed
 
 ### Fixed
-- details screen
-- plugin screen issues
 
 ### Updated
+
+## [5.0.4] - 2024-10-11
+
+
+### Fixed
+- details screen
+- plugin screen issues
 
 ## [5.0.3] - 2024-10-11
 
