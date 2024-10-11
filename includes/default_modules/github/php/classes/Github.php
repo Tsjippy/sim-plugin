@@ -62,7 +62,7 @@ class Github{
             $release    = '';
 
             try{
-                /** @var \Github\Api\Repo **/
+                /** @var Github\Api\Repository\Releases **/
                 $release 	    = $this->client->api('repo')->releases()->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
                 if(!$this->authenticated){
