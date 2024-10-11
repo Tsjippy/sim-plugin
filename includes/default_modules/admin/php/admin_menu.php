@@ -338,7 +338,7 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
  */
 function mainMenuActions(){
 	global $Modules;
-	
+
 	if(!empty($_GET['update'])){
 		$slug		= sanitize_text_field($_GET['update']);
 
@@ -419,6 +419,7 @@ function mainMenu(){
 
 	$active		= [];
 	$inactive	= [];
+	$missing	= [];
 
 	// merge the available modules and the installed modules to allow custom modules
 	$moduleList	= SIM\MODULELIST;
@@ -437,14 +438,15 @@ function mainMenu(){
 		$moduleName	= SIM\getModuleName($moduleName, ' ');
 
 		// activated and files downloaded
-		if(isset($Modules[$moduleSlug]['enable']) && isset($moduleDirs[$moduleSlug])){
-			$active[$moduleSlug]	= $moduleName;
+		if(isset($Modules[$moduleSlug]['enable'])){
+			if(isset($moduleDirs[$moduleSlug])){
+				$active[$moduleSlug]	= $moduleName;
+			}
 		}else{
 			$inactive[$moduleSlug]	= $moduleName;
 		}
 	}
-
-	$missing	= [];
+	
 	foreach(array_keys($Modules) as $moduleName){
 		if(!in_array($moduleName, array_keys($moduleDirs))){
 			$missing[]	= $moduleName;
