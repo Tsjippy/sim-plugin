@@ -183,8 +183,8 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
  * @return	string				The url
 */
 function currentUrl($trim=false){
-	if(defined('REST_REQUEST')){
-		$url	 = trim(explode('?', $_SERVER['HTTP_REFERER'])[0], "/");
+	if(defined('REST_REQUEST') && !empty($_SERVER['HTTP_REFERER'])){
+		$url		= $_SERVER['HTTP_REFERER'];
 	}else{
 		$url	 = '';
 		$url 	.=	$_SERVER['REQUEST_SCHEME']."://";

@@ -167,7 +167,7 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 	let result;
 	try{
 		result = await fetch(
-			`${sim.baseUrl}/wp-json/sim/v2/${url}`,
+			`${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url}`,
 			{
 				method: 'POST',
 				credentials: 'same-origin',

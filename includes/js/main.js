@@ -312,7 +312,21 @@ document.addEventListener("DOMContentLoaded",function() {
 		document.querySelectorAll('.hide-on-desktop:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
 		positionSubSubMenus();
-	}	
+	}
+
+	// Check for messages
+	let params = new Proxy(new URLSearchParams(window.location.search), {
+		get: (searchParams, prop) => searchParams.get(prop),
+	});
+
+	if(params.message != null){
+		let type = 'success';
+
+		if(params.type != null){
+			type	= params.type;
+		}
+		displayMessage(params.message, type);
+	}
 });
 
 

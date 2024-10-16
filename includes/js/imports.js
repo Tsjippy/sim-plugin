@@ -91,7 +91,11 @@ export let addScripts	= function (attachTo) {
         
         s.id	= el.id;
         
-        document.head.appendChild(s);
+        try{
+            document.head.appendChild(s);
+        }catch (error) {
+            console.error(error);
+        }
 
         if(scripts.length > 0){
             if(el.src != ''){
