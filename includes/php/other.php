@@ -45,6 +45,8 @@ if(get_option("wpstg_is_staging_site") == "true"){
 	require_once(ABSPATH.'wp-admin/includes/user.php');
 	
 	add_action( 'init', function() {
+		global $wp_rewrite;
+		
 		if(str_contains($_SERVER['REQUEST_URI'], 'options-permalink.php') && get_option("first_run") == ""){
 			flush_rewrite_rules();
 
@@ -62,7 +64,7 @@ if(get_option("wpstg_is_staging_site") == "true"){
 					wp_delete_user($user->ID,1);
 				}
 			}
-			global $wp_rewrite;
+			
 			//Set the permalinks
 			$wp_rewrite->set_permalink_structure( '/%category%/%postname%/' );
 			$wp_rewrite->flush_rules();
