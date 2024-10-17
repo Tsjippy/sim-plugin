@@ -117,6 +117,8 @@ function buildSubMenu(){
 		$tab	= 'description';
 		if(isset($_GET['tab'])){
 			$tab	= $_GET['tab'];
+		}elseif(!empty($settings['enable'])){
+			$tab	= 'settings';
 		}
 
 		$descriptionsTab	= descriptionsTab($moduleSlug, $moduleName, $tab);
@@ -174,7 +176,7 @@ function buildSubMenu(){
 }
 
 function descriptionsTab($moduleSlug, $moduleName, $tab){
-	$description	= file_get_contents(SIM\MODULESPATH."/$moduleSlug/README.md");
+	$description	= file_get_contents(constant("SIM\\$moduleSlug\MODULE_PATH")."README.md");
 	if($description){
 		//convert to html
 		$parser 	= new \Michelf\MarkdownExtra;
