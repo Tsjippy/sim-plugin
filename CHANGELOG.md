@@ -5,6 +5,7 @@
 - show messages on homepage
 
 ### Changed
+- modal layout on mobile
 
 ### Fixed
 - admin sub menu bug
