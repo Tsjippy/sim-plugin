@@ -225,6 +225,7 @@ function urlToPath($url){
 	
 	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
 	$url		= str_replace(['https://', 'http://'], '', urldecode($url));
+	$url		= explode('?', $url)[0];
 	
 	return str_replace(trailingslashit($siteUrl), str_replace('\\', '/', ABSPATH), $url);
 }
@@ -244,6 +245,14 @@ function pathToUrl($path){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
 
+		//Replace any query params
+		$exploded	= explode('?', $path);
+		$path		= $exploded[0];
+		$query		= '';
+		if(!empty($exploded[1])){
+			$query	= '?'.$exploded[1];
+		}
+
 		if(!str_contains($path, ABSPATH)  && !str_contains($path, $base) ){
 			$path	= $base.$path;
 		}
@@ -251,7 +260,7 @@ function pathToUrl($path){
 		if(!file_exists($path)){
 			return false;
 		}
-		$url	= str_replace($base, SITEURL.'/', $path);
+		$url	= str_replace($base, SITEURL.'/', $path).$query;
 
 		// fix any spaces
 		$url	= str_replace(' ', '%20', $url);
