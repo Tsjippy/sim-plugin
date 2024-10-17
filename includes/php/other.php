@@ -144,3 +144,15 @@ add_filter( 'auto_update_plugin', function ( $value, $item ) {
 
     return $value; // Preserve auto-update status for other plugins
 }, 10, 2 );
+
+// only load needed block assets
+add_filter( 'should_load_separate_core_block_assets', '__return_true' );
+
+// Blocks are assumed to be in the plugins folder.
+// So adjust the urls for the ones in the sim-modules folder
+add_filter( 'plugins_url', function($url, $path, $plugin ){
+	if(str_contains($url, MODULESPATH)){
+		$url	= pathToUrl(MODULESPATH.explode(MODULESPATH, $url)[1]);
+	}
+	return $url;
+}, 10, 3);
