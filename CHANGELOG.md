@@ -10,6 +10,7 @@
 ### Fixed
 - admin sub menu bug
 - user pages
+- loading module block assets
 
 ### Updated
 
