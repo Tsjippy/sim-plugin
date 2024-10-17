@@ -3,6 +3,7 @@
 
 ### Added
 - show messages on homepage
+- support for query params in path to url and url to path functions
 
 ### Changed
 - modal layout on mobile
