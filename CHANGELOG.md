@@ -7,6 +7,7 @@
 
 ### Changed
 - modal layout on mobile
+- limit github api calls
 
 ### Fixed
 - admin sub menu bug
