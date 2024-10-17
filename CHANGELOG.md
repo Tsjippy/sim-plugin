@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [5.0.9] - 2024-10-17
+
+
+### Added
 - show messages on homepage
 - support for query params in path to url and url to path functions
 
@@ -14,8 +25,6 @@
 - user pages
 - loading module block assets
 - plugin version check
-
-### Updated
 
 ## [5.0.8] - 2024-10-11
 
