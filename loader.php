@@ -60,7 +60,7 @@ $defaultModules = [];
 
 // default modules
 foreach(scandir(INCLUDESPATH.'default_modules') as $dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..' || !is_dir(INCLUDESPATH."default_modules/$dir")){
         continue;
     }
 
@@ -72,7 +72,7 @@ foreach(scandir(INCLUDESPATH.'default_modules') as $dir){
 
 // normal modules
 foreach(scandir(MODULESPATH) as $key=>$dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+    if(str_contains($dir, 'node_modules') || $dir == '.' || $dir == '..' || !is_dir(MODULESPATH.$dir)){
         continue;
     }
 

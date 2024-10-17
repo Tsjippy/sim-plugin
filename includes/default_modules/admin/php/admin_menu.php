@@ -48,8 +48,10 @@ add_action( 'admin_menu', function() {
 		
 		//check module page exists
 		if(!file_exists($path.'/php/__module_menu.php')){
-			SIM\printArray("Module page does not exist for module $moduleName");
-			SIM\printArray("File: $path/php/__module_menu.php" );
+			if(!str_contains($path, 'node_modules') && is_dir($path)){
+				SIM\printArray("Module page does not exist for module $moduleName");
+				SIM\printArray("File: $path/php/__module_menu.php" );
+			}
 			continue;
 		}
 
@@ -499,7 +501,11 @@ function mainMenu(){
 				// Skip the update check if just updated
 				if(empty($_GET['update']) || $_GET['update'] != $slug){
 					// Check if update available
-					$release	= $github->getLatestRelease('tsjippy', $slug, true);
+					$force		= false;
+					if(!empty($_GET['force'])){
+						$force	= true;
+					}
+					$release	= $github->getLatestRelease('tsjippy', $slug, $force);
 				}
 
 				echo "<tr>";
@@ -507,16 +513,17 @@ function mainMenu(){
 
 					// the module version for this module is set
 					if( defined("SIM\\$slug\\MODULE_VERSION")){
+						$content	= constant("SIM\\$slug\\MODULE_VERSION");
 						if( 
 							!is_wp_error($release) &&														// no error during the getting the release info
 							isset($release['tag_name']) &&													// release has a tagname
 							version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))	// the release version is bigger than the current version
 						){
 							// Add update link
-							echo "<td><a href='$url&update=$slug' class='button sim small'>Update to version {$release['tag_name']}</a></td>";
-						}else{
-							echo "<td>".constant("SIM\\$slug\\MODULE_VERSION")."</td>";
+							$content .= " <a href='$url&update=$slug' class='button sim small'>Update to version {$release['tag_name']}</a></td>";
 						}
+
+						echo "<td>$content</td>";
 					}else{
 						echo '';
 					}
