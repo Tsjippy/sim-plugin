@@ -13,6 +13,7 @@
 - admin sub menu bug
 - user pages
 - loading module block assets
+- plugin version check
 
 ### Updated
 
