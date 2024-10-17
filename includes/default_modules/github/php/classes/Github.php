@@ -276,7 +276,6 @@ class Github{
 
         $item			= (object) array(
             'slug'          => $slug,
-            'new_version'   => $oldVersion,
             'url'           => "https://api.github.com/repos/$author/$repo",
             'package'       => '',
             'plugin'		=> $path
