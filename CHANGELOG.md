@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- module update issue
 
 ### Updated
+
+## [5.1.0] - 2024-10-18
+
+
+### Fixed
+- module update issue
 
 ## [5.0.9] - 2024-10-17
 
