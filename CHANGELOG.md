@@ -7,6 +7,7 @@
 
 ### Fixed
 - module update issue
+- github error
 
 ### Updated
 
