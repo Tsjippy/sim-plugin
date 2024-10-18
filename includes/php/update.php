@@ -27,7 +27,7 @@ add_action( 'schedule_sim_plugin_update_action', function($oldVersion){
     printArray('Running update actions');
     do_action('sim_plugin_update', $oldVersion);
 
-    $github = new GITHUB\github();
+    $github = new GITHUB\Github();
 
     // Reinstall any missing modules
     foreach(array_keys($Modules) as $module){
