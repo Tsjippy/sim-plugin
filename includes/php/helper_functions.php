@@ -34,6 +34,110 @@ function updateFamilyMeta($userId, $metaKey, $value){
 
 /**
  * Create a dropdown with all users
+ * @param	bool		$returnFamily  	Whether we should group families in one entry default false
+ * @param	bool		$adults			Whether we should only get adults
+ * @param	array		$fields    		Extra fields to return
+ * @param	array		$extraArgs		An array of extra query arguments
+ * @param	array		$excludeIds		An array of user id's to be excluded
+ *
+ * @return	array						An array of WP_Users
+*/
+function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraArgs=[], $excludeIds=[1], $uniqueDisplayName=false){
+	$doNotProcess 		= $excludeIds;
+	$cleanedUserArray 	= [];
+	
+	$arg = array(
+		'orderby'	=> 'meta_value',
+		'meta_key'	=> 'last_name'
+	);
+	
+	if(is_array($fields) && count($fields)>0){
+		$arg['fields'] = $fields;
+	}
+	
+	$arg 	= array_merge_recursive($arg, $extraArgs);
+	
+	$users  = get_users($arg);
+	
+	//Loop over the users
+	foreach($users as $user){//remove any user who should not be in the dropdown
+		//If we should only return families
+		if($returnFamily){
+			//Current user is a child, exclude it
+			if (isChild($user->ID)){
+				$doNotProcess[] = $user->ID;
+			}
+
+			//Check if this adult is not already in the list
+			elseif(!in_array($user->ID, $doNotProcess)){
+				//Change the display name
+				$user->display_name = getFamilyName($user, false, $partnerId);
+
+				if ($partnerId){
+					$doNotProcess[] = $partnerId;
+				}
+			}
+		//Only returning adults, but this is a child
+		}elseif($adults && isChild($user->ID)){
+			$doNotProcess[] = $user->ID;
+		}
+	}
+
+	$existsArray 	= array();
+	
+	//Loop over all users again
+	foreach($users as $key=>$user){
+		if(in_array($user->ID, $doNotProcess)){
+			continue;
+		}
+		
+		if($uniqueDisplayName){
+			//Get the full name
+			$fullName = strtolower("$user->first_name $user->last_name");
+			
+			//If the full name is already found
+			if (isset($existsArray[$fullName])){
+				// Change current users last name
+				$user->last_name = "$user->last_name ($user->user_email)";
+
+				// Change current users display name
+				if($user->display_name == $user->nickname){
+					$user->display_name = "$user->first_name $user->last_name";
+				}else{
+					$user->display_name = $user->nickname;
+				}
+				
+				// Change previous found users last name
+				$prevUser = $users[$existsArray[$fullName]];
+				
+				// But only if not already done
+				if(!str_contains($prevUser->last_name, $prevUser->user_email)  ){
+					$prevUser->last_name = "$prevUser->last_name ($prevUser->user_email)";
+				}
+
+				// Change current users display name
+				if($prevUser->display_name == $prevUser->nickname){
+					$prevUser->display_name = "$prevUser->first_name $prevUser->last_name";
+				}else{
+					$prevUser->display_name = $prevUser->nickname;
+				}
+
+				$cleanedUserArray[$prevUser->ID] = $prevUser;
+			}else{
+				//User has a so far unique displayname, add to array
+				$existsArray[$fullName] = $key;
+			}
+		}
+
+		//Add the user to the cleaned array if not in the donotprocess array
+		$cleanedUserArray[$user->ID] = $user;
+	}
+	
+	return $cleanedUserArray;
+}
+
+/**
+ * Create a dropdown with all users
  * @param 	string		$title	 		The title to display above the select
  * @param	bool		$onlyAdults	 	Whether children should be excluded. Default false
  * @param	bool		$families  		Whether we should group families in one entry default false
@@ -56,37 +160,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	}
 	
 	//Get the id and the displayname of all users
-	$users 			= getUserAccounts($families, $onlyAdults, [], $args);
-	$existsArray 	= array();
-	
-	//Loop over all users to find duplicate displaynames
-	foreach($users as $key=>$user){
-		//remove any user who should not be in the dropdown
-		if(in_array($user->ID, $excludeIds)){
-			unset($users[$key]);
-			continue;
-		}
-
-		//Get the full name
-		$fullName = strtolower("$user->first_name $user->last_name");
-		
-		//If the full name is already found
-		if (isset($existsArray[$fullName])){
-			//Change current users last name
-			$user->last_name = "$user->last_name ($user->user_email)";
-			
-			//Change previous found users last name
-			$user = $users[$existsArray[$fullName]];
-			
-			//But only if not already done
-			if(!str_contains($user->last_name, $user->user_email)  ){
-				$user->last_name = "$user->last_name ($user->user_email)";
-			}
-		}else{
-			//User has a so far unique displayname, add to array
-			$existsArray[$fullName] = $key;
-		}
-	}
+	$users 			= getUserAccounts($families, $onlyAdults, [], $args, $excludeIds, true);
 	
 	$html .= "<div class='optionwrapper'>";
 	if(!empty($title)){
@@ -819,65 +893,6 @@ function numberToWords($number) {
     }
 
     return $string;
-}
-
-/**
- * Create a dropdown with all users
- * @param	bool		$returnFamily  	Whether we should group families in one entry default false
- * @param	bool		$adults			Whether we should only get adults
- * @param	array		$fields    		Extra fields to return
- * @param	array		$extraArgs		An array of extra query arguments
- *
- * @return	array						An array of WP_Users
-*/
-function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraArgs=[]){
-	$doNotProcess 		= [];
-	$cleanedUserArray 	= [];
-	
-	$arg = array(
-		'orderby'	=> 'meta_value',
-		'meta_key'	=> 'last_name'
-	);
-	
-	if(is_array($fields) && count($fields)>0){
-		$arg['fields'] = $fields;
-	}
-	
-	$arg 	= array_merge_recursive($arg, $extraArgs);
-	
-	$users  = get_users($arg);
-	
-	//Loop over the users
-	foreach($users as $user){
-		//If we should only return families
-		if($returnFamily){
-			//Current user is a child, exclude it
-			if (isChild($user->ID)){
-				$doNotProcess[] = $user->ID;
-			//Check if this adult is not already in the list
-			}elseif(!in_array($user->ID, $doNotProcess)){
-				//Change the display name
-				$user->display_name = getFamilyName($user, false, $partnerId);
-
-				if ($partnerId){
-					$doNotProcess[] = $partnerId;
-				}
-			}
-		//Only returning adults, but this is a child
-		}elseif($adults && isChild($user->ID)){
-			$doNotProcess[] = $user->ID;
-		}
-	}
-	
-	//Loop over the users again
-	foreach($users as $user){
-		//Add the user to the cleaned array if not in the donotprocess array
-		if(!in_array($user->ID, $doNotProcess)){
-			$cleanedUserArray[] = $user;
-		}
-	}
-	
-	return $cleanedUserArray;
 }
 
 /**
