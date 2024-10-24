@@ -4,7 +4,7 @@ namespace SIM;
 /**
  * Plugin Name:  		SIM plugin
  * Description:  		A bundle of 25 modules to add AJAX login, forms and other functionality
- * Version:      		5.1.0
+ * Version:      		5.1.1
  * Author:       		Ewald Harmsen
  * AuthorURI:			harmseninnigeria.nl
  * Requires at least:	6.0

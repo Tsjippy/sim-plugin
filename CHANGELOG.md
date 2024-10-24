@@ -6,11 +6,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [5.1.1] - 2024-10-24
+
+
+### Fixed
 - module update issue
 - github error
 - form submit display extra data
-
-### Updated
 
 ## [5.0.9] - 2024-10-17
 
