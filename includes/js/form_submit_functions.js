@@ -192,7 +192,7 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 			if(json.data == null){
 				Main.displayMessage(json.message);
 			}else{
-				Main.displayMessage(json.message+"\n"+json.data, 'error');
+				Main.displayMessage(json.message+"\n"+JSON.stringify(json.data), 'error');
 			}
 			return false;
 		}

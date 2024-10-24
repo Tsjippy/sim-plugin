@@ -23,6 +23,8 @@ function getModuleName($slug, $seperator=''){
 
 // Class loader function
 spl_autoload_register(function ($classname) {
+    loadModules();
+
     global $moduleDirs;
     global $Modules;
 
@@ -54,54 +56,69 @@ spl_autoload_register(function ($classname) {
     }
 });
 
-// Store all modulefolders
-$moduleDirs     = [];
-$defaultModules = [];
+function loadModules(){
+    global $moduleDirs;
+    global $defaultModules;
+    global $Modules;
 
-// default modules
-foreach(scandir(INCLUDESPATH.'default_modules') as $dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..' || !is_dir(INCLUDESPATH."default_modules/$dir")){
-        continue;
+    if(!empty($moduleDirs)){
+        return;// only run once
     }
 
-    $moduleDirs[strtolower($dir)]   = INCLUDESPATH."default_modules/$dir";
+    // Store all modulefolders
+    $moduleDirs     = [];
+    $defaultModules = [];
 
-    $moduleName         = getModuleName($dir);
-    $defaultModules[]   = $moduleName;
-}
+    // default modules
+    foreach(scandir(INCLUDESPATH.'default_modules') as $dir){
+        if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..' || !is_dir(INCLUDESPATH."default_modules/$dir")){
+            continue;
+        }
 
-// normal modules
-foreach(scandir(MODULESPATH) as $key=>$dir){
-    if(str_contains($dir, 'node_modules') || $dir == '.' || $dir == '..' || !is_dir(MODULESPATH.$dir)){
-        continue;
+        $moduleDirs[strtolower($dir)]   = INCLUDESPATH."default_modules/$dir";
+
+        $moduleName         = getModuleName($dir);
+        $defaultModules[]   = $moduleName;
     }
 
-    $moduleDirs[strtolower($dir)] = MODULESPATH.$dir;
-}
+    // normal modules
+    foreach(scandir(MODULESPATH) as $key=>$dir){
+        if(str_contains($dir, 'node_modules') || $dir == '.' || $dir == '..' || !is_dir(MODULESPATH.$dir)){
+            continue;
+        }
 
-$moduleDirs = apply_filters('sim-moduledirs', $moduleDirs);
-
-//Sort alphabeticalyy, ignore case
-ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);
-
-//load all libraries
-require( __DIR__  . '/includes/lib/vendor/autoload.php');
-
-$Modules		= get_option('sim_modules', []);
-ksort($Modules);
-
-//Make sure the default modules are enabled always
-foreach($defaultModules as $module){
-    $module = $module;
-    if(!isset($Modules[$module])){
-        $Modules[$module]  = [
-            'enable'    => 'on'
-        ];
-
-        update_option('sim_modules', $Modules);
+        $moduleDirs[strtolower($dir)] = MODULESPATH.$dir;
     }
+
+    $moduleDirs = apply_filters('sim-moduledirs', $moduleDirs);
+
+    //Sort alphabeticalyy, ignore case
+    ksort($moduleDirs, SORT_STRING | SORT_FLAG_CASE);
+
+    //load all libraries
+    require( __DIR__  . '/includes/lib/vendor/autoload.php');
+
+    $Modules		= get_option('sim_modules', []);
+    ksort($Modules);
+
+    //Make sure the default modules are enabled always
+    foreach($defaultModules as $module){
+        $module = $module;
+        if(!isset($Modules[$module])){
+            $Modules[$module]  = [
+                'enable'    => 'on'
+            ];
+
+            update_option('sim_modules', $Modules);
+        }
+    }
+    unset($module);
 }
-unset($module);
+
+loadModules();
+
+global $moduleDirs;
+global $Modules;
 
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
