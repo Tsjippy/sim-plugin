@@ -8,6 +8,7 @@
 ### Fixed
 - module update issue
 - github error
+- form submit display extra data
 
 ### Updated
 
