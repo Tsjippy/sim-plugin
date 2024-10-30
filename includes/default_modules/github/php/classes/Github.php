@@ -152,9 +152,17 @@ class Github{
         $zip = new \ZipArchive();
         $zip->open($zipFile);
 
-        if(!is_dir($path)){
-            mkdir($path);
+        // if the folder already exists, remove it, to accomodate file deletions
+        if(is_dir($path)){
+            WP_Filesystem();
+			global $wp_filesystem;
+			$result				= $wp_filesystem->rmdir($path, true);
         }
+
+        // recreate the folder
+        mkdir($path);
+
+        // Extract the zipfile
         $result = $zip->extractTo($path);
 
         // close the archive and delete the file
@@ -162,24 +170,8 @@ class Github{
 
         if(!$result){
             SIM\printArray("Unzip failed to $path");
-
-            WP_Filesystem();
-			global $wp_filesystem;
-			$result				= $wp_filesystem->rmdir($path, true);
-            mkdir($path);
-
-            // try again
-            $zip = new \ZipArchive();
-            $zip->open($zipFile);
-            $result = $zip->extractTo($path);
-
-            // close the archive and delete the file
-            $zip->close();
-
-            if(!$result){
-                $result				= $wp_filesystem->rmdir($path, true);
-                return new WP_Error('Github', "Unzip failed for $repo" );
-            }
+            
+            return new WP_Error('Github', "Unzip failed for $repo" );
         }
         
         fclose($tmpZipFile);
