@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- remove module folder before installing new version
 
 ### Fixed
 
