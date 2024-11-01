@@ -5,6 +5,7 @@
 
 ### Changed
 - remove module folder before installing new version
+- style version bump
 
 ### Fixed
 
