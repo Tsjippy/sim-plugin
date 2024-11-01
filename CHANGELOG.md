@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- remove module folder before installing new version
-- style version bump
 
 ### Fixed
 
 ### Updated
+
+## [5.1.2] - 2024-11-01
+
+
+### Changed
+- remove module folder before installing new version
+- style version bump
 
 ## [5.1.1] - 2024-10-24
 
