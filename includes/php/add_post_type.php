@@ -153,7 +153,7 @@ add_filter( 'content_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 function getTemplateFile($template, $type, $name=''){
 	global $post;
 
-	$baseDir		= __DIR__."/../modules";
+	$baseDir		= MODULESPATH;
 	$templateFile	= '';
 
 	//check what we are dealing with
