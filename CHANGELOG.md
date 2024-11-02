@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- custom post type archive pages
 
 ### Updated
 
