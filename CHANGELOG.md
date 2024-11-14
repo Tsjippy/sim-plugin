@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- release info for modules
 
 ### Changed
 
 ### Fixed
-- custom post type archive pages
 
 ### Updated
+
+## [5.1.3] - 2024-11-14
+
+
+### Added
+- release info for modules
+
+### Fixed
+- custom post type archive pages
 
 ## [5.1.2] - 2024-11-01
 
