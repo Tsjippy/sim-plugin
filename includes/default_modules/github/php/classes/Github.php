@@ -180,6 +180,35 @@ class Github{
     }
 
     /**
+     * Read the data of a file on github
+     * 
+     * @param   string  $fileName   The filename
+     * 
+     * @return  string|false        The content or false on failure
+     */
+    public function getFileContents($author, $repo, $fileName){
+        try{
+            $file   = $this->repo->contents()->show($author, $repo, $fileName);
+            
+            if(!empty($file)){
+                $content	= base64_decode($file['content']);
+                //convert to html
+                $parser 	= new \Michelf\MarkdownExtra;
+                $content	= $parser->transform($content);
+            }
+        }catch (\Exception $e) {
+            // 404 is not found
+            if($e->getCode() != 404){
+                SIM\printArray($e);
+            }
+
+            $content    = false;
+        }
+
+        return $content;
+    }
+
+    /**
      * Parses plugin info from github
      *
      * @param   string  $pluginFilePath     The main file of the plugin you want to have info of
@@ -208,23 +237,7 @@ class Github{
             $content    = get_transient("sim-git-$item");
             // if not in transient
             if($content === false){
-                try{
-                    $file   = $this->repo->contents()->show($author, $repo, $item.'.md');
-                    
-                    if(!empty($file)){
-                        $content	= base64_decode($file['content']);
-                        //convert to html
-                        $parser 	= new \Michelf\MarkdownExtra;
-                        $content	= $parser->transform($content);
-                    }
-                }catch (\Exception $e) {
-                    // 404 is not found
-                    if($e->getCode() != 404){
-                        SIM\printArray($e);
-                    }
-
-                    $content    = '';
-                }
+                $content    = $this->getFileContents($author, $repo, $item.'.md');
 
                 // Store for 24 hours
                 set_transient( "sim-git-$item", $content, DAY_IN_SECONDS );
@@ -262,7 +275,7 @@ class Github{
     /**
      * Checks for update from github
      *
-     * @param   string  $path     The fullpath to the plugin or thmes main file
+     * @param   string  $path     The fullpath to the plugin or themes main file
      *
      * @return  object            Version information
      */

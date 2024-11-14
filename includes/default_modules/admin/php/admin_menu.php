@@ -483,6 +483,13 @@ function mainMenu(){
 	
 	ob_start();
 	?>
+	<div id='release_modal' class='modal hidden'>
+		<div class="modal-content" style='width:500px;'>
+			<span id="modal_close" class="close">&times;</span>
+			<div class='loadergif_wrapper'><img class='loadergif' src='<?php echo SIM\LOADERIMAGEURL;?>' width=50 loading='lazy'>Loading changelog...</div>
+			<div class="content"></div>
+		</div>
+	</div>
 	<div>
 		<strong>Current active modules</strong><br>
 		<table class="table">
@@ -520,7 +527,8 @@ function mainMenu(){
 							version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))	// the release version is bigger than the current version
 						){
 							// Add update link
-							$content .= " <a href='$url&update=$slug' class='button sim small'>Update to version {$release['tag_name']}</a></td>";
+							$content .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
+							$content .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
 						}
 
 						echo "<td>$content</td>";

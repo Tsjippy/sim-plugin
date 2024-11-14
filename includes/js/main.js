@@ -180,7 +180,7 @@ function bodyScrolling(type){
 
 export function showModal(modal){
 	if(typeof(modal) == 'string'){
-		modal = document.getElementById(modal+"_modal");
+		modal = document.getElementById(modal + "_modal");
 	}
 	
 	if(modal != null){

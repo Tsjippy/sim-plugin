@@ -1,4 +1,5 @@
-import {changeUrl, displayTab} from './../../../../js/main.js'
+import {changeUrl, displayTab, showModal} from './../../../../includes/js/main.js'
+import {fetchRestApi} from  './../../../../includes/js/form_submit_functions.js'
 
 console.log('admin.js loaded');
 
@@ -12,7 +13,7 @@ function switchSlider(event){
 
 //Load after page load
 document.addEventListener("DOMContentLoaded", function() {
-	document.querySelector('[name="enable"]').addEventListener('change', switchSlider);
+	document.querySelectorAll('[name="enable"]').forEach(el=>el.addEventListener('change', switchSlider));
 
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
@@ -22,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 });
 
-window.addEventListener("click", event => {
+window.addEventListener("click", async event => {
 	let target = event.target;
     if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
         event.preventDefault();
@@ -59,5 +60,22 @@ window.addEventListener("click", event => {
 
 		//show the tab
 		displayTab(target);
-	}
+	}else if(target.matches(`.sim.release`)){
+        showModal('release');
+
+        let formData    = new FormData();
+        formData.append('module_name', target.dataset.name);
+        
+        let response    = await fetchRestApi('get-changelog', formData);
+
+        document.querySelector('#release_modal .loadergif_wrapper').classList.add('hidden');
+
+        document.querySelector('#release_modal .content').innerHTML   = response;
+        document.querySelector('#release_modal .content').classList.remove('hidden');
+    }
+});
+
+document.querySelector('#release_modal').addEventListener('modalclosed', ev=>{
+    ev.target.querySelector('.loadergif_wrapper').classList.remove('hidden');
+    ev.target.querySelector('.content').classList.add('hidden');
 });
