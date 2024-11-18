@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- removed nameless functions
 
 ### Fixed
 
 ### Updated
+
+## [5.1.4] - 2024-11-18
+
+
+### Changed
+- removed nameless functions
 
 ## [5.1.3] - 2024-11-14
 
