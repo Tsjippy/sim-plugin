@@ -9,7 +9,8 @@ DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
 
 require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
-add_filter('sim_submenu_description', function($description, $moduleSlug, $moduleName){
+add_filter('sim_submenu_description', __NAMESPACE__.'\subMenuDescription', 10, 3);
+function subMenuDescription($description, $moduleSlug, $moduleName){
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
 		return $description;
@@ -23,9 +24,10 @@ add_filter('sim_submenu_description', function($description, $moduleSlug, $modul
 	<?php
 
 	return ob_get_clean();
-}, 10, 3);
+}
 
-add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings, $moduleName){
+add_filter('sim_submenu_options', __NAMESPACE__.'\subMenuOptions', 10, 4);
+function subMenuOptions($optionsHtml, $moduleSlug, $settings, $moduleName){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $optionsHtml;
@@ -49,4 +51,4 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings,
 	<?php
 
 	return ob_get_clean();
-}, 10, 4);
+}

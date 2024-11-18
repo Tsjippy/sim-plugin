@@ -2,24 +2,26 @@
 namespace SIM\GITHUB;
 use SIM;
 
-add_action('init', function(){
+add_action('init', __NAMESPACE__.'\init');
+function init(){
 	//add action for use in scheduled task
 	add_action( 'update_modules_action', __NAMESPACE__.'\checkForModuleUpdates' );
-});
+}
 
 function scheduleTasks(){
     SIM\scheduleTask('update_modules_action', 'daily');
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', function($moduleSlug, $options){
+add_action('sim_module_deactivated', __NAMESPACE__.'\onDeactivation', 10, 2);
+function onDeactivation($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return;
 	}
 
 	wp_clear_scheduled_hook( 'update_modules_action' );
-}, 10, 2);
+}
 
 function checkForModuleUpdates(){
 	global $moduleDirs;

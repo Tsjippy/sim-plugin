@@ -8,9 +8,10 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
 add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\registerScripts');
 
 // Style the buttons in the media library
-add_action( 'wp_enqueue_media', function(){
+add_action( 'wp_enqueue_media', __NAMESPACE__.'\enqueuMediaStyle');
+function enqueuMediaStyle(){
     wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], STYLE_VERSION);
-});
+}
 
 function registerScripts($hook=''){
 	global $runned;
@@ -94,7 +95,8 @@ function enqueueScripts(){
 	}
 }
 
-add_action('wp_enqueue_scripts', function() {
+add_action('wp_enqueue_scripts', __NAMESPACE__.'\loadScripts', 99999);
+function loadScripts() {
 	//Do no load these css files
 	$dequeueStyles = [];
 	//Do no load these js files
@@ -114,9 +116,10 @@ add_action('wp_enqueue_scripts', function() {
 	foreach ($dequeueScripts as $dequeue_script){
 		wp_dequeue_script($dequeue_script);
 	}
-}, 99999);
+}
 
-add_action( 'wp_default_scripts', function( $scripts ) {
+add_action( 'wp_default_scripts', __NAMESPACE__.'\loadDefaultScripts');
+function loadDefaultScripts( $scripts ) {
 	if ( ! is_admin() && isset( $scripts->registered['jquery'] ) ) {
 		$script = $scripts->registered['jquery'];
 		if ( $script->deps ) {
@@ -124,4 +127,4 @@ add_action( 'wp_default_scripts', function( $scripts ) {
 			$script->deps = array_diff( $script->deps, array( 'jquery-migrate' ) );
 		}
 	}
-});
+}

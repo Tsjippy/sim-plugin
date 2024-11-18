@@ -12,7 +12,8 @@ DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 /**
  * Register a custom menu page.
  */
-add_action( 'admin_menu', function() {
+add_action( 'admin_menu', __NAMESPACE__.'\adminMenu');
+function adminMenu() {
 	global $moduleDirs;
 	global $Modules;
 
@@ -64,7 +65,7 @@ add_action( 'admin_menu', function() {
 			add_submenu_page(null, "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 		}
 	}
-});
+}
 
 function handlePost(){
 	do_action('sim-admin-settings-post');

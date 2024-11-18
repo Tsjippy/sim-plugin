@@ -8,7 +8,8 @@ DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
 
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
-add_filter('sim_submenu_description', function($description, $moduleSlug){
+add_filter('sim_submenu_description', __NAMESPACE__.'\subMenuDescription', 10, 2);
+function subMenuDescription($description, $moduleSlug){
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
 		return $description;
@@ -17,4 +18,4 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	$description	.= "Default module for custom AJAX file upload";
 
 	return $description;
-}, 10, 2);
+}

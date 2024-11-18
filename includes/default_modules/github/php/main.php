@@ -10,7 +10,8 @@ use Github\Client;
 /**
  * Adds a custom description to the plugin in the plugin page
  */
-add_filter( 'plugins_api', function ( $res, $action, $args ) {
+add_filter( 'plugins_api', __NAMESPACE__.'\customDescription', 10, 3);
+function customDescription( $res, $action, $args ) {
 	// do nothing if you're not getting plugin information or this is not our plugin
 	if( 'plugin_information' !== $action || SIM\PLUGINNAME !== $args->slug) {
 		return $res;
@@ -28,12 +29,13 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 		], 
 		'tested'			=> '6.6.2'		
 	]);
-}, 10, 3);
+}
 
 /**
  * Checks and shows plugin updates from github
  */
-add_filter( 'pre_set_site_transient_update_plugins', function($transient){
+add_filter( 'pre_set_site_transient_update_plugins', __NAMESPACE__.'\showPluginUpdate');
+function showPluginUpdate($transient){
 	$github			= new Github();
 
 	$item			= $github->getVersionInfo(SIM\PLUGIN_PATH);
@@ -50,4 +52,4 @@ add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 	}
 
 	return $transient;
-});
+}

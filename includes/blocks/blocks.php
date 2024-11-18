@@ -2,7 +2,8 @@
 namespace SIM;
 
 // Load the js file to filter all blocks
-add_action( 'enqueue_block_editor_assets', function() {
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__.'\addBlockJs');
+function addBlockJs(){
 
     wp_register_script(
         'sim-block-filter',
@@ -12,10 +13,11 @@ add_action( 'enqueue_block_editor_assets', function() {
     );
 	
     wp_enqueue_script( 'sim-block-filter' );
-});
+}
 
 // Filter block visibility
-add_filter('render_block', function($blockContent, $block){
+add_filter('render_block', __NAMESPACE__.'\renderBlock', 10, 2);
+function renderBlock($blockContent, $block){
 	// make sure only published pages are included
 	if(!empty($block['attrs']['onlyOn'])){
 		foreach($block['attrs']['onlyOn'] as $index=>$pageId){
@@ -57,7 +59,7 @@ add_filter('render_block', function($blockContent, $block){
 	}
 
 	return $blockContent;
-}, 10, 2);
+}
 
 add_action('init', function () {
 	register_block_type(

@@ -20,7 +20,8 @@ add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) 
 
 
 // Runs 10 seconds after a succesfull update of the plugin to be able to use the new files
-add_action( 'schedule_sim_plugin_update_action', function($oldVersion){
+add_action( 'schedule_sim_plugin_update_action', __NAMESPACE__.'\afterPluginUpdate');
+function afterPluginUpdate($oldVersion){
     global $Modules;
     global $moduleDirs;
 
@@ -42,4 +43,4 @@ add_action( 'schedule_sim_plugin_update_action', function($oldVersion){
 
         }
     }
-});
+}

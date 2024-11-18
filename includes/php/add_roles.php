@@ -66,7 +66,8 @@ function saveExtraUserRoles( $userId, $newRoles=[] ) {
     }
 }
 
-add_filter('sim_role_description', function($description, $role){
+add_filter('sim_role_description', __NAMESPACE__.'\roleDescriptions', 10, 2);
+function roleDescriptions($description, $role){
     switch($role){
         case 'administrator':
             $description    = 'Access to all the administration features';
@@ -89,4 +90,4 @@ add_filter('sim_role_description', function($description, $role){
     }
 
     return $description;
-}, 10, 2);
+}
