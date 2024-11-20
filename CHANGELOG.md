@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.1.5] - 2024-11-20
+
+
+### Changed
 - removed nameless functions
 
 ### Fixed
 - auto module update
-
-### Updated
 
 ## [5.1.3] - 2024-11-14
 
