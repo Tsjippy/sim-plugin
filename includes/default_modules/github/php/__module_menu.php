@@ -52,3 +52,15 @@ function subMenuOptions($optionsHtml, $moduleSlug, $settings, $moduleName){
 
 	return ob_get_clean();
 }
+
+add_filter('sim_module_updated', __NAMESPACE__.'\moduleUpdated', 10, 3);
+function moduleUpdated($newOptions, $moduleSlug, $oldOptions){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $newOptions;
+	}
+
+	scheduleTasks();
+
+	return $newOptions;
+}
