@@ -7,6 +7,7 @@
 - removed nameless functions
 
 ### Fixed
+- auto module update
 
 ### Updated
 
