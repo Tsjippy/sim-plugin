@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- auto update of modules
 
 ### Updated
 
