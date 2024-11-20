@@ -28,20 +28,31 @@ function checkForModuleUpdates(){
 
 	$github	= new Github();
 	foreach($moduleDirs as $module=>$path){
+		// inactive module
+		if( ! defined("SIM\\$module\\MODULE_VERSION")){
+			SIM\printArray("Constant does not exist for $module ");
+			continue;
+		}
+
 		$oldVersion	= false;
+
 		$oldVersion	= constant("SIM\\$module\\MODULE_VERSION");
 		
 		$release	= $github->getLatestRelease('Tsjippy', $module, true);
 
 		if(is_wp_error($release)){
+			SIM\printArray("Error checking for update for module $module: ");
+			SIM\printArray($release);
 			continue;
 		}
 
 		$newVersion	= $release['tag_name'];
 
 		// Download the new version
+		//SIM\printArray("Name: $module. Current Version $oldVersion, new version $newVersion. ");
 		if(version_compare($newVersion, $oldVersion)){
-            $github->downloadFromGithub('Tsjippy', $module, SIM\MODULESPATH.$path);
+			SIM\printArray("Updating $module");
+            $github->downloadFromGithub('Tsjippy', $module, $path);
         }
 	}
 }
