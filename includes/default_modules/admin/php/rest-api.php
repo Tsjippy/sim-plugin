@@ -2,7 +2,8 @@
 namespace SIM\FILEUPLOAD;
 use SIM;
 
-add_action( 'rest_api_init', function () {
+add_action( 'rest_api_init', __NAMESPACE__.'\restApiInit');
+function restApiInit() {
 	//Route for first names
 	register_rest_route(
 		RESTAPIPREFIX,
@@ -18,7 +19,7 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-});
+}
 
 function getChangelog(){
     $github		= new SIM\GITHUB\Github();

@@ -3,7 +3,8 @@ namespace SIM\ADMIN;
 use SIM;
 
 //load js and css
-add_action( 'admin_enqueue_scripts', function ($hook) {
+add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\loadAdminAssets');
+function loadAdminAssets($hook) {
 	//Only load on sim settings pages
 	if(!str_contains($hook, '_sim')) {
 		return;
@@ -24,4 +25,4 @@ add_action( 'admin_enqueue_scripts', function ($hook) {
 			'restApiPrefix'	=> '/'.RESTAPIPREFIX
 		)
 	);
-});
+}

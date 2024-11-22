@@ -3,7 +3,8 @@ namespace SIM;
 
 
 // Runs after a succesfull update of the plugin
-add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) {
+add_action( 'upgrader_process_complete', __NAMESPACE__.'\upgradeSucces', 10, 2 );
+function upgradeSucces( $upgraderObject, $options ) {
     // If an update has taken place and the updated type is plugins and the plugins element exists
     if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
         foreach( $options['plugins'] as $plugin ) {
@@ -16,7 +17,7 @@ add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) 
             }
         }
     }
-}, 10, 2 );
+}
 
 
 // Runs 10 seconds after a succesfull update of the plugin to be able to use the new files

@@ -1,7 +1,8 @@
 <?php
 
 //Widget title, depending on page
-add_filter( 'widget_title', function ($title, $instance=[]){
+add_filter( 'widget_title', __NAMESPACE__.'\widgetTitle', 10, 2);
+function widgetTitle($title, $instance=[]){
 	if(!empty($instance) && array_key_exists('widget_name', $instance) && $instance['widget_name'] == "Advanced Sidebar Pages Menu"){
 		global $post;
 		// This is a subpage
@@ -19,4 +20,4 @@ add_filter( 'widget_title', function ($title, $instance=[]){
 	}
 	
 	return $title;
-}, 10, 2);
+}

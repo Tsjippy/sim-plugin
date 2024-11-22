@@ -1,10 +1,16 @@
 {
 	"folders": [
 		{
+			"name": "sim-plugin",
 			"path": "."
 		},
 		{
-			"path": "..\\..\\.."
+			"name": "sim-modules",
+			"path": "../../sim-modules"
+		},
+		{
+			"name": "simnigeria",
+			"path": "../../.."
 		}
 	],
 	"settings": {},

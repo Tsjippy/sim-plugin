@@ -2,8 +2,8 @@
 namespace SIM\FILEUPLOAD;
 use SIM;
 
-add_action( 'rest_api_init', __NAMESPACE__.'\init');
-function init(){
+add_action( 'rest_api_init', __NAMESPACE__.'\restApiInit');
+function restApiInit(){
 	//Route for first names
 	register_rest_route(
 		RESTAPIPREFIX,
@@ -15,14 +15,16 @@ function init(){
             'args'					=> array(
 				'url'		=> array(
 					'required'	=> true,
-                    'validate_callback' => function($param){
-                        // File should be in the uploads folder or a sub folder
-                        return str_contains($param, 'wp-content/uploads');
-                    }
+                    'validate_callback' => __NAMESPACE__.'\validateUrl'
 				)
 			)
 		)
 	);
+}
+
+function validateUrl($param){
+    // File should be in the uploads folder or a sub folder
+    return str_contains($param, 'wp-content/uploads');
 }
 
 function removeDocument(){

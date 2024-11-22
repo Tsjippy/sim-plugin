@@ -1,7 +1,8 @@
 <?php
 namespace SIM;
 
-add_action( 'rest_api_init', function () {
+add_action( 'rest_api_init', __NAMESPACE__.'\restApiInit');
+function restApiInit() {
 	register_rest_route( 
 		RESTAPIPREFIX, 
 		'/user_roles', 
@@ -15,4 +16,4 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-});
+}
