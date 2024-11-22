@@ -9,6 +9,12 @@
 
 ### Updated
 
+## [5.1.6] - 2024-11-20
+
+
+### Fixed
+- auto update of modules
+
 ## [5.1.5] - 2024-11-20
 
 
