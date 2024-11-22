@@ -53,11 +53,3 @@ register_deactivation_hook( __FILE__, __NAMESPACE__.'\onDeactivation');
 function onDeactivation() {
 	printArray("Removing cron schedules");
 }
-
-// Make sure we have an active user when doing cron
-add_action('init', __NAMESPACE__.'\init');
-function init(){
-	if(wp_doing_cron()){
-		wp_set_current_user(1);
-	}
-}

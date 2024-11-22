@@ -2,8 +2,8 @@
 namespace SIM\FILEUPLOAD;
 use SIM;
 
-add_action( 'rest_api_init', __NAMESPACE__.'\restApiInit');
-function restApiInit(){
+add_action( 'rest_api_init', __NAMESPACE__.'\uploadRestApiInit');
+function uploadRestApiInit(){
 	//Route for first names
 	register_rest_route(
 		RESTAPIPREFIX,

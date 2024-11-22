@@ -9,12 +9,12 @@ function blockRestApiInit() {
 		'/show_children', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> __NAMESPACE__.'\displayChildren',
+			'callback' 				=> __NAMESPACE__.'\showChildren',
 			'permission_callback' 	=> '__return_true',
 		)
 	);
 }
 
-function displayChildren($WP_REST_Request){
+function showChildren($WP_REST_Request){
 	return displayChildren($WP_REST_Request->get_params());
 }

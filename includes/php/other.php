@@ -127,6 +127,11 @@ function customExcerpt($excerpt, $post=null) {
 add_action( 'init', __NAMESPACE__.'\init', 1);
 function init(){
 	wp_deregister_script('heartbeat');
+
+	// Make sure we have an active user when doing cron
+	if(wp_doing_cron()){
+		wp_set_current_user(1);
+	}
 }
 
 //Remove the password protect of a page for logged in users
