@@ -26,6 +26,11 @@ function onDeactivation($moduleSlug, $options){
 function checkForModuleUpdates(){
 	global $moduleDirs;
 
+	// DO not run on localhost
+	if($_SERVER['HTTP_HOST'] == 'localhost') {
+		return;
+	}
+
 	$github	= new Github();
 	foreach($moduleDirs as $module=>$path){
 		// inactive module

@@ -1761,6 +1761,7 @@ function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
 
 //Creates subimages
 //Add action
-add_action('init', function () {
+add_action('init', __NAMESPACE__.'\processImagesAction');
+function processImagesAction() {
 	add_action( 'process_images_action', __NAMESPACE__.'\processImages' );
-});
+}

@@ -61,7 +61,8 @@ function renderBlock($blockContent, $block){
 	return $blockContent;
 }
 
-add_action('init', function () {
+add_action('init', __NAMESPACE__.'\blockInit');
+function blockInit() {
 	register_block_type(
 		__DIR__ . '/show_categories/build',
 		array(
@@ -97,7 +98,7 @@ add_action('init', function () {
 			]
 		)
 	);
-});
+}
 
 function displayCategories($attributes) {
 
