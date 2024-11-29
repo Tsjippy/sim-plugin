@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- removed junk from user names
 
 ### Fixed
 
