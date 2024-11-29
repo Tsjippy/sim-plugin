@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- removed junk from user names
 
 ### Fixed
 
 ### Updated
+
+## [5.1.9] - 2024-11-29
+
+
+### Changed
+- removed junk from user names
 
 ## [5.1.8] - 2024-11-22
 
