@@ -1546,7 +1546,20 @@ function findUsers(&$string, $skipHyperlinks){
 		}
 
 		if(!isset($foundUsers[$userId])){
-			$foundUsers[$userId]	= $match[1];
+			if(isset($match[2])){
+				$firstName				= trim($match[2][0]);
+
+				// Make sure we only return the name, split on the first name, take the second portion and prepend the name
+				$str					= $firstName . explode($firstName, $match[1][0])[1];
+
+				// Calculate the updated string start position
+				$pos					= strlen($match[1][0])	- strlen($str);
+	
+				// Add to the array
+				$foundUsers[$userId]	= [$str, $match[1][1] + $pos];
+			}else{
+				$foundUsers[$userId]	= $match[0][1];
+			}
 		}
 	}
 
