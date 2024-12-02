@@ -1,7 +1,8 @@
 <?php
 namespace SIM;
 
-set_error_handler(function ( $errno, $errstr, $errfile, $errline ) {
+set_error_handler(__NAMESPACE__.'\printError');
+function printError( $errno, $errstr, $errfile, $errline ) {
     if( $errno == E_USER_NOTICE && !str_contains($errstr, '_load_textdomain_just_in_time')) {
 
         $message = 'You have an error notice: "%s" in file "%s" at line: "%s".' ;
@@ -10,7 +11,7 @@ set_error_handler(function ( $errno, $errstr, $errfile, $errline ) {
         error_log(print_r($message, true));
         error_log(print_r(generateStackTrace(), true));
     }
-});
+}
 
 // Function from php.net https://php.net/manual/en/function.debug-backtrace.php#112238
 function generateStackTrace() {

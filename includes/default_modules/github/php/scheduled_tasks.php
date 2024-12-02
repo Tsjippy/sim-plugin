@@ -25,6 +25,7 @@ function onDeactivation($moduleSlug, $options){
 
 function checkForModuleUpdates(){
 	global $moduleDirs;
+	global $defaultModules;
 
 	// DO not run on localhost
 	if($_SERVER['HTTP_HOST'] == 'localhost') {
@@ -33,8 +34,13 @@ function checkForModuleUpdates(){
 
 	$github	= new Github();
 	foreach($moduleDirs as $module=>$path){
+		// Default module
+		if(in_array($module, $defaultModules)){
+			continue;
+		}
+
 		// inactive module
-		if( ! defined("SIM\\$module\\MODULE_VERSION")){
+		if( ! defined("SIM\\$module\\MODULE_VERSION") ){
 			SIM\printArray("Constant does not exist for $module ");
 			continue;
 		}
