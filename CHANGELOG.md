@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- skip default modules in update check
 
 ### Fixed
 
