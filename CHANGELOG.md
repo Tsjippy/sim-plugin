@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- on module update action
 
 ### Changed
 - skip default modules in update check
