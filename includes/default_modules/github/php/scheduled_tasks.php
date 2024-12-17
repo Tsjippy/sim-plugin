@@ -63,7 +63,11 @@ function checkForModuleUpdates(){
 		//SIM\printArray("Name: $module. Current Version $oldVersion, new version $newVersion. ");
 		if(version_compare($newVersion, $oldVersion)){
 			SIM\printArray("Updating $module");
-            $github->downloadFromGithub('Tsjippy', $module, $path);
+            $result	= $github->downloadFromGithub('Tsjippy', $module, $path);
+
+			if($result){
+				do_action("sim_{$module}_module_update", $oldVersion);
+			}
         }
 	}
 }

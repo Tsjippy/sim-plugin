@@ -36,7 +36,12 @@ function registerScripts($hook=''){
 	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(), STYLE_VERSION,true);
 	
 	//Sweet alert https://sweetalert2.github.io/
-	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
+	if($_SERVER['HTTP_HOST'] == 'localhost') {
+		$url	= plugins_url('js/sweetalert.min.js', __DIR__);
+	}else{
+		$url	= '//cdn.jsdelivr.net/npm/sweetalert2@11';
+	}
+	wp_register_script('sweetalert', $url, array(), '11.1.4', true);
 
 	// purify library
 	wp_register_script('sim_purify', plugins_url('js/purify.min.js', __DIR__), array(), '2.3.8', true);
