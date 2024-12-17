@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- on module update action
 
 ### Changed
-- skip default modules in update check
 
 ### Fixed
 
 ### Updated
+
+## [5.2.0] - 2024-12-17
+
+
+### Added
+- on module update action
+
+### Changed
+- skip default modules in update check
 
 ## [5.1.9] - 2024-11-29
 
