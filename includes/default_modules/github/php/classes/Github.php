@@ -117,6 +117,8 @@ class Github{
             return new WP_Error('Github', 'Path canot be empty');
         }
 
+        $oldVersion	= constant("SIM\\$repo\\MODULE_VERSION");
+
         // Get latest release info
         $release	= $this->getLatestRelease($author, $repo, $force);
 
@@ -175,6 +177,16 @@ class Github{
         }
         
         fclose($tmpZipFile);
+
+        // Reload the module files
+        $files = glob("{$path}/php/*.php");
+        $files = array_merge($files, glob("{$path}/blocks/*.php"));
+        
+        foreach ($files as $file) {
+            include($file);
+        }
+
+        do_action("sim_{$repo}_module_update", $oldVersion);
 
         return true;
     }
