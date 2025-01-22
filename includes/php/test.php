@@ -9,7 +9,7 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-/*     $results    = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}sim_events` WHERE `enddate` = ''");
+    /*     $results    = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}sim_events` WHERE `enddate` = ''");
     foreach($results as $result){
         $meta   = json_decode(get_post_meta($result->post_id, 'eventdetails', true));
 
@@ -26,7 +26,7 @@ add_shortcode("test", function ($atts){
             ),
         );
     } */
-    
+
     /* $posts = get_posts(
 		array(
 			'post_type'		=> 'any',
