@@ -7,6 +7,7 @@
 
 ### Fixed
 - module update hook
+- issue with double names in strings
 
 ### Updated
 
