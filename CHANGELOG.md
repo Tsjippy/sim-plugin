@@ -6,9 +6,15 @@
 ### Changed
 
 ### Fixed
-- module update hook
 
 ### Updated
+
+## [5.2.1] - 2025-01-22
+
+
+### Fixed
+- module update hook
+- issue with double names in strings
 
 ## [5.2.0] - 2024-12-17
 
