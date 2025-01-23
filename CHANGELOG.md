@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- extra data for submitForm function
 
 ### Changed
 
 ### Fixed
-- first time download of modules
 
 ### Updated
+
+## [5.2.2] - 2025-01-23
+
+
+### Added
+- extra data for submitForm function
+
+### Fixed
+- first time download of modules
 
 ## [5.2.1] - 2025-01-22
 
