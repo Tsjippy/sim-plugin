@@ -32,7 +32,7 @@ export function formReset(form){
 	}
 }
 
-export async function submitForm(target, url){
+export async function submitForm(target, url, extraData=''){
 	let form		= target.closest('form');
 	let validity 	= true;
 	
@@ -63,6 +63,10 @@ export async function submitForm(target, url){
 		}
 		
 		let formData = new FormData(form);
+
+		if(extraData != ''){
+			formData.append('extra', extraData);
+		}
 
 		// disable fields again
 		form.querySelectorAll('.was-disabled').forEach( el=>{
