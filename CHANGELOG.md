@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- extra data for submitForm function
 
 ### Changed
 
