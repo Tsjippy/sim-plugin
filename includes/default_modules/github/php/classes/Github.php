@@ -117,7 +117,10 @@ class Github{
             return new WP_Error('Github', 'Path canot be empty');
         }
 
-        $oldVersion	= constant("SIM\\$repo\\MODULE_VERSION");
+        $oldVersion	= -1;
+        if (defined("SIM\\$repo\\MODULE_VERSION")) {
+            $oldVersion	= constant("SIM\\$repo\\MODULE_VERSION");
+        }
 
         // Get latest release info
         $release	= $this->getLatestRelease($author, $repo, $force);
@@ -186,7 +189,9 @@ class Github{
             include($file);
         }
 
-        do_action("sim_{$repo}_module_update", $oldVersion);
+        if($oldVersion > 0){
+            do_action("sim_{$repo}_module_update", $oldVersion);
+        }
 
         return true;
     }
