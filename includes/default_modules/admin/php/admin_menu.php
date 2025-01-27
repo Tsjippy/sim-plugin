@@ -179,10 +179,10 @@ function buildSubMenu(){
 }
 
 function descriptionsTab($moduleSlug, $moduleName, $tab){
-	$description	= file_get_contents(constant("SIM\\$moduleSlug\MODULE_PATH")."README.md");
+	$description	= file_get_contents(constant("SIM\\MODULESPATH")."/$moduleSlug/README.md");
 	if($description){
 		//convert to html
-		$parser 	= new \Michelf\MarkdownExtra;
+		$parser 		= new \Michelf\MarkdownExtra;
 		$description	= $parser->transform($description);
 	}
 

@@ -1302,10 +1302,11 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
  * @param	array 		$size				Size (width, height) of the image. Default [50,50]
  * @param	bool		$showDefault		Whether to show a default pictur if no user picture is found. Default true
  * @param	bool		$famillyPicture		Whether or not to use the family picture
+ * @param	bool		$wrapInLink			Whether or not to make the picture clickable to the full size picture
  *
  * @return	string|false					The picture html or false if no picture
  */
-function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false){
+function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false, $wrapInLink=true){
 	
 	$attachmentId = get_user_meta($userId, 'profile_picture', true);
 
@@ -1334,7 +1335,14 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 			}
 		}
 
-		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
+		$image	= "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
+		if($wrapInLink){
+			return "<a href='$url'>$image</a>";
+		}else{
+			return $image;
+		}
+
+		
 	}elseif($showDefault){
 		return $defaultPicture;
 	}else{

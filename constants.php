@@ -43,6 +43,7 @@ define(__NAMESPACE__.'\MODULELIST', [
     'pdfToExcel',
     'prayer',
     'projects',
+    'positionalAccounts',
     'querier',
     'recipes',
     'statistics',
