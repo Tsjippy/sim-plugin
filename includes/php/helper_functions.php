@@ -155,7 +155,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
-	if(!empty($_REQUEST["userid"]) && !is_numeric($userId)){
+	if(empty($userId) && !empty($_REQUEST["userid"]) && !is_numeric($userId)){
 		$userId = $_REQUEST["userid"];
 	}
 	
