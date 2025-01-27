@@ -6,10 +6,15 @@
 ### Changed
 
 ### Fixed
-- userid prefill
-- module description while deactivated
 
 ### Updated
+
+## [5.2.3] - 2025-01-27
+
+
+### Fixed
+- userid prefill
+- module description while deactivated
 
 ## [5.2.2] - 2025-01-23
 
