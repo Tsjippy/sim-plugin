@@ -7,6 +7,7 @@
 
 ### Fixed
 - userid prefill
+- module description while deactivated
 
 ### Updated
 
