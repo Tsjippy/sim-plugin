@@ -519,22 +519,31 @@ function mainMenu(){
 				echo "<tr>";
 					echo "<td><a href='{$url}_$slug'>$name</a></td>";
 
-					// the module version for this module is set
-					if( defined("SIM\\$slug\\MODULE_VERSION")){
-						$content	= constant("SIM\\$slug\\MODULE_VERSION");
-						if( 
-							!is_wp_error($release) &&														// no error during the getting the release info
-							isset($release['tag_name']) &&													// release has a tagname
-							version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))	// the release version is bigger than the current version
-						){
-							// Add update link
-							$content .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
-							$content .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
+					if( 
+						!is_wp_error($release) &&														// no error during the getting the release info
+						isset($release['tag_name'])													// release has a tagname
+					){
+						$update		= false;
+						$content	= '';
+
+						// the module version for this module is set
+						if( defined("SIM\\$slug\\MODULE_VERSION")){
+							$content	.= constant("SIM\\$slug\\MODULE_VERSION");
+							if( 
+								version_compare($release['tag_name'], constant("SIM\\$slug\\MODULE_VERSION"))	// the release version is bigger than the current version
+							){
+								$update	= true;
+							}
+						}else{
+							$update	= true;
 						}
 
-						echo "<td>$content</td>";
-					}else{
-						echo '';
+						if($update){
+							$content = " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
+							$content .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
+
+							echo "<td>$content</td>";
+						}
 					}
 
 				echo "</tr>";
