@@ -147,7 +147,7 @@ class Github{
             }
 
             if(!$zipContent){
-                return new WP_Error('Github', "Failed to download the latest release for $author-$repo<br><br>".$e->getMessage());
+                return new WP_Error('Github', "Failed to download the latest release for $author-$repo<br><br>".$e->getMessage()."<br><br>Does the zip file exist in the release?");
             }
         }
         
