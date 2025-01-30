@@ -186,7 +186,7 @@ class Github{
         $files = array_merge($files, glob("{$path}/blocks/*.php"));
         
         foreach ($files as $file) {
-            include($file);
+            include_once($file);
         }
 
         if($oldVersion > 0){
