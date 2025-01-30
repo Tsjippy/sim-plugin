@@ -50,11 +50,13 @@ abstract class MailSetting{
      * @param object    $user   WP_User
      */
     protected function addUser($user){
-        if(!empty($user)){
-            $this->replaceArray['%first_name%']  = $user->first_name;
-            $this->replaceArray['%last_name%']   = $user->last_name;
-            $this->replaceArray['%full_name%']   = $user->display_name;
+        if(empty($user)){
+            return;
         }
+        
+        $this->replaceArray['%first_name%']  = $user->first_name;
+        $this->replaceArray['%last_name%']   = $user->last_name;
+        $this->replaceArray['%full_name%']   = $user->display_name;
     }
 
     /**

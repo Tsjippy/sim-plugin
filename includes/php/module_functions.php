@@ -43,11 +43,11 @@ function maybeGetUserPageUrl($userId){
 
 /**
  * Checks if Signal module is enabled and if so sends the message
- * @param	string 		$message		The module name'
- * @param	int|WP_User	$recipient		The user or user id the message should be send to
- * @param	bool		$async			Whether to send the signal later
- * @param	int|array	$postId			Optional post id to add a link to or an array of filepaths of pictures
- * @param   bool        $getResult  	Whether we should return the result, default true
+ * @param	string 				$message		The module name'
+ * @param	string|int|WP_User	$recipient		The recipient phone number, or user id or user object
+ * @param	bool				$async			Whether to send the signal later
+ * @param	int|array			$postId			Optional post id to add a link to or an array of filepaths of pictures
+ * @param   bool        		$getResult  	Whether we should return the result, default true
  *
  * @return	string						The result
 */
