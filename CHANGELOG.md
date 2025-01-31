@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- version bump
 
 ### Fixed
 
