@@ -8,6 +8,7 @@
 
 ### Fixed
 - module update error
+- user page links
 
 ### Updated
 
