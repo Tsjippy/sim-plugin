@@ -2,15 +2,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- warning
 
 ### Changed
 
 ### Fixed
-- module update error
-- user page links
 
 ### Updated
+
+## [5.2.4] - 2025-01-31
+
+
+### Added
+- warning
+
+### Fixed
+- module update error
+- user page links
 
 ## [5.2.3] - 2025-01-27
 
