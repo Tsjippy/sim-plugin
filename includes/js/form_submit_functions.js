@@ -63,7 +63,7 @@ export async function submitForm(target, url, extraData=''){
 		}
 		
 		let formData = new FormData(form);
-
+		
 		if(extraData != ''){
 			formData.append('extra', extraData);
 		}
