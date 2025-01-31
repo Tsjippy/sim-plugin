@@ -1590,7 +1590,7 @@ function findUsers(&$string, $skipHyperlinks){
 
 				
 			}else{
-				$foundUsers[$userId]	= $match[0][1];
+				$foundUsers[$userId]	= $match[1];
 			}
 		}
 	}
