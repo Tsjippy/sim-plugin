@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- version bump
-- version bump
 
 ### Fixed
 
 ### Updated
+
+## [5.2.5] - 2025-02-03
+
+
+### Changed
+- version bump
+- version bump
 
 ## [5.2.4] - 2025-01-31
 
