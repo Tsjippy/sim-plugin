@@ -75,7 +75,7 @@ window.addEventListener("click", async event => {
     }
 });
 
-document.querySelector('#release_modal').addEventListener('modalclosed', ev=>{
+document.querySelectorAll('#release_modal').forEach(el=>el.addEventListener('modalclosed', ev=>{
     ev.target.querySelector('.loadergif_wrapper').classList.remove('hidden');
     ev.target.querySelector('.content').classList.add('hidden');
-});
+}));
