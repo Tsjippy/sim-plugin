@@ -1,6 +1,7 @@
 export let scripts;
 
 export let afterScriptsLoaded	= function (attachTo){
+    // load 
     if(typeof(tinymce) != 'undefined'){
         tinymce.remove();
 
@@ -42,11 +43,16 @@ export let afterScriptsLoaded	= function (attachTo){
 }
 
 export let addStyles    = function (response, attachTo){
-    let temp = document.createElement('div');
+    scripts     = [];
+    let temp    = document.createElement('div');
+
+    // parse inline scripts
+    temp.innerHTML =  response.html;
+    scripts = Array.prototype.slice.call(temp.getElementsByTagName('script'));
 
     if(response.js){
         temp.innerHTML =  response.js;
-        scripts	= [...temp.children];
+        scripts	= [...temp.children].concat(scripts);
         addScripts(attachTo);
     }
 
