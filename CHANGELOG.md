@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- inline js loading over AJAX
 
 ### Changed
 
