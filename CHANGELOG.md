@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- inline js loading over AJAX
 
 ### Changed
 
 ### Fixed
-- module versions
 
 ### Updated
+
+## [5.2.6] - 2025-02-04
+
+
+### Added
+- inline js loading over AJAX
+
+### Fixed
+- module versions
 
 ## [5.2.5] - 2025-02-03
 
