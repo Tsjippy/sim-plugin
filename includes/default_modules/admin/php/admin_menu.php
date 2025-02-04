@@ -539,11 +539,10 @@ function mainMenu(){
 						}
 
 						if($update){
-							$content = " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
+							$content .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
 							$content .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
-
-							echo "<td>$content</td>";
 						}
+						echo "<td>$content</td>";
 					}
 
 				echo "</tr>";
