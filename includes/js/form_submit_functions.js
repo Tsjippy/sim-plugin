@@ -61,6 +61,12 @@ export async function submitForm(target, url, extraData=''){
 				}
 			});
 		}
+
+		// change the name of multiselects if needed
+		document.querySelectorAll('select[multiple]:not([name$=\\[\\]])').forEach(el => {
+			console.error(`Multi select ${el.name} should have [] at the end. I have fixed it for now`);
+			el.name	= el.name+'[]';
+		})
 		
 		let formData = new FormData(form);
 		
@@ -95,12 +101,7 @@ export async function submitForm(target, url, extraData=''){
 			});
 		}catch{
 			//pass
-		}
-
-		// store values of multi-selects
-		document.querySelectorAll('select[multiple]').forEach(el => {
-			formData.set(el.name, Array.from(el.selectedOptions,e=>e.value));
-		});
+		};
 
 		let response = await fetchRestApi(url, formData);
 
