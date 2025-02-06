@@ -9,11 +9,6 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-    BOOKINGS\pluginUpdate('8.0.3');
-
-    $bookings = new BOOKINGS\Bookings();
-	$bookings->sendPaymentReminders();
-
     /*     $results    = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}sim_events` WHERE `enddate` = ''");
     foreach($results as $result){
         $meta   = json_decode(get_post_meta($result->post_id, 'eventdetails', true));

@@ -138,15 +138,15 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 
 /**
  * Create a dropdown with all users
- * @param 	string		$title	 		The title to display above the select
- * @param	bool		$onlyAdults	 	Whether children should be excluded. Default false
- * @param	bool		$families  		Whether we should group families in one entry default false
- * @param	string		$class			Any extra class to be added to the dropdown default empty
- * @param	string		$id				The name or id of the dropdown, default 'user-selection'
- * @param	array		$args    		Extra query arg to get the users
- * @param	int|string	$userId			The current selected user id or name
- * @param	array		$excludeIds		An array of user id's to be excluded
- * @param	string		$type			Html input type Either select or list
+ * @param 	string				$title	 		The title to display above the select
+ * @param	bool				$onlyAdults	 	Whether children should be excluded. Default false
+ * @param	bool				$families  		Whether we should group families in one entry default false
+ * @param	string				$class			Any extra class to be added to the dropdown default empty
+ * @param	string				$id				The name or id of the dropdown, default 'user-selection'
+ * @param	array				$args    		Extra query arg to get the users
+ * @param	int|string|array	$userId			The current selected user id or name or multiple userids
+ * @param	array				$excludeIds		An array of user id's to be excluded
+ * @param	string				$type			Html input type Either select or list
  *
  * @return	string						The html
  */
@@ -168,35 +168,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	}
 
 	$inputClass	= 'wide';
-	if($multiple){
-		$html	.= '<ul class="listselectionlist">';
-			// we supplied an array of users
-			if(is_array($userId)){
-				foreach($userId as $userid){
-					$html	.= "<li class='listselection'>";
-						$html	.= "<button type='button' class='small remove-list-selection'><span class='remove-list-selection'>×</span></button>";
-					if(is_numeric($userid)){
-						$user	= get_userdata($userid);
-						if($user){
-							$html	.= "<input type='hidden' name='{$id}[]' value='{$user->ID}'>";
-							$html	.= "<span>{$user->display_name}</span>";
-						}
-					}else{
-						$html	.= "<span>";
-							$html	.= "<input type='text' name='{$id}[]' value='$userid' readonly=readonly style='width:".strlen($userid)."ch'>";
-						$html	.= "</span>";
-					}
-				}
-
-				$userId	= '';
-			}
-		$html	.= '</ul>';
-
-		$inputClass	.= ' datalistinput multiple';
-	}
-
 	if($type == 'select'){
-		$html .= "<select name='$id' class='$class user_selection' value=''>";
+		if($multiple){
+			$multiple	= 'multiple';
+		}
+
+		$html .= "<select name='$id' class='$class user_selection' value='' $multiple>";
 			foreach($users as $key=>$user){
 				if(empty($user->first_name) || empty($user->last_name) || $families){
 					$name	= $user->display_name;
@@ -204,7 +181,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 					$name	= "$user->first_name $user->last_name";
 				}
 
-				if ($userId == $user->ID){
+				if ($userId == $user->ID || (is_array($userId) && in_array($user->ID, $userId))){
 					//Make this user the selected user
 					$selected='selected="selected"';
 				}else{
@@ -214,6 +191,33 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			}
 		$html .= '</select>';
 	}elseif($type == 'list'){
+		if($multiple){
+			$html	.= '<ul class="listselectionlist">';
+				// we supplied an array of users
+				if(is_array($userId)){
+					foreach($userId as $userid){
+						$html	.= "<li class='listselection'>";
+							$html	.= "<button type='button' class='small remove-list-selection'><span class='remove-list-selection'>×</span></button>";
+						if(is_numeric($userid)){
+							$user	= get_userdata($userid);
+							if($user){
+								$html	.= "<input type='hidden' name='{$id}[]' value='{$user->ID}'>";
+								$html	.= "<span>{$user->display_name}</span>";
+							}
+						}else{
+							$html	.= "<span>";
+								$html	.= "<input type='text' name='{$id}[]' value='$userid' readonly=readonly style='width:".strlen($userid)."ch'>";
+							$html	.= "</span>";
+						}
+					}
+	
+					$userId	= '';
+				}
+			$html	.= '</ul>';
+	
+			$inputClass	.= ' datalistinput multiple';
+		}
+
 		$value	= '';
 
 		if(!is_numeric($userId)){
