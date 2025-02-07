@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- multi user select
 
 ### Changed
 
 ### Fixed
-- multiselect saving
 
 ### Updated
+
+## [5.2.7] - 2025-02-07
+
+
+### Added
+- multi user select
+
+### Fixed
+- multiselect saving
 
 ## [5.2.6] - 2025-02-04
 
