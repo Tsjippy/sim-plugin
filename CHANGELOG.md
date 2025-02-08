@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- after module update hook fix
 
 ### Updated
 
