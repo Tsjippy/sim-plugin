@@ -181,16 +181,9 @@ class Github{
         
         fclose($tmpZipFile);
 
-        // Reload the module files
-        $files = glob("{$path}/php/*.php");
-        $files = array_merge($files, glob("{$path}/blocks/*.php"));
-        
-        foreach ($files as $file) {
-            include_once($file);
-        }
-
+        // run the update action. We should do so with the updated files so we do it via a single event.
         if($oldVersion > 0){
-            do_action("sim_{$repo}_module_update", $oldVersion);
+            wp_schedule_single_event(time(), 'sim-after-module-update', [$repo, $oldVersion]);
         }
 
         return true;

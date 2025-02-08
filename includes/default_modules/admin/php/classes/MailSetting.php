@@ -12,6 +12,7 @@ abstract class MailSetting{
     public $message;
     public $defaultSubject;
     public $defaultMessage;
+    public $headers;
 
     /**
      * Initiates the class
@@ -30,6 +31,7 @@ abstract class MailSetting{
         $this->messageKey       = $this->keyword."_message";
         $this->subject          = '';
         $this->message          = '';
+        $this->headers          = [];
 
         $emailSettings          = SIM\getModuleOption($this->moduleSlug, 'emails');
         if($emailSettings){
@@ -60,7 +62,7 @@ abstract class MailSetting{
     }
 
     /**
-     * Replaces all places holders in subject and message
+     * Replaces all places holders in subject, message and headers
      */
     public function filterMail(){
         if(empty($this->subject)){
@@ -73,6 +75,51 @@ abstract class MailSetting{
 
         $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
         $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
+        foreach($this->headers as &$header){
+            $header = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $header);
+        }
+    }
+
+    /**
+     * Prints the e-mail headers input
+     */
+    protected function printHeadersInput(){
+        $headers    = $this->headers;
+        if(empty($this->headers)){
+            $headers    = [''];
+        }
+        ?>
+        Any additional headers (see <a href='https://developer.wordpress.org/reference/functions/wp_mail/#using-headers-to-set-from-cc-and-bcc-parameters'>here</a>):<br>
+        <div class="clone_divs_wrapper">
+            <?php
+            foreach($headers as $index=>$header){
+                ?>
+                <div class="clone_div" data-divid="<?php echo $index;?>">
+                    <label name="Header" class=" formfield formfieldlabel">
+                        <h4 class="labeltext">Header <?php echo $index + 1;?></h4>
+                    </label>
+                    <div class="buttonwrapper" style="width:100%; display: flex;">
+                        <input type="text" name="header[<?php echo $index;?>]" id="headers" class=" formfield formfieldinput" value="<?php echo $header;?>" style="width: 500px;">
+                        <?php
+                        if(count($this->headers) > 1){
+                            ?>
+                            <button type="button" class="remove button" style="flex: 1;max-width:100px;">-</button>
+                            <?php
+                        }
+                        if(end($this->headers) == $header){
+                            ?>
+                            <button type="button" class="add button" style="flex: 1;max-width:100px;">+</button>
+                            <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+            <?php
+            }
+            ?>
+        </div>
+        <br>
+        <?php
     }
 
     /**
@@ -134,6 +181,8 @@ abstract class MailSetting{
         $this->printSubjectInput($settings);
 
         $this->printMessageInput($settings);
+
+        $this->printHeadersInput($settings);
     }
 
     /**
