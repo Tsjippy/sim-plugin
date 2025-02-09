@@ -8,6 +8,7 @@ abstract class MailSetting{
     public $moduleSlug;
     public $subjectKey;
     public $messageKey;
+    public $headerKey;
     public $subject;
     public $message;
     public $defaultSubject;
@@ -29,6 +30,7 @@ abstract class MailSetting{
         $this->moduleSlug       = $moduleSlug;
         $this->subjectKey       = $this->keyword."_subject";
         $this->messageKey       = $this->keyword."_message";
+        $this->headerKey        = $this->keyword."_header";
         $this->subject          = '';
         $this->message          = '';
         $this->headers          = [];
@@ -42,8 +44,11 @@ abstract class MailSetting{
             if(isset($emailSettings[$this->messageKey])){
                 $this->message  = $emailSettings[$this->messageKey];
             }
+
+            if(isset($emailSettings[$this->headerKey])){
+                $this->headers  = $emailSettings[$this->headerKey];
+            }
         }
-        
     }
 
     /**
@@ -94,21 +99,26 @@ abstract class MailSetting{
             <?php
             foreach($headers as $index=>$header){
                 ?>
+                <style>
+                    .add, .remove{
+                        max-width:50px;
+                    }
+                </style>
                 <div class="clone_div" data-divid="<?php echo $index;?>">
                     <label name="Header" class=" formfield formfieldlabel">
                         <h4 class="labeltext">Header <?php echo $index + 1;?></h4>
                     </label>
                     <div class="buttonwrapper" style="width:100%; display: flex;">
-                        <input type="text" name="header[<?php echo $index;?>]" id="headers" class=" formfield formfieldinput" value="<?php echo $header;?>" style="width: 500px;">
+                        <input type="text" name="emails[<?php echo $this->headerKey;?>][<?php echo $index;?>]" id="headers" class=" formfield formfieldinput" value="<?php echo $header;?>" style="width: 500px;">
                         <?php
                         if(count($this->headers) > 1){
                             ?>
-                            <button type="button" class="remove button" style="flex: 1;max-width:100px;">-</button>
+                            <button type="button" class="remove button" style="flex: 1">-</button>
                             <?php
                         }
                         if(end($this->headers) == $header){
                             ?>
-                            <button type="button" class="add button" style="flex: 1;max-width:100px;">+</button>
+                            <button type="button" class="add button" style="flex: 1">+</button>
                             <?php
                         }
                         ?>
@@ -134,7 +144,7 @@ abstract class MailSetting{
         ?>
         <label>
             E-mail subject:<br>
-            <input type='text' name="emails[<?php echo $this->keyword;?>_subject]" value="<?php echo $subject;?>" style="width:100%;">
+            <input type='text' name="emails[<?php echo $this->subjectKey;?>]" value="<?php echo $subject;?>" style="width:100%;">
         </label>
         <br>
         <?php

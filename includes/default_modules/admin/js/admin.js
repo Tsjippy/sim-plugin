@@ -1,5 +1,6 @@
 import {changeUrl, displayTab, showModal} from './../../../../includes/js/main.js'
 import {fetchRestApi} from  './../../../../includes/js/form_submit_functions.js'
+import {copyFormInput, fixNumbering, removeNode} from './../../../../../../sim-modules/forms/js/forms.js'
 
 console.log('admin.js loaded');
 
@@ -25,6 +26,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
 window.addEventListener("click", async event => {
 	let target = event.target;
+        
+    //add element
+    if(target.matches('.add')){
+        let newNode = copyFormInput(target.closest(".clone_div"));
+
+        fixNumbering(target.closest('.clone_divs_wrapper'));
+
+        //add tinymce's can only be done when node is inserted and id is unique
+        newNode.querySelectorAll('.wp-editor-area').forEach(el =>{
+            window.tinyMCE.execCommand('mceAddEditor',false, el.id);
+        });
+
+        target.remove();
+    }
+    
+    //remove element
+    if(target.matches('.remove')){
+        //Remove node clicked
+        removeNode(target);
+    }
+
     if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
         event.preventDefault();
 
