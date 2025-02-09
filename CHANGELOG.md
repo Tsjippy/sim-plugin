@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- headers input to mail class
 
 ### Changed
 
 ### Fixed
-- after module update hook fix
 
 ### Updated
+
+## [5.2.8] - 2025-02-09
+
+
+### Added
+- headers input to mail class
+
+### Fixed
+- after module update hook fix
 
 ## [5.2.7] - 2025-02-07
 
