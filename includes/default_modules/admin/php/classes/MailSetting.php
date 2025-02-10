@@ -78,8 +78,14 @@ abstract class MailSetting{
             $this->message  = $this->defaultMessage;
         }
 
-        $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
-        $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
+        // Run the replacement twice as replace values can have placeholders themselves
+        $i = 1;
+        while ($i <= 2) {
+            $i++;
+            $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
+            $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
+        }
+        
         foreach($this->headers as &$header){
             $header = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $header);
         }
