@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- filter e-mail twice to replace nested replace patterns
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [5.2.9] - 2025-02-10
+
+
+### Added
+- filter e-mail twice to replace nested replace patterns
 
 ## [5.2.8] - 2025-02-09
 
