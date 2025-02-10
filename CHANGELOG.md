@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- filter e-mail twice to replace nested replace patterns
 
 ### Changed
 
