@@ -346,6 +346,16 @@ function mainMenuActions(){
 	global $moduleDirs;
 
 	if(!empty($_GET['update'])){
+		if($_GET['update'] == 'all'){
+			SIM\GITHUB\checkForModuleUpdates();
+	
+			?>
+			<div class='success'>All modules updated successfully</div>
+			<?php
+
+			return;
+		}
+
 		$slug		= sanitize_text_field($_GET['update']);
 
 		$github		= new SIM\GITHUB\Github();
@@ -483,6 +493,8 @@ function mainMenu(){
 	$github		= new SIM\GITHUB\Github();
 	
 	ob_start();
+
+	$updatesAvailable	= false;
 	?>
 	<div id='release_modal' class='modal hidden'>
 		<div class="modal-content" style='width:500px;'>
@@ -539,8 +551,9 @@ function mainMenu(){
 						}
 
 						if($update){
-							$content .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
-							$content .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
+							$updatesAvailable	= true;
+							$content 		   .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
+							$content 		   .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
 						}
 						echo "<td>$content</td>";
 					}
@@ -607,5 +620,12 @@ function mainMenu(){
 			?>
 	</div>
 	<?php
-	echo ob_get_clean();
+
+	$tableHtml	= ob_get_clean();
+	if($updatesAvailable){
+		?>
+		<a href='<?php echo SIM\getCurrentUrl();?>&update=all' class='button sim small'>Update all</a>
+		<?php
+	}
+	echo $tableHtml;
 }
