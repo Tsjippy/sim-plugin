@@ -159,7 +159,7 @@ class Github{
 
         // if the folder already exists, remove it, to accomodate file deletions
         if(is_dir($path)){
-            WP_Filesystem();
+            \WP_Filesystem();
 			global $wp_filesystem;
 			$result				= $wp_filesystem->rmdir($path, true);
         }
@@ -253,11 +253,20 @@ class Github{
                 set_transient( "sim-git-$item", $content, DAY_IN_SECONDS );
             }
 
+            if(empty($content) && file_exists(SIM\PLUGINFOLDER."/$item.md")){
+                $content    = file_get_contents(SIM\PLUGINFOLDER."/$item.md");
+            }
+
             if(!empty($content)){
                 // do not use h2 for layout purposes
                 $content    = str_replace('h4', 'h5', trim($content));
                 $content    = str_replace('h3', 'h4', trim($content));
                 $content    = str_replace('h2', 'h3', trim($content));
+                
+                //convert to html
+                $parser     = new \Michelf\MarkdownExtra;
+                $content	= $parser->transform($content);
+                
                 $res->sections[strtolower(ucfirst($item))]    = str_replace('h2', 'h3', trim($content));
             }
         }
