@@ -9,13 +9,8 @@ DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
 
 require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
-add_filter('sim_submenu_description', __NAMESPACE__.'\subMenuDescription', 10, 3);
-function subMenuDescription($description, $moduleSlug, $moduleName){
-	//module slug should be the same as the constant
-	if($moduleSlug != MODULE_SLUG)	{
-		return $description;
-	}
-
+add_filter('sim_submenu_github_description', __NAMESPACE__.'\subMenuDescription');
+function subMenuDescription($description){
 	ob_start();
 	?>
 	<p>
@@ -23,16 +18,11 @@ function subMenuDescription($description, $moduleSlug, $moduleName){
 	</p>
 	<?php
 
-	return ob_get_clean();
+	return $description.ob_get_clean();
 }
 
-add_filter('sim_submenu_options', __NAMESPACE__.'\subMenuOptions', 10, 4);
-function subMenuOptions($optionsHtml, $moduleSlug, $settings, $moduleName){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return $optionsHtml;
-	}
-
+add_filter('sim_submenu_github_options', __NAMESPACE__.'\subMenuOptions', 10, 2);
+function subMenuOptions($optionsHtml, $settings){
 	ob_start();
 	
     ?>
@@ -50,7 +40,7 @@ function subMenuOptions($optionsHtml, $moduleSlug, $settings, $moduleName){
 
 	<?php
 
-	return ob_get_clean();
+	return $optionsHtml.ob_get_clean();
 }
 
 add_filter('sim_module_github_after_save', __NAMESPACE__.'\moduleUpdated');

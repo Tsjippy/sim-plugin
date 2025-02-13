@@ -13,13 +13,8 @@ function scheduleTasks(){
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', __NAMESPACE__.'\onDeactivation', 10, 2);
-function onDeactivation($moduleSlug, $options){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return;
-	}
-
+add_action('sim_module_deactivated', __NAMESPACE__.'\onDeactivation');
+function onDeactivation($options){
 	wp_clear_scheduled_hook( 'update_modules_action' );
 }
 

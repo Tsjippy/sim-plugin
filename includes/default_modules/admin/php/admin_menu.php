@@ -186,7 +186,7 @@ function descriptionsTab($moduleSlug, $moduleName, $tab){
 		$description	= $parser->transform($description);
 	}
 
-	$description = apply_filters('sim_submenu_description', $description, $moduleSlug, $moduleName);
+	$description = apply_filters("sim_submenu_{$moduleSlug}_description", $description, $moduleSlug, $moduleName);
 
 	ob_start();
 	if(!empty($description)){
@@ -233,7 +233,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 			?>
 			<div class='options' <?php if(!isset($settings['enable'])){echo "style='display:none'";}?>>
 				<?php
-				$options	= apply_filters('sim_submenu_options', '', $moduleSlug, $settings, $moduleName);
+				$options	= apply_filters("sim_submenu_{$moduleSlug}_options", '', $settings, $moduleName);
 				if(empty($options)){
 					echo '<div>No special settings needed for this module</div>';
 				}else{
@@ -262,7 +262,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 }
 
 function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
-	$html	= apply_filters('sim_email_settings', '', $moduleSlug, $settings, $moduleName);
+	$html	= apply_filters("sim_email_{$moduleSlug}_settings", '', $settings, $moduleName);
 
 	if(empty($html)){
 		return '';
@@ -295,7 +295,7 @@ function dataTab($moduleSlug, $moduleName, $settings, $tab){
 		return '';
 	}
 
-	$html	= apply_filters('sim_module_data', '', $moduleSlug, $settings, $moduleName);
+	$html	= apply_filters("sim_module_{$moduleSlug}_data", '', $settings, $moduleName);
 
 	if(empty($html)){
 		return '';
@@ -319,7 +319,7 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
 		return '';
 	}
 
-	$html	= apply_filters('sim_module_functions', '', $moduleSlug, $settings, $moduleName);
+	$html	= apply_filters("sim_module_{$moduleSlug}_functions", '', $moduleSlug, $settings, $moduleName);
 
 	if(empty($html)){
 		return '';
