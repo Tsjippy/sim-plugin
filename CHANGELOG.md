@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- update all modules button
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [5.3.1] - 2025-02-13
+
+
+### Added
+- update all modules button
 
 ## [5.3.0] - 2025-02-11
 
