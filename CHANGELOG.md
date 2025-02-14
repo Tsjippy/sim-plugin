@@ -9,6 +9,7 @@
 - readme
 
 ### Fixed
+- slug
 
 ### Updated
 
