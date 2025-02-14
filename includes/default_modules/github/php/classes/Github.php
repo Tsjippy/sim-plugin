@@ -278,7 +278,7 @@ class Github{
         $res->requires          = $res->RequiresWP;
         $res->requires_php      = $res->RequiresPhp;
         $res->homepage          = $res->PluginURI;
-        $res->slug              = $args->slug;
+        $res->slug              = 'sim';
 
         foreach($extraData  as $key=>$data){
             $res->$key  = $data;
