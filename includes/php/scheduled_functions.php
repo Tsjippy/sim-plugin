@@ -60,31 +60,31 @@ function addCronSchedule( $schedules ) {
 	// Adds once monthly to the existing schedules.
 	$schedules['quarterly'] = array(
 		'interval'	=> 900,
-		'display' 	=> __( 'Once every 15 minutes' )
+		'display' 	=> __( 'Once every 15 minutes', 'sim-plugin')
 	);
 
    // Adds once monthly to the existing schedules.
    $schedules['monthly'] = array(
        'interval'	=> 2628000,
-       'display' 	=> __( 'Once every month' )
+       'display' 	=> __( 'Once every month', 'sim-plugin' )
    );
    
    // Adds threemonthly to the existing schedules.
    $schedules['threemonthly'] = array(
        'interval' => 7884000,
-       'display' => __( 'Once every 3 months' )
+       'display' => __( 'Once every 3 months', 'sim-plugin' )
    );
 
    // Adds sixmonthly to the existing schedules.
    $schedules['sixmonthly'] = array(
 		'interval'	=> 60*60*24*182,
-		'display'	=> __( 'Once every 6 months' )
+		'display'	=> __( 'Once every 6 months', 'sim-plugin' )
 	);
 
    // Adds yearly to the existing schedules.
 	$schedules['yearly'] = array(
 		'interval' => 31557600,
-		'display' => __( 'Once every year' )
+		'display' => __( 'Once every year', 'sim-plugin' )
 	);
    return $schedules;
 }

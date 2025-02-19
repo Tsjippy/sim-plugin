@@ -159,7 +159,8 @@ class Github{
 
         // if the folder already exists, remove it, to accomodate file deletions
         if(is_dir($path)){
-            \WP_Filesystem();
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            WP_Filesystem();
 			global $wp_filesystem;
 			$result				= $wp_filesystem->rmdir($path, true);
         }

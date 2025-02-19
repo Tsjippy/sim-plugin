@@ -13,6 +13,8 @@ namespace SIM;
  * Plugin URI:			https://github.com/Tsjippy/sim-plugin/
  * Tested:				6.5.0	
  * TextDomain:			sim-plugin
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
  * @author Ewald Harmsen
  */

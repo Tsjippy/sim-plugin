@@ -29,7 +29,7 @@ add_action( 'activated_plugin', function ( $plugin ) {
     file_put_contents(ABSPATH.'/.htaccess', $htaccess);
 
     //redirect after plugin activation
-    exit( wp_redirect( admin_url( 'admin.php?page=sim' ) ) );
+    exit( wp_redirect( admin_url( esc_url('admin.php?page=sim') ) ) );
 } );
 
 //Add setting link

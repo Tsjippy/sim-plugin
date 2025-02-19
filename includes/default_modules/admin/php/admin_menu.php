@@ -89,7 +89,11 @@ function handlePost(){
 		}
 		unset($_SESSION['plugin']);
 	}
-	echo "<div class='success'>$message</div>";
+	?>
+	<div class='success'>
+		<?php echo esc_html($message);?>
+	</div>
+	<?php
 }
 
 /**
@@ -111,9 +115,9 @@ function buildSubMenu(){
 		$settings	= [];
 	}
 
-	echo '<div class="module-settings">';
-		?>
-		<h1><?php echo $moduleName;?> module</h1>
+	?>
+	<div class="module-settings">	
+		<h1><?php echo esc_html($moduleName);?> module</h1>
 
 		<?php
 		
@@ -165,16 +169,16 @@ function buildSubMenu(){
 		
 		handlePost();
 
-		echo $descriptionsTab;
-		echo $settingsTab;
+		echo wp_kses($descriptionsTab, 'post');
+		echo wp_kses($settingsTab, 'post');
 		if(!empty($emailSettingsTab)){
-			echo $emailSettingsTab;
+			echo wp_kses($emailSettingsTab, 'post');
 		}
 		if(!empty($dataTab)){
-			echo $dataTab;
+			echo wp_kses($dataTab, 'post');
 		}
 		if(!empty($functionsTab)){
-			echo $functionsTab;
+			echo wp_kses($functionsTab, 'post');
 		}
 }
 
@@ -194,7 +198,7 @@ function descriptionsTab($moduleSlug, $moduleName, $tab){
 		<div class='tabcontent <?php if($tab != 'description'){echo 'hidden';}?>' id='description'>
 			<h2>Description</h2>
 			
-			<?php echo $description; ?>
+			<?php echo wp_kses($description, 'post'); ?>
 			
 			<br>
 		</div>
@@ -213,14 +217,16 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<h2>Settings</h2>
 			
 		<form action="" method="post">
-			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
+			<input type='hidden' name='module' value='<?php echo esc_html($moduleSlug);?>'>
 			<?php
 			if(in_array($moduleSlug, $defaultModules)){
-				echo "<input type='hidden' name='enable' value='on'>";
-				echo "This module is enabled by default<br><br>";
+				?>
+				<input type='hidden' name='enable' value='on'>
+				This module is enabled by default<br><br>
+				<?php
 			}else{
 				?>
-				Enable <?php echo $moduleName;?> module
+				Enable <?php esc_html_e($moduleName);?> module
 				<label class="switch">
 					<input type="checkbox" name="enable" <?php if(isset($settings['enable'])){echo 'checked';}?>>
 					<span class="slider round"></span>
