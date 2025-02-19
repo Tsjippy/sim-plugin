@@ -169,16 +169,16 @@ function buildSubMenu(){
 		
 		handlePost();
 
-		echo wp_kses($descriptionsTab, 'post');
-		echo wp_kses($settingsTab, 'post');
+		echo $descriptionsTab;
+		echo $settingsTab;
 		if(!empty($emailSettingsTab)){
-			echo wp_kses($emailSettingsTab, 'post');
+			echo $emailSettingsTab;
 		}
 		if(!empty($dataTab)){
-			echo wp_kses($dataTab, 'post');
+			echo $dataTab;
 		}
 		if(!empty($functionsTab)){
-			echo wp_kses($functionsTab, 'post');
+			echo $functionsTab;
 		}
 }
 
