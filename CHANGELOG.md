@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [5.3.3] - 2025-03-06
+
+
+### Added
 - administror has admin role by default
 
 ### Changed
@@ -11,8 +22,6 @@
 
 ### Fixed
 - slug
-
-### Updated
 
 ## [5.3.2] - 2025-02-13
 
