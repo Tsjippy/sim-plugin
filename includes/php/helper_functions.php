@@ -144,7 +144,7 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
  * @param	string				$class			Any extra class to be added to the dropdown default empty
  * @param	string				$id				The name or id of the dropdown, default 'user-selection'
  * @param	array				$args    		Extra query arg to get the users
- * @param	int|string|array	$userId			The current selected user id or name or multiple userids
+ * @param	int|string|array	$userId			The current selected user id or name or array of multiple userids
  * @param	array				$excludeIds		An array of user id's to be excluded
  * @param	string				$type			Html input type Either select or list
  *
@@ -171,6 +171,10 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	if($type == 'select'){
 		if($multiple){
 			$multiple	= 'multiple';
+
+			if(!str_contains($id, '[]')){
+				$id	.= '[]';
+			}
 		}
 
 		$html .= "<select name='$id' class='$class user_selection' value='' $multiple>";
