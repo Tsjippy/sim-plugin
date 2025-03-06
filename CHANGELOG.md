@@ -7,6 +7,7 @@
 ### Changed
 - readme
 - readme
+- add [] to the name of a multiple select
 
 ### Fixed
 - slug
