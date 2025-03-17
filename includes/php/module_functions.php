@@ -56,7 +56,7 @@ function trySendSignal($message, $recipient, $async=false, $postId="", $getResul
 		if($async){
 			SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
 		}else{
-			return SIGNAL\sendSignalMessage($message, $recipient, $postId, 0, '', '', '', $getResult);
+			return SIGNAL\sendSignalMessage($message, $recipient, $postId, 0, '', '', $getResult);
 		}
 	}
 }
