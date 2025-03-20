@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- sendSignalMessage one argiument too many
 
 ### Updated
 
