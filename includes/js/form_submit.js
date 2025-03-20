@@ -16,7 +16,6 @@ window.addEventListener("beforeunload", (event) => {
 		console.log(el);
 		console.log(`${el.defaultValue} - ${el.value}`);
 		event.preventDefault();
-		event.returnValue = 'test2';
 	});
 
 	// check all inputs
@@ -25,7 +24,6 @@ window.addEventListener("beforeunload", (event) => {
 			console.log(el);
 			console.log(`${el.defaultValue} - ${el.value}`);
 			event.preventDefault();
-			event.returnValue = 'test2';
 		}
 	});
 
@@ -33,9 +31,8 @@ window.addEventListener("beforeunload", (event) => {
 	document.querySelectorAll('form.sim-form-wrapper input[type=radio], form input[type=checkbox]').forEach(el=>{
 		if(el.defaultChecked != el.checked){
 			console.log(el);
-			console.log(`${el.defaultValue} - ${el.value}`);
+			console.log(`${el.defaultChecked} - ${el.checked}`);
 			event.preventDefault();
-			event.returnValue = 'test2';
 		}
 	});
 
@@ -45,7 +42,6 @@ window.addEventListener("beforeunload", (event) => {
 			console.log(el)
 			console.log(el.options[el.selectedIndex].defaultSelected);
 			event.preventDefault();
-			event.returnValue = 'test2';
 		}
 	});
 });
