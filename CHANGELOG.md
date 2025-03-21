@@ -7,6 +7,7 @@
 
 ### Fixed
 - sendSignalMessage one argiument too many
+- makes sure message is always a string
 
 ### Updated
 
