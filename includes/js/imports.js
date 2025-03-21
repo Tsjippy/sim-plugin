@@ -132,7 +132,7 @@ export function displayMessage(message, icon, autoclose=false, no_ok=false, time
 	if(typeof(Swal) != 'undefined'){
 		var options = {
 			icon: icon,
-			title: message.trim(),
+			title: message.toString().trim(),
 			confirmButtonColor: "#bd2919",
 			cancelButtonColor: 'Crimson'
 		};
