@@ -6,10 +6,15 @@
 ### Changed
 
 ### Fixed
-- sendSignalMessage one argiument too many
-- makes sure message is always a string
 
 ### Updated
+
+## [5.3.4] - 2025-03-21
+
+
+### Fixed
+- sendSignalMessage one argiument too many
+- makes sure message is always a string
 
 ## [5.3.3] - 2025-03-06
 
