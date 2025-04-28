@@ -8,7 +8,6 @@ add_shortcode("test", function ($atts){
 
     global $wpdb;
     global $Modules;
-
 });
 
 // turn off incorrect error on localhost
