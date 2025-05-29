@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- version to image upload to prevent caching
 
 ### Changed
 
