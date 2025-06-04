@@ -1435,7 +1435,7 @@ function readTextFile($path){
 		$re 		= '/<p .*?>(.*?)<\/p>/s';
 		$html 		= preg_replace($re, "$1<br>", $html);
 
-		// Replace spans with strongs
+		// Replace spans with bold
 		$re 		= '~<span[^>]*?font-weight: bold;[^>]*>([^<]*)<\/span>~sm';
 		$html 		= preg_replace($re, '<b>$1</b>', $html);
 
