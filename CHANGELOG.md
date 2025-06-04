@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [5.3.5] - 2025-06-04
+
+
+### Added
 - version to image upload to prevent caching
 
 ### Changed
@@ -9,8 +20,6 @@
 
 ### Fixed
 - ajax changelog
-
-### Updated
 
 ## [5.3.4] - 2025-03-21
 
