@@ -5,6 +5,7 @@
 - version to image upload to prevent caching
 
 ### Changed
+- cleanup html before importing it
 
 ### Fixed
 - ajax changelog
