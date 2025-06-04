@@ -1392,6 +1392,15 @@ function getValidPageLink($postId){
 	return $link;
 }
 
+function removeDuplicateTags($matches){
+	//If the opening tag is exactly like the next opening tag, remove the the duplicate
+	if($matches[1] == $matches[4] && ($matches[3] == 'span' || $matches[3] == 'strong' || $matches[3] == 'b')){
+		return '<'.$matches[1].'>'.$matches[2];
+	}else{
+		return $matches[0];
+	}
+}
+
 function readTextFile($path){
 	$ext 	= pathinfo($path, PATHINFO_EXTENSION);
 		
@@ -1421,21 +1430,22 @@ function readTextFile($path){
 		$htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
 		
 		$html 		= $htmlWriter->getWriterPart('Body')->write();
-		
-		$html 		= preg_replace_callback(
-			//get all tags which are followed by the same tag
-			//syntax: <(some tagname)>(some text)</some tagname)0 or more spaces<(use tagname as found before + some extra symbols)>
-			'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m',
-			function($matches){
-				//If the opening tag is exactly like the next opening tag, remove the the duplicate
-				if($matches[1] == $matches[4] && ($matches[3] == 'span' || $matches[3] == 'strong' || $matches[3] == 'b')){
-					return $matches[2];
-				}else{
-					return $matches[0];
-				}
-			},
-			$html
-		);
+
+		// Replace paragraps with linebreaks
+		$re 		= '/<p .*?>(.*?)<\/p>/s';
+		$html 		= preg_replace($re, "$1<br>", $html);
+
+		// Replace spans with strongs
+		$re 		= '~<span[^>]*?font-weight: bold;[^>]*>([^<]*)<\/span>~sm';
+		$html 		= preg_replace($re, '<b>$1</b>', $html);
+
+		// Remove remaining spans
+		$re 		= '~<span[^>]*>([^<]*)<\/span>~sm';
+		$html 		= preg_replace($re, '$1', $html);
+
+		// Remove duplicate tags like </b><b>
+		$re			= '/<\/([^>]*)>\s*<\1>/s';
+		$html 		= preg_replace($re, '$2', $html);
 		
 		//Return the contents
 		return $html;
