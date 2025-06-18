@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- file path filter
 
 ### Changed
 
 ### Fixed
-- image version problems
 
 ### Updated
+
+## [5.3.6] - 2025-06-18
+
+
+### Added
+- file path filter
+
+### Fixed
+- image version problems
 
 ## [5.3.5] - 2025-06-04
 
