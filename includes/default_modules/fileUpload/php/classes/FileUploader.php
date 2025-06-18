@@ -120,11 +120,6 @@ class FileUploader{
 
         $path    = str_replace(ABSPATH, '', $path);
 
-        # Append a random number as version
-        if(in_array(pathinfo($path, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'webp'])){
-            $path    .= "?version=".rand();
-        }
-
         array_push($this->filesArr, ['url' => $path]);
     }
 

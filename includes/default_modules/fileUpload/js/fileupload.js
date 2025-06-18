@@ -213,6 +213,9 @@ function fileUploadSucces(result){
 
 		//is image
 		if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png|webp)/) != null){
+			// Add a version
+			url			+= `?version=${Math.floor(Math.random() * 1000)}`;
+			
 			//Add the image
 			anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="height:150px;"></a>`;
 		}else{
