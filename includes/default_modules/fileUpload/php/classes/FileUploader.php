@@ -115,13 +115,17 @@ class FileUploader{
             }
         }
 
-        // Add the url to the files array
-        $url    = str_replace(ABSPATH, '', $this->targetFile);
+        // Add the path to the files array
+        $path    = apply_filters('file_upload_path', $this->targetFile);
+
+        $path    = str_replace(ABSPATH, '', $path);
 
         # Append a random number as version
-        $url    .= "?version=".rand();
+        if(in_array(pathinfo($path, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'webp'])){
+            $path    .= "?version=".rand();
+        }
 
-        array_push($this->filesArr, ['url' => $url]);
+        array_push($this->filesArr, ['url' => $path]);
     }
 
     public function addToDb(){

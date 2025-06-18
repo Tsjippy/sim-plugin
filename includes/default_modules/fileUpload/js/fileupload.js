@@ -202,7 +202,7 @@ function fileUploadSucces(result){
 		let anchorLink	= '';
 		
 		if(element['id'] != undefined){
-			datasetString += ' data-libraryid="'+element['id']+'"';
+			datasetString += ` data-libraryid="${element['id']}"`;
 		}
 
 		if(element['id'] == undefined){
