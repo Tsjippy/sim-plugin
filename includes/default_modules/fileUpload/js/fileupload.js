@@ -218,6 +218,11 @@ function fileUploadSucces(result){
 			
 			//Add the image
 			anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="height:150px;"></a>`;
+		}else if (src.toLowerCase().match(/\.pdf/) != null){
+			anchorLink	= `<object data='${url}' 
+					type='application/pdf' 
+					width='100%' height='400px'>
+				</object>`;
 		}else{
 			//Add a link
 			let filename	= url.split('/')[url.split('/').length-1]
