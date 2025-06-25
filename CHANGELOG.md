@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- preview uploaded pdf
 
 ### Changed
 
 ### Fixed
-- error
 
 ### Updated
+
+## [5.3.7] - 2025-06-25
+
+
+### Added
+- preview uploaded pdf
+
+### Fixed
+- error
 
 ## [5.3.6] - 2025-06-18
 
