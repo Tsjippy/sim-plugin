@@ -277,7 +277,7 @@ class Github{
         $res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
         $res->author            = $res->Author;
         $res->requires          = $res->RequiresWP;
-        $res->requires_php      = $res->RequiresPhp;
+        //$res->requires_php      = $res->RequiresPhp;
         $res->homepage          = $res->PluginURI;
         $res->slug              = 'sim';
 
