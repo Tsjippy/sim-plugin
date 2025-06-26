@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- show default module versions on plugin page
 
 ### Fixed
 
