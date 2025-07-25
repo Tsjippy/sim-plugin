@@ -29,9 +29,6 @@ function registerScripts($hook=''){
 	//selectable select table cells https://github.com/Mobius1/Selectable
 	wp_register_script('smiley', plugins_url('js/smiley.min.js', __DIR__), array(), null, true);
 
-	//Nice select https://github.com/bluzky/nice-select2
-	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(), STYLE_VERSION,true);
-
 	//sortable library: https://github.com/SortableJS/Sortable#bs
 	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(), STYLE_VERSION,true);
 	
@@ -54,7 +51,7 @@ function registerScripts($hook=''){
 	wp_register_script('sim_table_script', plugins_url('js/table.min.js', __DIR__), array('sortable', 'sim_formsubmit_script'), STYLE_VERSION, true);
 
 	//add main.js
-	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array('niceselect', 'sweetalert'), STYLE_VERSION, true);
+	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array( 'sweetalert'), STYLE_VERSION, true);
 
 	wp_localize_script( 'sim_script',
 		'sim',

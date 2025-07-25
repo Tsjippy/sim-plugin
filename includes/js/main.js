@@ -1,5 +1,6 @@
 console.log("Main.js loaded");
 
+import 'nice-select2';
 import {displayMessage, showLoader, isMobileDevice, } from './imports.js';
 export  {displayMessage, showLoader, isMobileDevice};
 
@@ -301,7 +302,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
 		if(select._niceselect  == undefined){
-			select._niceselect = NiceSelect.bind(select, {searchable: true});
+			NiceSelect.bind(select, {searchable: true});
 		}
 	});
 

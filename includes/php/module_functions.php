@@ -40,23 +40,3 @@ function maybeGetUserPageUrl($userId){
 
 	return $url;
 }
-
-/**
- * Checks if Signal module is enabled and if so sends the message
- * @param	string 				$message		The module name'
- * @param	string|int|WP_User	$recipient		The recipient phone number, or user id or user object
- * @param	bool				$async			Whether to send the signal later
- * @param	int|array			$postId			Optional post id to add a link to or an array of filepaths of pictures
- * @param   bool        		$getResult  	Whether we should return the result, default true
- *
- * @return	string						The result
-*/
-function trySendSignal($message, $recipient, $async=false, $postId="", $getResult=true){
-	if (function_exists('SIM\SIGNAL\sendSignalMessage')) {
-		if($async){
-			SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
-		}else{
-			return SIGNAL\sendSignalMessage($message, $recipient, $postId, 0, '', '', $getResult);
-		}
-	}
-}

@@ -2,9 +2,9 @@
 @use 'fileuploads';
 @use 'infoIcons';
 @use 'modal';
-@use 'nice-select2';
 @use 'sidebar';
 @use 'table';
+@use '../../js/node_modules/nice-select2/src/scss/nice-select2';
 
 /* Size of the loading gif */
 .loadergif{

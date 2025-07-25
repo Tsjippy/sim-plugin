@@ -1,6 +1,7 @@
 import {changeUrl, displayTab, showModal} from './../../../../includes/js/main.js'
 import {fetchRestApi} from  './../../../../includes/js/form_submit_functions.js'
 import {copyFormInput, fixNumbering, removeNode} from './../../../../../../sim-modules/forms/js/forms.js'
+import '../../../js/nice-select2';
 
 console.log('admin.js loaded');
 
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
         if(select._niceselect  == undefined){
-		    select._niceselect = NiceSelect.bind(select,{searchable: true});
+		    select._niceselect = NiceSelect.bind(select,{searchable: true, showSelectedItems: true});
         }
 	});
 });

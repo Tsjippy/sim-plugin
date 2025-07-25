@@ -18,6 +18,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "@picmo/popup-picker": "^5.8.5"
+    "@picmo/popup-picker": "^5.8.5",
+    "nice-select2": "^2.4.0"
   }
 }
