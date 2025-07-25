@@ -5,6 +5,7 @@
 
 ### Changed
 - show default module versions on plugin page
+- import nice-select2 from npm
 
 ### Fixed
 
