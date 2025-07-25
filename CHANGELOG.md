@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- version update
 
 ### Fixed
 
 ### Updated
+
+## [5.3.9] - 2025-07-25
+
+
+### Changed
+- version update
 
 ## [5.3.8] - 2025-07-25
 
