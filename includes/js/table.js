@@ -32,7 +32,7 @@ function addInputEventListeners(cell){
 		});
 		
 		if(inputnode.type == 'select-one'){
-			inputnode._niceselect = NiceSelect.bind(inputnode,{searchable: true});
+			Main.NiceSelect(inputnode,{searchable: true});
 		}
 		
 		//Add a keyboard

@@ -34,7 +34,7 @@ export let afterScriptsLoaded	= function (attachTo){
     //add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
         if(select._niceselect == undefined){
-		    NiceSelect.bind(select, {searchable: true});
+		    Main.NiceSelect(select, {searchable: true});
         }
 	});
 
