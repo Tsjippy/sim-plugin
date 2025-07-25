@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- show default module versions on plugin page
-- import nice-select2 from npm
 
 ### Fixed
 
 ### Updated
+
+## [5.3.8] - 2025-07-25
+
+
+### Changed
+- show default module versions on plugin page
+- import nice-select2 from npm
 
 ## [5.3.7] - 2025-06-25
 
