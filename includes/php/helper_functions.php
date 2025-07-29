@@ -1503,7 +1503,7 @@ function findUsers(&$string, $skipHyperlinks){
 		$displayNames[$user->ID]	= strtolower($user->display_name);
 		$partner					= hasPartner($user->ID, true);
 
-		// store firstname and partner firstname incase last name is omitted
+		// store firstname and partner firstname in case last name is omitted
 		if($partner){
 			$coupleNames[$user->ID]	= strtolower("$user->first_name & $partner->first_name");
 		}
@@ -1514,22 +1514,24 @@ function findUsers(&$string, $skipHyperlinks){
 	$singleRe	= "(?:$oneWord){2,}";								// two or more words starting with a capital after each other 
 	$coupleRe	= "(?:($oneWord)+(?:&|and).(($oneWord)+))";			// one or more words starting with a capital letter followed by 'and' or '&' followed by one or more words starting with a capital letter 
 	$familyRe	= "$oneWord\s(?:F|f)amily";
+	if($skipHyperlinks){
+		$skipHyperlinks	= "<a [^>]+?>.*?<\/a>(*SKIP)(*FAIL)|";
+	}else{
+		$skipHyperlinks	= "";
+	}
 
 	// check if prayer contains a single name or a couples name
 	// We use look ahead (?=)to allow for overlap
-	$re		= "/(*UTF8)(?=($coupleRe|$singleRe|$familyRe))/m";	
+	$re		= "/(*UTF8)$skipHyperlinks(?=($coupleRe|$singleRe|$familyRe))/m";	
 	preg_match_all($re, $string, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE, 0);
 
 	foreach($matches as $index=>$match){
-		if(
-			!isset($match[1]) || 
-			(
-				$skipHyperlinks	&&
-				str_contains($match[1][0], '</a>')		// skip hyperlinks
-			)
-		){
+		if(!isset($match[1])){
 			continue;
 		}
+
+		$userId		= false;
+		$userId2	= false;
 
 		// full catch
 		$name	= strtolower(trim($match[1][0]));
@@ -1553,14 +1555,35 @@ function findUsers(&$string, $skipHyperlinks){
 
 				// still not found, maybe two different lastnames, split on the & and use the first part
 				if(!$userId){
-					$name	= trim(explode('&', str_replace(' and ', ' & ', $match[1][0]))[0]);
+					$names		= explode('&', str_replace(' and ', ' & ', $match[1][0]));
 					
-					$userId	= array_search(strtolower($name), $displayNames);
+					$userId2	= array_search(trim(strtolower($names[0])), $displayNames);
+					$userId		= array_search(trim(strtolower($names[1])), $displayNames);
+
+					if($userId2){
+						// Add first name to the array
+						$foundUsers[$userId2]	= [trim($names[0]), $match[1][1]];
+					}
+
+					if($userId){
+						// add second name to the array
+			
+						// Calculate the start position
+						$pos					= strpos($match[1][0], trim($match[3][0]));
+
+						// Add to the array
+						$foundUsers[$userId]	= [$name, $match[1][1] + $pos];
+					}
+
+					if($userId || $userId2){
+						continue;
+					}
 				}
 			}
 		}	
 
-		if(!$userId){
+		// Still not found lets try copules first names without last name
+		if(!$userId && !$userId2){
 			$name	= trim($match[1][0]);
 
 			// check if mentioned as a couple without lastname
@@ -1571,45 +1594,47 @@ function findUsers(&$string, $skipHyperlinks){
 			}
 		}
 
-		if(!isset($foundUsers[$userId])){
-			// if we are adding with a couple
-			if(isset($match[2])){
-				$firstName				= trim($match[2][0]);
+		if(isset($foundUsers[$userId])){
+			continue;
+		}
 
-				// Make sure this is a couple and not just two people
-				$exploded	= explode($firstName, $match[1][0]);
+		// if we are adding with a couple
+		if(isset($match[2])){
+			$firstName	= trim($match[2][0]);
 
-				// check if this is an user as well
-				$extraName	= trim($exploded[0].$firstName);
+			// Make sure this is a couple and not just two people
+			$exploded	= explode($firstName, $match[1][0]);
 
-				$userId2	= array_search(strtolower($extraName), $displayNames);
+			// check if this is an user as well
+			$extraName	= trim($exploded[0].$firstName);
 
-				if($userId2){
-					// Add first name to the array
-					$foundUsers[$userId2]	= [$extraName, $match[1][1]];
+			$userId2	= array_search(strtolower($extraName), $displayNames);
 
-					// add second name to the array
-					
-					// Calculate the start position
-					$pos					= strpos($match[1][0], trim($match[3][0]));
+			if($userId2){
+				// Add first name to the array
+				$foundUsers[$userId2]	= [$extraName, $match[1][1]];
 
-					// Add to the array
-					$foundUsers[$userId]	= [$name, $match[1][1] + $pos];
-				}else{
-					// Make sure we only return the name, split on the first name, take the second portion and prepend the name
-					$str					= $firstName . explode($firstName, $match[1][0])[1];
-
-					// Calculate the updated string start position
-					$pos					= strlen($match[1][0])	- strlen($str);
-
-					// Add to the array
-					$foundUsers[$userId]	= [$str, $match[1][1] + $pos];
-				}
-
+				// add second name to the array
 				
+				// Calculate the start position
+				$pos					= strpos($match[1][0], trim($match[3][0]));
+
+				// Add to the array
+				$foundUsers[$userId]	= [$name, $match[1][1] + $pos];
 			}else{
-				$foundUsers[$userId]	= $match[1];
+				// Make sure we only return the name, split on the first name, take the second portion and prepend the name
+				$str					= $firstName . explode($firstName, $match[1][0])[1];
+
+				// Calculate the updated string start position
+				$pos					= strlen($match[1][0])	- strlen($str);
+
+				// Add to the array
+				$foundUsers[$userId]	= [$str, $match[1][1] + $pos];
 			}
+
+			
+		}else{
+			$foundUsers[$userId]	= $match[1];
 		}
 	}
 
