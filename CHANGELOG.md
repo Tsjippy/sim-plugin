@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- bug in finding usernames in long texts
 
 ### Updated
+
+## [5.4.0] - 2025-07-30
+
+
+### Fixed
+- bug in finding usernames in long texts
 
 ## [5.3.9] - 2025-07-25
 
