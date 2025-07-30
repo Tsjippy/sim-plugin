@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- bug in finding usernames in long texts
 
 ### Updated
 
