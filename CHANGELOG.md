@@ -6,14 +6,9 @@
 ### Changed
 
 ### Fixed
+- exclude template module from the list
 
 ### Updated
-
-## [5.4.1] - 2025-08-01
-
-
-### Fixed
-- exclude template module from the list
 
 ## [5.4.0] - 2025-07-30
 
