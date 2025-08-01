@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- exclude template module from the list
 
 ### Updated
 
