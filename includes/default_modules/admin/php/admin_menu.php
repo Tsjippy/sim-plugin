@@ -325,7 +325,7 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
 		return '';
 	}
 
-	$html	= apply_filters("sim_module_{$moduleSlug}_functions", '', $moduleSlug, $settings, $moduleName);
+	$html	= apply_filters("sim_module_{$moduleSlug}_functions", '', $settings, $moduleName);
 
 	if(empty($html)){
 		return '';
