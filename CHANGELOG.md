@@ -7,6 +7,7 @@
 
 ### Fixed
 - exclude template module from the list
+- sim_module_{}_functions filter
 
 ### Updated
 
