@@ -162,25 +162,25 @@ function getTemplateFile($template, $type, $name=''){
 			if(empty($name)){
 				$name	= $post->post_type;
 			}
-			$templateFile	= "$baseDir/{$name}s/templates/$type-$name.php";
+			$templateFile	= "$baseDir{$name}s/templates/$type-$name.php";
 			break;
 		case 'content':
 			if(empty($name)){
 				$name	= $post->post_type;
 			}
-			$templateFile	= "$baseDir/{$name}s/templates/$type.php";
+			$templateFile	= "$baseDir{$name}s/templates/$type.php";
 			break;
 		case 'archive':
 			if(empty($name)){
 				$name	= get_queried_object()->name.'s';
 			}
-			$templateFile	= "$baseDir/{$name}/templates/$type-$name.php";
+			$templateFile	= "$baseDir{$name}/templates/$type-$name.php";
 			break;
 		case 'taxonomy':
 			if(empty($name)){
 				$name	= get_queried_object()->taxonomy;
 			}
-			$templateFile	= "$baseDir/$name/templates/$type-$name.php";
+			$templateFile	= "$baseDir$name/templates/$type-$name.php";
 			break;
 		case 'page';
 			// if on the logged in homepage

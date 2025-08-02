@@ -23,8 +23,12 @@ function saveSettings(){
 
     //module was already activated
     if(isset($Modules[$moduleSlug])){
+
+        // Reactivate
+        if(isset($options['enable']) && !isset($Modules[$moduleSlug]['enable'])){
+            enableModule($moduleSlug, $options);
         //deactivate the module
-        if(!isset($options['enable'])){
+        }elseif(!isset($options['enable'])){
             unset($Modules[$moduleSlug]['enable']);
             do_action('sim_module_deactivated', $moduleSlug, $options);
         }elseif(!empty($options)){

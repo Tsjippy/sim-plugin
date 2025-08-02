@@ -40,18 +40,18 @@ function registerScripts($hook=''){
 	}
 	wp_register_script('sweetalert', $url, array(), '11.1.4', true);
 
+	//add main.js
+	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array( 'sweetalert'), STYLE_VERSION, true);
+
 	// purify library
 	wp_register_script('sim_purify', plugins_url('js/purify.min.js', __DIR__), array(), '2.3.8', true);
 
 	//Submit forms
 	wp_register_script('sim_user_select_script', plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), STYLE_VERSION, true);
-	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), STYLE_VERSION, true);
+	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array('sim_script'), STYLE_VERSION, true);
 
 	//table request shortcode
 	wp_register_script('sim_table_script', plugins_url('js/table.min.js', __DIR__), array('sortable', 'sim_formsubmit_script'), STYLE_VERSION, true);
-
-	//add main.js
-	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array( 'sweetalert'), STYLE_VERSION, true);
 
 	wp_localize_script( 'sim_script',
 		'sim',
