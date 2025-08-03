@@ -7,8 +7,8 @@
  * License: MIT
  */
 
-if ( ! class_exists( 'WP_Async_Task' ) ) {
-	abstract class WP_Async_Task {
+if ( ! class_exists( 'AsyncTask' ) ) {
+	abstract class AsyncTask {
 
 		/**
 		 * Constant identifier for a task that should be available to logged-in users
