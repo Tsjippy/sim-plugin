@@ -7,8 +7,8 @@
  * License: MIT
  */
 
-if ( ! class_exists( 'AsyncTask' ) ) {
-	abstract class AsyncTask {
+if ( ! class_exists( 'AsyncAction' ) ) {
+	abstract class AsyncAction {
 
 		/**
 		 * Constant identifier for a task that should be available to logged-in users
@@ -38,7 +38,7 @@ if ( ! class_exists( 'AsyncTask' ) ) {
 		 *
 		 * @var int
 		 */
-		protected $argument_count = 20;
+		protected $argumentCount = 20;
 
 		/**
 		 * Priority to fire intermediate action.
@@ -55,7 +55,7 @@ if ( ! class_exists( 'AsyncTask' ) ) {
 		/**
 		 * @var array
 		 */
-		protected $_body_data;
+		protected $_bodyData;
 
 		/**
 		 * Constructor to wire up the necessary actions
@@ -73,13 +73,13 @@ if ( ! class_exists( 'AsyncTask' ) ) {
 		 *
 		 * @param int $auth_level The authentication level to use (see above)
 		 */
-		public function __construct( $auth_level = self::BOTH ) {
+		public function __construct( $authLevel = self::BOTH ) {
 			if ( empty( $this->action ) ) {
 				throw new Exception( 'Action not defined for class ' . __CLASS__ );
 			}
 			add_action( $this->action, array( $this, 'launch' ), (int) $this->priority, (int) $this->argument_count );
 			if ( $auth_level & self::LOGGED_IN ) {
-				add_action( "admin_post_wp_async_$this->action", array( $this, 'handle_postback' ) );
+				add_action( "admin_post_wp_async_$this->action", array( $this, 'handlePostback' ) );
 			}
 			if ( $auth_level & self::LOGGED_OUT ) {
 				add_action( "admin_post_nopriv_wp_async_$this->action", array( $this, 'handle_postback' ) );
