@@ -2,14 +2,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- re-enable module
 
 ### Changed
 
 ### Fixed
-- exclude template module from the list
 
 ### Updated
+
+## [5.4.3] - 2025-08-04
+
+
+### Added
+- re-enable module
+- library module
+
+### Fixed
+- exclude template module from the list
 
 ## [5.4.0] - 2025-07-30
 
