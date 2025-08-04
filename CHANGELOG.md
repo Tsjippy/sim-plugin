@@ -3,6 +3,7 @@
 
 ### Added
 - re-enable module
+- library module
 
 ### Changed
 
