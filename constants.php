@@ -31,6 +31,7 @@ define(__NAMESPACE__.'\MODULELIST', [
     'forms',
     'frontendPosting',
     'heicToJpeg',
+    'library',
     'locations',
     'login',
     'mailchimp',
