@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- form reset
 
 ### Updated
+
+## [5.4.4] - 2025-08-04
+
+
+### Fixed
+- form reset
 
 ## [5.4.3] - 2025-08-04
 
