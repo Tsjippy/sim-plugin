@@ -17,9 +17,6 @@ export function formReset(form){
 	//show hidden file uploads
 	form.querySelectorAll('.upload_div.hidden').forEach(el=>el.classList.remove('hidden'));
 	
-	//Reset nice selects
-	form.querySelectorAll('select').forEach(el=>el._niceselect.update());
-	
 	//remove doc previews
 	document.querySelectorAll('.documentpreview .document').forEach(el=>el.remove());
 	

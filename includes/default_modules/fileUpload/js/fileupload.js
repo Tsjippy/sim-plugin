@@ -142,12 +142,12 @@ function fileUploadProgress(e){
 		var percentage = (current * 100)/max;
 		percentage = Math.round(percentage*10)/10
 		
-		document.getElementById("upload_progress").value 			= percentage;
-		document.getElementById("progress_percentage").textContent	= `   ${percentage}%`;
+		document.querySelectorAll("#upload_progress").forEach(el => el.value = percentage);
+		document.querySelectorAll("#progress_percentage").forEach(el =>el.textContent	= `   ${percentage}%`);
 
 		if(percentage >= 99){
 			//Remove progress barr
-			document.getElementById("progress-wrapper").remove();
+			document.getElementById("progress-wrapper").classList.add('hidden');
 			
 			// process completed
 			fileUploadWrap.querySelectorAll(".uploadmessage").forEach(el =>{
