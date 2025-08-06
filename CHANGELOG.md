@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- less niceselect code
 
 ### Fixed
 
