@@ -2,7 +2,7 @@ console.log("Main.js loaded");
 
 import { bind as NiceSelect } from 'nice-select2';
 import { displayMessage, showLoader, isMobileDevice, } from './imports.js';
-export { NiceSelect, displayMessage, showLoader, isMobileDevice };
+export { displayMessage, showLoader, isMobileDevice };
 
 export function changeUrl(target, secondTab=''){
 	let newParam	= target.dataset.param_val;
@@ -33,6 +33,12 @@ export function changeUrl(target, secondTab=''){
 	// switch tab when clicking on a change url link
 	if(target.tagName == 'A'){
 		switchTab();
+	}
+}
+
+export function attachNiceSelect(element, options = {searchable: true}){
+	if(element._niceselect == undefined){
+		element._niceselect	= NiceSelect(element, options);
 	}
 }
 
@@ -301,9 +307,7 @@ document.addEventListener("DOMContentLoaded",function() {
 
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
-		if(select._niceselect  == undefined){
-			NiceSelect(select, {searchable: true});
-		}
+		attachNiceSelect(select);
 	});
 
 	// hide mobile hidden
