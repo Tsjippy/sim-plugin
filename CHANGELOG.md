@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- updated styles version
 
 ### Fixed
 
