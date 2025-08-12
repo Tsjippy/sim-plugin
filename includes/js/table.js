@@ -1,4 +1,4 @@
-import { getFieldValue } from '/field_value.js';
+import { getFieldValue } from './field_value.js';
 
 let oldValue;
 
@@ -327,16 +327,17 @@ export function positionTable(){
 			//calculate if room for sidebar if one exists
 			if((width/window.innerWidth) < 0.7){
 				if(document.querySelector('.is-right-sidebar') != null){
-					diff	= (window.innerWidth*0.7) - width;
+					diff	= (window.innerWidth * 0.7) - width;
 				}
 			}else{
-				document.getElementById('primary').style.zIndex=1;
+				document.getElementById('primary').style.zIndex = 1;
+
 				//sidebar behind table
-				document.querySelectorAll('#right-sidebar').forEach(el=>el.style.zIndex=0);
+				document.querySelectorAll('#right-sidebar').forEach(el=>el.style.zIndex = 0);
 			}
 
 			//Table needs full screen width
-			if(diff<20){
+			if(diff < 20){
 				newX = 10;
 			//center the table
 			}else{
