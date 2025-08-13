@@ -150,6 +150,11 @@ input.wide{
 			bottom: 0;
 			top: unset;
 		}
+
+		@media (prefers-color-scheme: dark) {
+			background: darkgrey;
+		}
+
 	}
 }
 

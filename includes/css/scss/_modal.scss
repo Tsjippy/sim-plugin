@@ -53,7 +53,15 @@
 	}
 }
 
+@media (prefers-color-scheme: dark) {
+	div.modal{
+		background-color: rgba(0, 0, 0, .8);
 
+  		div.modal-content, a, .overview dt {
+    		background: darkgrey !important;
+		}
+	}
+}
 
 #vimeo_title{
 	width: 100%;
@@ -80,4 +88,3 @@
 		max-height: calc(100vh - 20%);
 	}
 }
-
