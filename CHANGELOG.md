@@ -6,6 +6,7 @@
 ### Changed
 - updated styles version
 - code layout
+- background color of modals in dark mode
 
 ### Fixed
 
