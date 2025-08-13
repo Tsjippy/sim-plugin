@@ -4,13 +4,18 @@
 ### Added
 
 ### Changed
-- updated styles version
-- code layout
-- background color of modals in dark mode
 
 ### Fixed
 
 ### Updated
+
+## [5.4.6] - 2025-08-13
+
+
+### Changed
+- updated styles version
+- code layout
+- background color of modals in dark mode
 
 ## [5.4.5] - 2025-08-06
 
