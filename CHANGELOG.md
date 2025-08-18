@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- removed [...] from excerpt
 
 ### Fixed
 
