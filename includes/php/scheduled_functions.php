@@ -57,7 +57,7 @@ function scheduleTask($taskName, $recurrence){
 //Adds extra schedule recurrences
 add_filter( 'cron_schedules', __NAMESPACE__.'\addCronSchedule');
 function addCronSchedule( $schedules ) {
-	// Adds once monthly to the existing schedules.
+	// Adds once every 15 minutes to the existing schedules.
 	$schedules['quarterly'] = array(
 		'interval'	=> 900,
 		'display' 	=> __( 'Once every 15 minutes', 'sim-plugin')
@@ -86,5 +86,6 @@ function addCronSchedule( $schedules ) {
 		'interval' => 31557600,
 		'display' => __( 'Once every year', 'sim-plugin' )
 	);
-   return $schedules;
+
+	return $schedules;
 }
