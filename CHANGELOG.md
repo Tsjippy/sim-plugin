@@ -5,6 +5,7 @@
 
 ### Changed
 - removed [...] from excerpt
+- comment
 
 ### Fixed
 
