@@ -114,7 +114,7 @@ function customExcerpt($excerpt, $post=null) {
 		if ( count($words) > $excerptLength ) {
 			array_pop($words);
 			$excerpt = implode(' ', $words);
-			$excerpt = "<div class='excerpt'>$excerpt [...]</div>$excerptMore";
+			$excerpt = "<div class='excerpt'>$excerpt </div>$excerptMore";
 		} else {
 			$excerpt = implode(' ', $words);
 		}
