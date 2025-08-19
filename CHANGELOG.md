@@ -6,6 +6,7 @@
 ### Changed
 - removed [...] from excerpt
 - comment
+- simply excerpt_more filter
 
 ### Fixed
 
