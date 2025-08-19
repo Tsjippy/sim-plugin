@@ -107,8 +107,7 @@ function customExcerpt($excerpt, $post=null) {
 		$excerptWordCount 	= 45;
 		$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount);
 		 
-		$excerptEnd			= '[...]';
-		$excerptMore 		= apply_filters('excerpt_more', ' ' . $excerptEnd);
+		$excerptMore 		= apply_filters('excerpt_more', ' [...]');
 		 
 		$words = preg_split("/[\n\r\t ]+/", $excerpt, $excerptLength + 1, PREG_SPLIT_NO_EMPTY);
 		if ( count($words) > $excerptLength ) {
