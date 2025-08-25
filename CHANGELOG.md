@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- listen to return keys presses for data list inputs
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [5.4.8] - 2025-08-25
+
+
+### Added
+- listen to return keys presses for data list inputs
 
 ## [5.4.7] - 2025-08-25
 
