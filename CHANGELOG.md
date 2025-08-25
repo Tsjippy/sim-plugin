@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- click on selected multi text will edit
 
 ### Changed
 
