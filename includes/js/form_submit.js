@@ -75,7 +75,26 @@ document.addEventListener('click', (ev)=>{
 		// add button clicked
 		doneTyping(ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.datalistinput`));
 	}
-})
+});
+
+//Add a keyboard listener
+document.addEventListener("keyup", function(event){
+	if (
+		['Enter', 'NumpadEnter'].includes(event.key) && 
+		keysPressed.Shift == undefined && 
+		document.activeElement.matches('.datalistinput')
+	) {
+		doneTyping(document.activeElement);
+	}
+
+	delete keysPressed[event.key];
+});
+
+// Keep track of which keys are pressed
+let keysPressed = {};
+document.addEventListener('keydown', (event) => {
+   keysPressed[event.key] = true;
+});
 
 function doneTyping(el) {
 	el.closest(`.multi-text-input-wrapper`).querySelector(`.add-list-selection`).classList.add('hidden');
