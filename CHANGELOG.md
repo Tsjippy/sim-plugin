@@ -9,6 +9,7 @@
 - simply excerpt_more filter
 
 ### Fixed
+- multi text inputs without list attached to it
 
 ### Updated
 
