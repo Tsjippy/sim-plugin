@@ -4,14 +4,21 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.4.7] - 2025-08-25
+
+
+### Changed
 - removed [...] from excerpt
 - comment
 - simply excerpt_more filter
 
 ### Fixed
 - multi text inputs without list attached to it
-
-### Updated
 
 ## [5.4.6] - 2025-08-13
 
