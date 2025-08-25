@@ -59,7 +59,7 @@ document.addEventListener('input', (ev)=>{
 
 	if(ev.target.matches(`.datalistinput.multiple`)){
 		// if the value is found in the datalist
-		if(ev.target.list.querySelector(`[value="${ev.target.value}"]`) != null){
+		if(ev.target.list != null && ev.target.list.querySelector(`[value="${ev.target.value}"]`) != null){
 			doneTyping(ev.target);
 		}else{
 			// Show the add button
@@ -90,8 +90,12 @@ function doneTyping(el) {
 	let html	= `<button type="button" class="small remove-list-selection"><span class='remove-list-selection'>×</span></button>`;
 
 	// find the option in the datalist
-	let option	= el.list.querySelector(`[value="${el.value}"]`);
-	let value,text;
+	let option, value, text;
+
+	if(el.list != null){
+		option	= el.list.querySelector(`[value="${el.value}"]`);
+	}
+
 	if(option != null && option.dataset.value != null){
 		value	= option.dataset.value;
 		text	= el.value
@@ -99,11 +103,11 @@ function doneTyping(el) {
 		value	= el.value;
 		text	= el.value
 	}
+
 	html   += `<input type='hidden' name='${el.id}[]' value='${value}'>`;
 	html   += `<span class='selectedname'>${text}</span>`
 
 	li.innerHTML	= html;
-
 
 	el.closest('.optionwrapper').querySelector('.listselectionlist').appendChild(li);
 
