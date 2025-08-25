@@ -69,7 +69,21 @@ document.addEventListener('input', (ev)=>{
 });
 
 document.addEventListener('click', (ev)=>{
-	if(ev.target.matches(`.remove-list-selection`)){
+	if(ev.target.matches('.selectedname')){
+		ev.target.closest('.optionwrapper').querySelector(`input[type='text']`).value	= ev.target.closest(`.listselection`).querySelector(`input`).value;
+		
+		// Show the add button
+		ev.target.closest(`.optionwrapper`).querySelector(`.add-list-selection`).classList.remove('hidden');
+		
+		ev.target.closest('.listselection').remove();
+
+		ev.preventDefault();
+
+		ev.stopPropagation();
+
+		ev.stopImmediatePropagation();
+	}
+	else if(ev.target.matches(`.remove-list-selection`)){
 		ev.target.closest('.listselection').remove();
 	}else if(ev.target.matches(`.add-list-selection`)){
 		// add button clicked
