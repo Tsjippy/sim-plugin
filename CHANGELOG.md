@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- listen to return keys presses for data list inputs
 
 ### Changed
 
