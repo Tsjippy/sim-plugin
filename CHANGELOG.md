@@ -9,6 +9,12 @@
 
 ### Updated
 
+## [5.4.9] - 2025-08-25
+
+
+### Added
+- click on selected multi text will edit
+
 ## [5.4.8] - 2025-08-25
 
 
