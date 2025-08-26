@@ -145,7 +145,7 @@ function displayChildren($attributes) {
 	if(!$parentId){
 		if(isset($attributes['postid']) && is_numeric($attributes['postid'])){
 			$parentId	= $attributes['postid'];
-		}elseif ( function_exists( 'get_current_screen' ) && get_current_screen()->is_block_editor()){
+		}elseif ( function_exists( 'get_current_screen' ) && get_current_screen() != null && get_current_screen()->is_block_editor()){
 			return 'Here the children will be shown';
 		}else{
 			return '';
