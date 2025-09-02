@@ -32,7 +32,7 @@ function saveSettings(){
             unset($Modules[$moduleSlug]['enable']);
             do_action('sim_module_deactivated', $moduleSlug, $options);
         }elseif(!empty($options)){
-            $Modules[$moduleSlug]	= apply_filters("sim_module_{$moduleSlug}_after_save", $options, $Modules[$moduleSlug], $moduleSlug);
+            $Modules[$moduleSlug]	= apply_filters("sim_module_{$moduleSlug}_after_save", $options, $Modules[$moduleSlug]);
         }
     //module needs to be activated
     }else{
@@ -70,8 +70,9 @@ function enableModule($slug, $options=['enable'=>'on']){
     foreach ($files as $file) {
         require_once($file);
     }
-    do_action('sim_module_activated', $slug, $options);
-    $Modules[$slug]	= apply_filters("sim_module_{$moduleSlug}_after_save", $options, $Modules[$slug], $slug);
+
+    do_action("sim_module_{$slug}_activated", $options);
+    $Modules[$slug]	= apply_filters("sim_module_{$slug}_after_save", $options, $Modules[$slug]);
 
     update_option('sim_modules', $Modules);
 }
