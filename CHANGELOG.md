@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- made activation hook include module name
 
 ### Fixed
 - bug with block screen
