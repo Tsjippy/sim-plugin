@@ -4,12 +4,20 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.5.0] - 2025-09-22
+
+
+### Changed
 - made activation hook include module name
 
 ### Fixed
 - bug with block screen
-
-### Updated
+- nice selects
 
 ## [5.4.9] - 2025-08-25
 
