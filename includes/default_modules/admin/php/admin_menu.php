@@ -505,7 +505,10 @@ function mainMenu(){
 	<div id='release_modal' class='modal hidden'>
 		<div class="modal-content" style='width:500px;'>
 			<span id="modal_close" class="close">&times;</span>
-			<div class='loadergif_wrapper'><img class='loadergif' src='<?php echo SIM\LOADERIMAGEURL;?>' width=50 loading='lazy'>Loading changelog...</div>
+			<div class='loadergif_wrapper'>
+				<img class='loadergif' src='<?php echo SIM\LOADERIMAGEURL;?>' width=50 loading='lazy'>
+				Loading changelog...
+			</div>
 			<div class="content"></div>
 		</div>
 	</div>
