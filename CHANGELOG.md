@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug with block screen
+- nice selects
 
 ### Updated
 
