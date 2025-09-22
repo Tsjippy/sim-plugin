@@ -37,8 +37,8 @@ export function changeUrl(target, secondTab=''){
 }
 
 export function attachNiceSelect(element, options = {searchable: true}){
-	if(element._niceselect == undefined){
-		element._niceselect	= NiceSelect(element, options);
+	if(element._niceSelect == undefined){
+		NiceSelect(element, options);
 	}
 }
 

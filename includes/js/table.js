@@ -31,7 +31,7 @@ function addInputEventListeners(cell){
 			}
 		});
 		
-		if(inputnode.type == 'select-one' && inputnode._niceselect == undefined){
+		if(inputnode.type == 'select-one' && inputnode._niceSelect == undefined){
 			Main.attachNiceSelect(inputnode);
 		}
 		

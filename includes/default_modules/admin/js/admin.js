@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
-        if(select._niceselect  == undefined){
+        if(select._niceSelect  == undefined){
 		    NiceSelect(select, {searchable: true});
         }
 	});
