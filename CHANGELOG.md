@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- cleaner admin js
 
 ### Fixed
 
 ### Updated
+
+## [5.5.1] - 2025-09-23
+
+
+### Changed
+- cleaner admin js
 
 ## [5.5.0] - 2025-09-22
 
