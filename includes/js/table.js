@@ -357,7 +357,37 @@ export function positionTable(){
 	});
 }
 
-document.addEventListener("click", event=>{
+const hideColumn	= async (target) => {
+	if(target.tagName == 'SPAN'){
+		target = target.querySelector('img');
+	}
+
+	// Table itself
+	if(target.parentNode.matches('th')){
+		let cell 	= target.parentNode;
+
+		// Hide the column
+		var table		= cell.closest('table');
+		var tableRows	= table.rows;
+		for (const element of tableRows) {
+			element.cells[cell.cellIndex].classList.add('hidden')
+		}
+
+		//show the reset button
+		cell.closest('.table-wrapper').querySelectorAll('.reset-col-vis').forEach(el => el.classList.remove('hidden'));
+	}
+}
+
+async function showHiddenColumns(target){
+	//hiden the reset button
+	target.closest('.table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
+
+	// Show the columns again
+	let table		= target.closest('.form.table-wrapper').querySelector('table');
+	table.querySelectorAll('th.hidden, td.hidden').forEach(el=>el.classList.remove('hidden'));
+}
+
+document.addEventListener("click", event => {
 	let target = event.target;
 	
 	if(target.tagName == 'TH'){
@@ -376,6 +406,16 @@ document.addEventListener("click", event=>{
 		showFullscreen(target);
 	}else if(target.matches('.close.fullscreenbutton')){
 		closeFullscreen(target);
+	}
+
+	//Hide column
+	else if(target.classList.contains('visibilityicon')){
+		hideColumn(target);
+	}
+
+	// Show all columns again
+	else if(target.matches('.reset-col-vis')){
+		showHiddenColumns(target);
 	}
 });
 

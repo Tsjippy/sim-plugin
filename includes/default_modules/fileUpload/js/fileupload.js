@@ -89,7 +89,8 @@ async function fileUpload(target){
 			await uploadVideo(file);
 		// file to big
 		}else if(file.size > sim.maxFileSize){
-			Main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
+			Main.displayMessage('File too big, max file size is ' + (parseInt(sim.maxFileSize)/1024/1024) + 'MB' ,'error');
+			
 			target.value = '';
 			return;
 		}else if(type == 'image' && target.matches('.should-edit')){
