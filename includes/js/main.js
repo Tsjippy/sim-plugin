@@ -259,6 +259,23 @@ export async function waitForInternet(){
 	}
 }
 
+export function adjustLoaderImageSize(loaderWrapper, size){
+	let loader			= loaderWrapper.querySelector('.loader');
+	let factor 			= size / parseInt(loader.style.height);
+
+	loaderWrapper.style.height	= (factor * parseInt(loaderWrapper.style.height)) + 'px';
+
+	loader.style.height	= (factor * parseInt(loader.style.height)) + 'px';
+	loader.style.width	= (factor * parseInt(loader.style.width)) + 'px';
+
+	loader.querySelectorAll('.dot').forEach( dot => {
+		dot.style.height	= (factor * parseInt(dot.style.height)) + 'px';
+		dot.style.width		= (factor * parseInt(dot.style.width)) + 'px';
+		dot.style.top		= (factor * parseInt(dot.style.top)) + 'px';
+		dot.style.left		= (factor * parseInt(dot.style.left)) + 'px';
+	});
+}
+
 function positionSubSubMenus(){
 	const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 

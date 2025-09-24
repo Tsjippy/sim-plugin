@@ -91,7 +91,7 @@ window.addEventListener("click", async event => {
         
         let response    = await fetchRestApi('get-changelog', formData);
 
-        document.querySelector('#release_modal .loadergif_wrapper').classList.add('hidden');
+        document.querySelector('#release_modal .loader_wrapper').classList.add('hidden');
 
         document.querySelector('#release_modal .content').innerHTML   = response;
         document.querySelector('#release_modal .content').classList.remove('hidden');
@@ -99,6 +99,6 @@ window.addEventListener("click", async event => {
 });
 
 document.querySelectorAll('#release_modal').forEach(el=>el.addEventListener('modalclosed', ev=>{
-    ev.target.querySelector('.loadergif_wrapper').classList.remove('hidden');
+    ev.target.querySelector('.loader_wrapper').classList.remove('hidden');
     ev.target.querySelector('.content').classList.add('hidden');
 }));

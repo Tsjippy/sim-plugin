@@ -18,7 +18,7 @@ function loadAdminAssets($hook) {
 		array(
 			'ajaxUrl' 		=> admin_url( 'admin-ajax.php' ),
 			"userId"		=> wp_get_current_user()->ID,
-			'loadingGif' 	=> SIM\LOADERIMAGEURL,
+			'loaderHtml' 	=> SIM\LOADERIMAGE,
 			'baseUrl' 		=> get_home_url(),
 			'maxFileSize'	=> wp_max_upload_size(),
 			'restNonce'		=> wp_create_nonce('wp_rest'),

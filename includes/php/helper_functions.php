@@ -1063,7 +1063,7 @@ function arraySearchRecursive($needle, $haystack, $strict=true, $stack=array()) 
 function addSaveButton($elementId, $buttonText, $extraClass = ''){
 	$html = "<div class='submit_wrapper'>";
 		$html .= "<button type='button' class='button form_submit $extraClass' name='$elementId'>$buttonText</button>";
-		$html .= "<img loading='lazy' class='loadergif hidden' src='".LOADERIMAGEURL."'>";
+		$html .= loaderImage(50, '', true);
 	$html .= "</div>";
 	
 	return $html;
@@ -1853,3 +1853,121 @@ add_action('init', __NAMESPACE__.'\processImagesAction');
 function processImagesAction() {
 	add_action( 'process_images_action', __NAMESPACE__.'\processImages' );
 }
+
+function loaderImage($size=50, $text='', $hidden=false){
+	if(!is_numeric($size) || $size < 20){
+		return false;
+	}
+
+	$factor		= $size / 100;
+	$dotSize	= $factor * 16;
+
+	ob_start();
+	?>
+	<style>
+		.loader_wrapper {
+			display: 			flex;
+			justify-content:	center;
+			align-items: 		center;
+		}
+
+		.loader {
+			position: 			relative;
+		}
+
+		.dot {
+			position: 			absolute;
+			border-radius: 		50%;
+			background-color: #8a1a0e;
+			animation: 			pulse 1.2s infinite;
+		}
+
+		.loader_text {
+			margin-left: 		10px;
+		}
+
+		@keyframes pulse {
+		0% {
+			transform: scale(1);
+			background-color: #8a1a0e;
+		}
+		50% {
+			transform: scale(1);
+			background-color: #8a1a0e;
+		}
+		75% {
+			transform: scale(1.8);
+			background-color: #bd2919;
+		}
+		100% {
+			transform: scale(1);
+			background-color: #8a1a0e;
+		}
+	}
+	</style>
+
+	<div class='loader_wrapper <?php if($hidden){echo 'hidden';}?>' style='height: <?php echo $factor * 100 + 10; ?>px;'>
+		<div class="loader" style='width: <?php echo $factor * 100; ?>px; height: <?php echo $factor * 100; ?>px; margin-top:3px'>
+			<?php
+			for ($i = 0; $i < 8; $i++){
+				switch ($i) {
+					case 0:
+						$top	= 0;
+						$left	= $factor * 44;
+						$delay	= 0;
+						break;
+					case 1:
+						$top	= $factor * 15;
+						$left	= $factor * 78;
+						$delay	= 0.15;
+						break;
+					case 2:
+						$top	= $factor * 44;
+						$left	= $factor * 88;
+						$delay	= 0.3;
+						break;
+					case 3:
+						$top	= $factor * 75;
+						$left	= $factor * 75;
+						$delay	= 0.45;
+						break;
+					case 4:
+						$top	= $factor * 88;
+						$left	= $factor * 44;
+						$delay	= 0.6;
+						break;
+					case 5:
+						$top	= $factor * 75;
+						$left	= $factor * 15;
+						$delay	= 0.75;
+						break;
+					case 6:
+						$top	= $factor * 44;
+						$left	= 0;
+						$delay	= 0.9;
+						break;
+					case 7:
+						$top	= $factor * 15;
+						$left	= $factor * 15;
+						$delay	= 1.05;
+						break;
+					default:
+						$top	= $factor * 15;
+						$left	= $factor * 15;
+						$delay	= 1.05;
+						break;
+				}
+
+				echo "<div class='dot' style='width: {$dotSize}px; height: {$dotSize}px; top: {$top}px; left: {$left}px; animation-delay: {$delay}s;'></div>";
+			}
+			?>
+		</div>
+
+		<span class='loader_text'><?php echo $text;?></span>
+	</div>
+
+	<?php
+
+	return ob_get_clean();
+}
+define(__NAMESPACE__ .'\LOADERIMAGE', loaderImage());

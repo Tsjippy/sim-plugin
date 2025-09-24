@@ -8,9 +8,9 @@ let datasetString		= '';
 
 function createProgressBar(target){
 	//Show loading gif
-	target.closest('.upload_div').querySelectorAll(".loadergif_wrapper").forEach(loader =>{
+	target.closest('.upload_div').querySelectorAll(".loader_wrapper").forEach(loader =>{
 		loader.classList.remove('hidden');
-		loader.querySelectorAll(".uploadmessage").forEach(el =>{
+		loader.querySelectorAll(".loader_text").forEach(el =>{
 			el.textContent = "Preparing upload";
 			el.classList.add('upload-message');
 		});
@@ -33,7 +33,7 @@ function addPreview(link, value){
 	<div class='document'>
 		<input type='hidden' name='${name}' value='${value}' data-pending='true'>
 		${link}
-		<img class="remove_document_loader hidden" src="${sim.loadingGif}" style="height:40px;">
+		${sim.loaderHtml}
 	</div>`;
 
 	// insert html
@@ -129,7 +129,7 @@ async function fileUpload(target){
 	if (totalFiles > 1){
 		s = "s";
 	}
-	target.closest('.upload_div').querySelector('.uploadmessage').textContent = "Uploading document"+s;
+	target.closest('.upload_div').querySelector('.loader_text').textContent = "Uploading document"+s;
 	document.getElementById('progress-wrapper').classList.remove('hidden');
 
 	request.send(formData);
@@ -151,7 +151,7 @@ function fileUploadProgress(e){
 			document.getElementById("progress-wrapper").classList.add('hidden');
 			
 			// process completed
-			fileUploadWrap.querySelectorAll(".uploadmessage").forEach(el =>{
+			fileUploadWrap.querySelectorAll(".loader_text").forEach(el =>{
 				//Change message text
 				if (totalFiles > 1){
 					el.textContent = "Processing documents";
@@ -178,7 +178,7 @@ function readyStateChanged(e){
 		}
 		
 		//Hide loading gif
-		document.querySelectorAll(".loadergif_wrapper").forEach(
+		document.querySelectorAll(".loader_wrapper").forEach(
 			function(loader){
 				loader.classList.add('hidden');
 			}
@@ -318,7 +318,7 @@ async function uploadVideo(file){
 		document.getElementById("progress-wrapper").remove();
 
 		// Hide the loader
-		document.querySelector('.loadergif_wrapper:not(.hidden)').classList.add('hidden');
+		document.querySelector('.loader_wrapper:not(.hidden)').classList.add('hidden');
 
 		return false;
 	}
@@ -367,7 +367,7 @@ async function uploadVideo(file){
 		var preview		= addPreview(link, postId);
 
 		// Hide the loader
-		document.querySelector('.loadergif_wrapper:not(.hidden)').classList.add('hidden');
+		document.querySelector('.loader_wrapper:not(.hidden)').classList.add('hidden');
 
 		Main.displayMessage(`The file ${file.name} has been uploaded succesfully.`,'success',true);
 		

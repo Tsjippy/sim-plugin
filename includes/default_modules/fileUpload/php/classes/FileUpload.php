@@ -212,7 +212,7 @@ class FileUpload{
 
 					$this->html .= "<input type='hidden' name='fileupload[updatemeta]' 		value='{$this->updatemeta}'>";
 					
-					$this->html .= "<div class='loadergif_wrapper hidden'><span class='uploadmessage'></span><img class='loadergif' src='".SIM\LOADERIMAGEURL."' loading='lazy'></div>";
+					$this->html .= SIM\loaderImage(50, '', true);
 				$this->html .= "</div>";
 			$this->html .= "</div>";
 		$this->html .= "</div>";
@@ -297,7 +297,7 @@ class FileUpload{
 		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
 		$this->html .= "<button type='button' class='remove_document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
-		$this->html .= "<img class='remove_document_loader hidden' src='".SIM\LOADERIMAGEURL."' loading='lazy' style='height:40px;' >";
+		$this->html .= SIM\loaderImage(40);
 		$this->html .= "</div>";
 
 		return true;

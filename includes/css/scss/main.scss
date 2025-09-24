@@ -6,13 +6,6 @@
 @use 'table';
 @use '../../js/node_modules/nice-select2/src/scss/nice-select2';
 
-/* Size of the loading gif */
-.loadergif{
-	width:7%; 
-	max-height:45px; 
-	margin:20px 0px 0px 10px;
-	min-width: 50px;
-}
 
 .submit_wrapper{
 	margin: 20px 0px;

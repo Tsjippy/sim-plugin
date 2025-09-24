@@ -162,18 +162,8 @@ export function showLoader(element, replace=true, message=''){
 		return;
 	}
 	
-	let wrapper	= document.createElement("DIV");
-	wrapper.setAttribute('class','loaderwrapper');
-	if(message != ''){
-		wrapper.innerHTML	= message;
-	}
-
-	let loader	= document.createElement("IMG");
-	loader.setAttribute('class','loadergif');
-	loader.setAttribute("src", sim.loadingGif);
-	loader.style["height"]= "30px";
-
-	wrapper.insertAdjacentElement('beforeEnd', loader);
+	let wrapper	        = document.createElement("DIV");
+	wrapper.innerHTML   = sim.loaderHtml;
 	if(replace){
 		element.parentNode.replaceChild(wrapper, element);
 	}else{

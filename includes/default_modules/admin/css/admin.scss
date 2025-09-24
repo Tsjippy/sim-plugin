@@ -1,5 +1,4 @@
 @use '../../../css/scss/global' as *;
-@use '../../../css/scss/nice-select2' as *;
 @use '../../../css/scss/table' as *;
 @use '../../../css/scss/modal' as *;
 
@@ -105,4 +104,8 @@ table{
 .tablink.active{
     background: firebrick;
     color: white;
+}
+
+.hidden{
+	display:none !important;
 }
