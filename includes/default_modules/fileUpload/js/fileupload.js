@@ -29,12 +29,16 @@ function createProgressBar(target){
 function addPreview(link, value){
 	let name		= fileUploadWrap.querySelector('.file_upload').name.replace('_files','');
 
+	let loader	= Main.showLoader(null, false, 50, '', true);
+
 	let html = `
 	<div class='document'>
 		<input type='hidden' name='${name}' value='${value}' data-pending='true'>
 		${link}
-		${sim.loaderHtml}
+		${loader}
 	</div>`;
+
+	loader.remove();
 
 	// insert html
 	fileUploadWrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html);

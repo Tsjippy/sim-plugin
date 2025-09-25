@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const STYLE_VERSION		= '7.1.10';
+const STYLE_VERSION		= '7.1.11';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
@@ -58,7 +58,6 @@ function registerScripts($hook=''){
 		array(
 			'ajaxUrl' 		=> admin_url( 'admin-ajax.php' ),
 			"userId"		=> wp_get_current_user()->ID,
-			'loaderHtml' 	=> LOADERIMAGE,
 			'baseUrl' 		=> get_home_url(),
 			'maxFileSize'	=> wp_max_upload_size(),
 			'restNonce'		=> wp_create_nonce('wp_rest'),

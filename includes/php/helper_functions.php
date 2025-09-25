@@ -1855,7 +1855,7 @@ function processImagesAction() {
 }
 
 function loaderImage($size=50, $text='', $hidden=false){
-	if(!is_numeric($size) || $size < 20){
+	if(!is_numeric($size)){
 		return false;
 	}
 
@@ -1864,50 +1864,8 @@ function loaderImage($size=50, $text='', $hidden=false){
 
 	ob_start();
 	?>
-	<style>
-		.loader_wrapper {
-			display: 			flex;
-			justify-content:	center;
-			align-items: 		center;
-		}
-
-		.loader {
-			position: 			relative;
-		}
-
-		.dot {
-			position: 			absolute;
-			border-radius: 		50%;
-			background-color: #8a1a0e;
-			animation: 			pulse 1.2s infinite;
-		}
-
-		.loader_text {
-			margin-left: 		10px;
-		}
-
-		@keyframes pulse {
-		0% {
-			transform: scale(1);
-			background-color: #8a1a0e;
-		}
-		50% {
-			transform: scale(1);
-			background-color: #8a1a0e;
-		}
-		75% {
-			transform: scale(1.8);
-			background-color: #bd2919;
-		}
-		100% {
-			transform: scale(1);
-			background-color: #8a1a0e;
-		}
-	}
-	</style>
-
 	<div class='loader_wrapper <?php if($hidden){echo 'hidden';}?>' style='height: <?php echo $factor * 100 + 10; ?>px;'>
-		<div class="loader" style='width: <?php echo $factor * 100; ?>px; height: <?php echo $factor * 100; ?>px; margin-top:3px'>
+		<div class="loader" style='width: <?php echo $factor * 100; ?>px; height: <?php echo $factor * 100; ?>px; '>
 			<?php
 			for ($i = 0; $i < 8; $i++){
 				switch ($i) {

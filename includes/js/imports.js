@@ -157,14 +157,94 @@ export function displayMessage(message, icon, autoclose=false, no_ok=false, time
 	}
 }
 
-export function showLoader(element, replace=true, message=''){
-	if(element == null){
+export function showLoader(element, replace=true, size=50, text='', returnHtml=false){
+
+    if(element == null && returnHtml == false){
 		return;
 	}
-	
-	let wrapper	        = document.createElement("DIV");
-	wrapper.innerHTML   = sim.loaderHtml;
-	if(replace){
+
+    if(!Number.isInteger(size)){
+        return false;
+    }
+
+    let factor		= size / 100;
+
+    let wrapper		        = document.createElement('div');
+    wrapper.style.height	= (factor * 100 + 10) + 'px';
+    wrapper.classList.add('loader_wrapper');
+
+    let loader		    = document.createElement('div');
+    loader.style.width	= (factor * 100) + 'px';
+    loader.style.height	= (factor * 100) + 'px';
+    loader.classList.add('loader');
+
+    wrapper.appendChild(loader);
+
+    for(let i = 0; i < 8; i++){
+        let dot	= document.createElement('div');
+        dot.classList.add('dot');
+        dot.style.width		= (factor * 16) + 'px';
+        dot.style.height	= (factor * 16) + 'px';	
+
+        switch (i) {
+            case 0:
+                dot.style.top				= 0;
+                dot.style.left				= (factor * 44) + 'px';
+                break;
+            case 1:
+                dot.style.top				= (factor * 15) + 'px';
+                dot.style.left				= (factor * 78) + 'px';
+                dot.style.animationDelay	= '0.15s';	
+                break;
+            case 2:
+                dot.style.top				= (factor * 44) + 'px';
+                dot.style.left				= (factor * 88) + 'px';
+                dot.style.animationDelay	= '0.3s';
+                break;
+            case 3:
+                dot.style.top				= (factor * 75) + 'px';
+                dot.style.left				= (factor * 75) + 'px';
+                dot.style.animationDelay	= '0.45s';
+                break;
+            case 4:
+                dot.style.top				= (factor * 88) + 'px';
+                dot.style.left				= (factor * 44) + 'px';
+                dot.style.animationDelay	= '0.6s';
+                break;
+            case 5:
+                dot.style.top				= (factor * 75) + 'px';
+                dot.style.left				= (factor * 15) + 'px';
+                dot.style.animationDelay	= '0.75s';
+                break;
+            case 6:
+                dot.style.top				= (factor * 44) + 'px';
+                dot.style.left				= 0;
+                dot.style.animationDelay	= '0.9s';
+                break;
+            case 7:
+                dot.style.top				= (factor * 15) + 'px';
+                dot.style.left				= (factor * 15) + 'px';
+                dot.style.animationDelay	= '1.05s';
+                break;
+            default:
+                dot.style.top				= 0;
+                dot.style.left				= 0;
+                break;
+        }
+
+        loader.appendChild(dot);
+    }
+
+    let span	= document.createElement('span');
+    span.classList.add('loader_text');
+    span.textContent	= text;
+    wrapper.appendChild(span);
+
+    if(returnHtml){
+        return wrapper.outerHTML;
+    }
+
+    if(replace){
 		element.parentNode.replaceChild(wrapper, element);
 	}else{
         let el  = element.nextElementSibling;
