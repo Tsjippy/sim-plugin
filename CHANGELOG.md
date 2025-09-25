@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- upload loader
 
 ### Updated
+
+## [5.5.4] - 2025-09-25
+
+
+### Fixed
+- upload loader
 
 ## [5.5.3] - 2025-09-25
 
