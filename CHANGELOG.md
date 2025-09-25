@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- js generated loader
 
 ### Fixed
 
 ### Updated
+
+## [5.5.3] - 2025-09-25
+
+
+### Changed
+- js generated loader
 
 ## [5.5.2] - 2025-09-24
 
