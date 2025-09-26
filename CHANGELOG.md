@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- min-width for modal content
 
 ### Fixed
 
