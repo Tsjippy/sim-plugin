@@ -19,7 +19,7 @@
 }
 
 /* Hide hidden elements*/
-.frontendform.hidden, .hidden, .stephidden{
+.frontendform.hidden, .hidden, .stephidden, .mobile-hidden{
 	display:none !important;
 }
 
@@ -129,10 +129,6 @@ input.wide{
 }
 
 @media screen and (max-width: $mobilewidth){
-	.mobile-hidden{
-		display: none;
-	}
-
 	.mobile-sticky{
 		z-index: 99999999;
 		position: sticky;
