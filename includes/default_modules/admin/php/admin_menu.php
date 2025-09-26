@@ -535,7 +535,7 @@ function mainMenu(){
 				}
 
 				// Skip the update check if just updated
-				elseif(empty($_GET['update']) || $_GET['update'] != $slug){
+				elseif(empty($_GET['update']) || ($_GET['update'] != $slug && $_GET['update'] != 'all')){
 					// Check if update available
 					$force		= false;
 					if(!empty($_GET['force'])){
