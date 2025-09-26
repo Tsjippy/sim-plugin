@@ -30,9 +30,9 @@ window.addEventListener("click", async event => {
         
     //add element
     if(target.matches('.add')){
-        let newNode = copyFormInput(target.closest(".clone_div"));
+        let newNode = copyFormInput(target.closest(".clone-div"));
 
-        fixNumbering(target.closest('.clone_divs_wrapper'));
+        fixNumbering(target.closest('.clone-divs-wrapper'));
 
         //add tinymce's can only be done when node is inserted and id is unique
         newNode.querySelectorAll('.wp-editor-area').forEach(el =>{
@@ -91,14 +91,14 @@ window.addEventListener("click", async event => {
         
         let response    = await fetchRestApi('get-changelog', formData);
 
-        document.querySelector('#release_modal .loader_wrapper').classList.add('hidden');
+        document.querySelector('#release-modal .loader-wrapper').classList.add('hidden');
 
-        document.querySelector('#release_modal .content').innerHTML   = response;
-        document.querySelector('#release_modal .content').classList.remove('hidden');
+        document.querySelector('#release-modal .content').innerHTML   = response;
+        document.querySelector('#release-modal .content').classList.remove('hidden');
     }
 });
 
-document.querySelectorAll('#release_modal').forEach(el=>el.addEventListener('modalclosed', ev=>{
-    ev.target.querySelector('.loader_wrapper').classList.remove('hidden');
+document.querySelectorAll('#release-modal').forEach(el=>el.addEventListener('modalclosed', ev=>{
+    ev.target.querySelector('.loader-wrapper').classList.remove('hidden');
     ev.target.querySelector('.content').classList.add('hidden');
 }));

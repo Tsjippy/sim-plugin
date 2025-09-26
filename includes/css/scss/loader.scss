@@ -1,6 +1,6 @@
 @use 'global' as *;
 
-.loader_wrapper {
+.loader-wrapper {
     display: 			flex;
     justify-content:	center;
     align-items: 		center;
@@ -19,8 +19,9 @@
     animation: 			pulse 1.2s infinite;
 }
 
-.loader_text {
-    margin-left: 		10px;
+.loader-text {
+    margin-left: 		30px;
+    font-weight:        bold;
 }
 
 @keyframes pulse {

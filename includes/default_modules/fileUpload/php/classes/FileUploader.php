@@ -116,7 +116,7 @@ class FileUploader{
         }
 
         // Add the path to the files array
-        $path    = apply_filters('file_upload_path', $this->targetFile);
+        $path    = apply_filters('file-upload_path', $this->targetFile);
 
         $path    = str_replace(ABSPATH, '', $path);
 

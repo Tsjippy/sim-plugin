@@ -8,9 +8,9 @@ let datasetString		= '';
 
 function createProgressBar(target){
 	//Show loading gif
-	target.closest('.upload_div').querySelectorAll(".loader_wrapper").forEach(loader =>{
+	target.closest('.upload-div').querySelectorAll(".loader-wrapper").forEach(loader =>{
 		loader.classList.remove('hidden');
-		loader.querySelectorAll(".loader_text").forEach(el =>{
+		loader.querySelectorAll(".loader-text").forEach(el =>{
 			el.textContent = "Preparing upload";
 			el.classList.add('upload-message');
 		});
@@ -18,8 +18,8 @@ function createProgressBar(target){
 	
 	var html	= ` 
 	<div id="progress-wrapper" class="hidden">
-		<progress id="upload_progress" value="0" max="100"></progress>
-		<span id="progress_percentage">   0%</span>
+		<progress id="upload-progress" value="0" max="100"></progress>
+		<span id="progress-percentage">   0%</span>
 	</div>
 	`;
 
@@ -27,7 +27,7 @@ function createProgressBar(target){
 }
 
 function addPreview(link, value){
-	let name	= fileUploadWrap.querySelector('.file_upload').name.replace('_files','');
+	let name	= fileUploadWrap.querySelector('.file-upload').name.replace('_files','');
 
 	let loaderHtml	= Main.showLoader(null, false, 50, '', true);
 
@@ -48,7 +48,7 @@ async function fileUpload(target){
 	target.classList.add('active');
 
 	let s			= "";
-	fileUploadWrap	= target.closest('.file_upload_wrap');
+	fileUploadWrap	= target.closest('.file-upload-wrap');
 	totalFiles 		= target.files.length;
 
 	if (totalFiles < 0){
@@ -59,14 +59,14 @@ async function fileUpload(target){
 	// prevent form submission
 	let form	= target.closest('form');
 	if(form != undefined){
-		form.querySelector('.button.form_submit').disabled	= true;
+		form.querySelector('.button.form-submit').disabled	= true;
 	}
 	
 	//Create a formData element
 	let formData = new FormData();
 	
 	//Add the ajax action name
-	formData.append('action', 'upload_files');
+	formData.append('action', 'upload-files');
 	
 	//Loop over the dataset attributes and add them to post
 	datasetString	= '';
@@ -106,7 +106,7 @@ async function fileUpload(target){
 
 	// No files remaining to upload after uploading videos
 	if(formData.get('files[]') == null){
-		target.closest('form').querySelector('.button.form_submit').disabled	= false;
+		target.closest('form').querySelector('.button.form-submit').disabled	= false;
 
 		target.classList.remove('active');
 
@@ -131,7 +131,7 @@ async function fileUpload(target){
 	if (totalFiles > 1){
 		s = "s";
 	}
-	target.closest('.upload_div').querySelector('.loader_text').textContent = "Uploading document"+s;
+	target.closest('.upload-div').querySelector('.loader-text').textContent = "Uploading document"+s;
 	document.getElementById('progress-wrapper').classList.remove('hidden');
 
 	request.send(formData);
@@ -145,15 +145,15 @@ function fileUploadProgress(e){
 		var percentage = (current * 100)/max;
 		percentage = Math.round(percentage*10)/10
 		
-		document.querySelectorAll("#upload_progress").forEach(el => el.value = percentage);
-		document.querySelectorAll("#progress_percentage").forEach(el =>el.textContent	= `   ${percentage}%`);
+		document.querySelectorAll("#upload-progress").forEach(el => el.value = percentage);
+		document.querySelectorAll("#progress-percentage").forEach(el =>el.textContent	= `   ${percentage}%`);
 
 		if(percentage >= 99){
 			//Remove progress barr
 			document.getElementById("progress-wrapper").classList.add('hidden');
 			
 			// process completed
-			fileUploadWrap.querySelectorAll(".loader_text").forEach(el =>{
+			fileUploadWrap.querySelectorAll(".loader-text").forEach(el =>{
 				//Change message text
 				if (totalFiles > 1){
 					el.textContent = "Processing documents";
@@ -180,17 +180,17 @@ function readyStateChanged(e){
 		}
 		
 		//Hide loading gif
-		document.querySelectorAll(".loader_wrapper").forEach(
+		document.querySelectorAll(".loader-wrapper").forEach(
 			function(loader){
 				loader.classList.add('hidden');
 			}
 		);
 			
 		//Clear the input
-		fileUploadWrap.querySelector('.file_upload').value = "";
+		fileUploadWrap.querySelector('.file-upload').value = "";
 
 		// enable form submission again
-		document.querySelectorAll('.button.form_submit[disabled]').forEach(el=>el.disabled	= false);
+		document.querySelectorAll('.button.form-submit[disabled]').forEach(el=>el.disabled	= false);
 	}
 }
 
@@ -231,7 +231,7 @@ function fileUploadSucces(result){
 			let filename	= url.split('/')[url.split('/').length-1]
 			anchorLink	= `<a class="fileupload" href="${url}">${filename}</a>`;
 		}
-		anchorLink += `<button type="button" class="remove_document button" data-url="${src}" ${datasetString}>X</button>`;
+		anchorLink += `<button type="button" class="remove-document button" data-url="${src}" ${datasetString}>X</button>`;
 
 		addPreview(anchorLink, value);
 	}
@@ -244,8 +244,8 @@ function fileUploadSucces(result){
 	}
 	
 	//Hide upload button if only one file allowed
-	if(!fileUploadWrap.querySelector('.file_upload').multiple){
-		fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
+	if(!fileUploadWrap.querySelector('.file-upload').multiple){
+		fileUploadWrap.querySelector('.upload-div').classList.add('hidden');
 	}
 
 	// Create a custom event so others can listen to it.
@@ -253,7 +253,7 @@ function fileUploadSucces(result){
 	const event = new Event('uploadfinished');
 	fileUploadWrap.dispatchEvent(event);
 
-	document.querySelectorAll('.file_upload.active').forEach(el => el.classList.remove('active'));
+	document.querySelectorAll('.file-upload.active').forEach(el => el.classList.remove('active'));
 }
 
 async function removeDocument(target){
@@ -272,24 +272,24 @@ async function removeDocument(target){
 	target.parentNode.classList.add('removethisdocument');
 	
 	//show loader
-	target.parentNode.querySelector('.remove_document_loader').classList.remove('hidden');
+	target.parentNode.querySelector('.remove-document-loader').classList.remove('hidden');
 	
-	let response	= await FormSubmit.fetchRestApi('remove_document', data);
+	let response	= await FormSubmit.fetchRestApi('remove-document', data);
 
 	if(response){
 		let docWrapper		= target.closest('.document');
-		fileUploadWrap		= docWrapper.closest('.file_upload_wrap');
+		fileUploadWrap		= docWrapper.closest('.file-upload-wrap');
 		
 		//hide the loading gif
-		docWrapper.querySelector('.remove_document_loader').classList.add('hidden');
+		docWrapper.querySelector('.remove-document-loader').classList.add('hidden');
 			
 		// If successful
 		try{
 			//show the upload field
-			fileUploadWrap.querySelector('.upload_div').classList.remove('hidden');
+			fileUploadWrap.querySelector('.upload-div').classList.remove('hidden');
 		}catch{
 			//remove featured image id
-			document.querySelector('[name="post_image_id"]').value = '';
+			document.querySelector('[name="post-image-id"]').value = '';
 		}
 		
 		//remove the document/picture
@@ -314,13 +314,13 @@ async function uploadVideo(file){
 	// Could not upload
 	if(!upload){
 		//clear file upload
-		fileUploadWrap.querySelector('.file_upload').value = "";
+		fileUploadWrap.querySelector('.file-upload').value = "";
 				
 		//Remove progress barr
 		document.getElementById("progress-wrapper").remove();
 
 		// Hide the loader
-		document.querySelector('.loader_wrapper:not(.hidden)').classList.add('hidden');
+		document.querySelector('.loader-wrapper:not(.hidden)').classList.add('hidden');
 
 		return false;
 	}
@@ -337,8 +337,8 @@ async function uploadVideo(file){
 		var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
 	
 		//show percentage in progressbar
-		document.getElementById("upload_progress").value			= percentage;
-		document.getElementById("progress_percentage").textContent	= `   ${percentage}%`;
+		document.getElementById("upload-progress").value			= percentage;
+		document.getElementById("progress-percentage").textContent	= `   ${percentage}%`;
 
 		if(percentage>98){
 			document.querySelector('.upload-message').textContent = "Processing video"+s;
@@ -369,17 +369,17 @@ async function uploadVideo(file){
 		var preview		= addPreview(link, postId);
 
 		// Hide the loader
-		document.querySelector('.loader_wrapper:not(.hidden)').classList.add('hidden');
+		document.querySelector('.loader-wrapper:not(.hidden)').classList.add('hidden');
 
 		Main.displayMessage(`The file ${file.name} has been uploaded succesfully.`,'success',true);
 		
 		//Hide upload button if only one file allowed
-		if(!fileUploadWrap.querySelector('.file_upload').multiple){
-			fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
+		if(!fileUploadWrap.querySelector('.file-upload').multiple){
+			fileUploadWrap.querySelector('.upload-div').classList.add('hidden');
 		}
 
 		//clear file upload
-		fileUploadWrap.querySelector('.file_upload').value = "";
+		fileUploadWrap.querySelector('.file-upload').value = "";
 		
 		uploader.urlStorage.removeUpload(uploader.storedEntry.urlStorageKey);
 
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener("click", function(event) {
 	var target = event.target;
 	
-	if (target.matches(".remove_document")){
+	if (target.matches(".remove-document")){
 		event.preventDefault();
 		removeDocument(target);
 	}
@@ -435,7 +435,7 @@ window.addEventListener("click", function(event) {
 window.addEventListener("change", event => {
 	let target = event.target;
 
-	if (target.className.includes("file_upload")){
+	if (target.className.includes("file-upload")){
 		event.preventDefault();
 		fileUpload(target);
 	}

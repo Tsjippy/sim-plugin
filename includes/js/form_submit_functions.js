@@ -3,10 +3,10 @@ export function formReset(form){
 	form.reset();
 
 	//hide loaders
-	form.querySelectorAll('.loader_wrapper').forEach(el=>el.classList.add('hidden'));
+	form.querySelectorAll('.loader-wrapper').forEach(el=>el.classList.add('hidden'));
 
 	//hide button again if needed
-	form.querySelectorAll('.multistepcontrols .form_submit').forEach(el=>el.classList.add('hidden'));
+	form.querySelectorAll('.multistepcontrols .form-submit').forEach(el=>el.classList.add('hidden'));
 	
 	//fix required fields
 	form.querySelectorAll('[required]').forEach(el=>{el.required = false;});
@@ -15,7 +15,7 @@ export function formReset(form){
 	form.querySelectorAll('.file_upload').forEach(el=>el.value='');
 
 	//show hidden file uploads
-	form.querySelectorAll('.upload_div.hidden').forEach(el=>el.classList.remove('hidden'));
+	form.querySelectorAll('.upload-div.hidden').forEach(el=>el.classList.remove('hidden'));
 	
 	//remove doc previews
 	document.querySelectorAll('.documentpreview .document').forEach(el=>el.remove());
@@ -47,7 +47,7 @@ export async function submitForm(target, url, extraData=''){
 	//only continue if valid
 	if(validity){
 		//Display loader
-		target.closest('.submit_wrapper').querySelectorAll('.loader_wrapper').forEach(loader=>loader.classList.remove('hidden'));
+		target.closest('.submit-wrapper').querySelectorAll('.loader-wrapper').forEach(loader=>loader.classList.remove('hidden'));
 		
 		//save any tinymce forms
 		if (typeof tinymce !== 'undefined') {
@@ -102,7 +102,7 @@ export async function submitForm(target, url, extraData=''){
 
 		let response = await fetchRestApi(url, formData);
 
-		form.querySelectorAll('.submit_wrapper .loader_wrapper').forEach(loader => loader.classList.add('hidden'));
+		form.querySelectorAll('.submit-wrapper .loader-wrapper').forEach(loader => loader.classList.add('hidden'));
 
 		if(form.dataset.reset != 'true'){
 			markComplete();

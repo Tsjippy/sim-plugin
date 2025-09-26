@@ -171,7 +171,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
 
     let wrapper		        = document.createElement('div');
     wrapper.style.height	= (factor * 100 + 10) + 'px';
-    wrapper.classList.add('loader_wrapper');
+    wrapper.classList.add('loader-wrapper');
 
     let loader		    = document.createElement('div');
     loader.style.width	= (factor * 100) + 'px';
@@ -236,7 +236,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
     }
 
     let span	= document.createElement('span');
-    span.classList.add('loader_text');
+    span.classList.add('loader-text');
     span.textContent	= text;
     wrapper.appendChild(span);
 

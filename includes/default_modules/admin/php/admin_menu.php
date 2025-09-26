@@ -502,7 +502,7 @@ function mainMenu(){
 
 	$updatesAvailable	= false;
 	?>
-	<div id='release_modal' class='modal hidden'>
+	<div id='release-modal' class='modal hidden'>
 		<div class="modal-content" style='width:500px;'>
 			<span id="modal_close" class="close">&times;</span>
 			<?php echo SIM\LOADERIMAGE;?>

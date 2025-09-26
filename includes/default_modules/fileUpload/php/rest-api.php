@@ -7,7 +7,7 @@ function uploadRestApiInit(){
 	//Route for first names
 	register_rest_route(
 		RESTAPIPREFIX,
-		'/remove_document',
+		'/remove-document',
 		array(
 			'methods'				=> 'POST',
 			'callback'				=> __NAMESPACE__.'\removeDocument',

@@ -1061,8 +1061,8 @@ function arraySearchRecursive($needle, $haystack, $strict=true, $stack=array()) 
  * @return string					The html
 */
 function addSaveButton($elementId, $buttonText, $extraClass = ''){
-	$html = "<div class='submit_wrapper'>";
-		$html .= "<button type='button' class='button form_submit $extraClass' name='$elementId'>$buttonText</button>";
+	$html = "<div class='submit-wrapper'>";
+		$html .= "<button type='button' class='button form-submit $extraClass' name='$elementId'>$buttonText</button>";
 		$html .= loaderImage(50, '', true);
 	$html .= "</div>";
 	
@@ -1161,7 +1161,7 @@ function pictureSelector($key, $name, $settings, $type=''){
 		$text		= 'Change';
 	}
 	?>
-	<div class='picture_selector_wrapper'>
+	<div class='picture-selector-wrapper'>
 		<div class='image-preview-wrapper <?php echo $hidden;?>'>
 			<img loading='lazy' class='image-preview' src='<?php echo $src;?>' alt=''>
 		</div>
@@ -1864,7 +1864,7 @@ function loaderImage($size=50, $text='', $hidden=false){
 
 	ob_start();
 	?>
-	<div class='loader_wrapper <?php if($hidden){echo 'hidden';}?>' style='height: <?php echo $factor * 100 + 10; ?>px;'>
+	<div class='loader-wrapper <?php if($hidden){echo 'hidden';}?>' style='height: <?php echo $factor * 100 + 10; ?>px;'>
 		<div class="loader" style='width: <?php echo $factor * 100; ?>px; height: <?php echo $factor * 100; ?>px; '>
 			<?php
 			for ($i = 0; $i < 8; $i++){
@@ -1921,7 +1921,7 @@ function loaderImage($size=50, $text='', $hidden=false){
 			?>
 		</div>
 
-		<span class='loader_text'><?php echo $text;?></span>
+		<span class='loader-text'><?php echo $text;?></span>
 	</div>
 
 	<?php

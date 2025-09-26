@@ -101,7 +101,7 @@ abstract class MailSetting{
         }
         ?>
         Any additional headers (see <a href='https://developer.wordpress.org/reference/functions/wp_mail/#using-headers-to-set-from-cc-and-bcc-parameters'>here</a>):<br>
-        <div class="clone_divs_wrapper">
+        <div class="clone-divs-wrapper">
             <?php
             foreach($headers as $index=>$header){
                 ?>
@@ -110,7 +110,7 @@ abstract class MailSetting{
                         max-width:50px;
                     }
                 </style>
-                <div class="clone_div" data-divid="<?php echo $index;?>">
+                <div class="clone-div" data-divid="<?php echo $index;?>">
                     <label name="Header" class=" formfield formfieldlabel">
                         <h4 class="labeltext">Header <?php echo $index + 1;?></h4>
                     </label>

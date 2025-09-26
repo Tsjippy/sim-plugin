@@ -1,12 +1,12 @@
 @use 'global' as *;
 
 /* Tooltip text */
-.info_icon{
+.info-icon{
 	flex:1;
 }
 
 .infobox{
-	.info_text{
+	.info-text{
 		display: none;
 		width: fit-content;
 		background-color: $primary_color;
@@ -24,7 +24,7 @@
 	}
 
 	/* Show the tooltip text when you mouse over the tooltip container */
-	&:hover .info_text{
+	&:hover .info-text{
 		display:inline-block;
 	}
 

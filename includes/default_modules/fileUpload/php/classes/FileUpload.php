@@ -161,7 +161,7 @@ class FileUpload{
 			$fileClass	= 'should-edit';
 		}
 		
-		$this->html .= '<div class="file_upload_wrap">';
+		$this->html .= '<div class="file-upload-wrap">';
 			$this->html .= '<div class="documentpreview">';
 
 			if(is_array($documentArray) && !empty($documentArray)){
@@ -189,8 +189,8 @@ class FileUpload{
 
 			$this->html .= '</div>';
 		
-			$this->html .= "<div class='upload_div $class'>";
-				$this->html .= "<input class='file_upload $fileClass' type='file' name='{$documentName}_files[]' $multipleString $options>";
+			$this->html .= "<div class='upload-div $class'>";
+				$this->html .= "<input class='file-upload $fileClass' type='file' name='{$documentName}_files[]' $multipleString $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->userId)){
 						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->userId}'>";
@@ -296,7 +296,7 @@ class FileUpload{
 
 		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
-		$this->html .= "<button type='button' class='remove_document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
+		$this->html .= "<button type='button' class='remove-document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
 		$this->html .= SIM\loaderImage(40);
 		$this->html .= "</div>";
 

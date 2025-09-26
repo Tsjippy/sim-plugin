@@ -7,7 +7,7 @@ document.querySelectorAll('form.sim-form-wrapper').forEach(form=>form.addEventLi
 
 // check for unsaved formdata
 window.addEventListener("beforeunload", (event) => {
-	if(document.querySelector('.loader_wrapper:not(.hidden)') != null){
+	if(document.querySelector('.loader-wrapper:not(.hidden)') != null){
 		return;
 	}
 	

@@ -9,7 +9,8 @@
     "formsubmit": "webpack --watch --config formsubmit.config.js",
     "table": "webpack --watch --config table.config.js",
     "main": "webpack --watch --config main.config.js",
-    "smile": "webpack --watch --entry ./smiley.js --output-path . --output-filename smiley.min.js --progress --mode=production --devtool source-map"
+    "smile": "webpack --watch --entry ./smiley.js --output-path . --output-filename smiley.min.js --progress --mode=production --devtool source-map",
+    "all": "run-p picture"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

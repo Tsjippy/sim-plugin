@@ -38,7 +38,7 @@ function selectImage(event, type='') {
 		//Get the selected image
 		let attachment = frame.state().get('selection').first().toJSON();
 
-		let parent		= button.closest('.picture_selector_wrapper');
+		let parent		= button.closest('.picture-selector-wrapper');
 		
 		//Store the id
 		parent.querySelector('.image_attachment_id').value = attachment.id;
