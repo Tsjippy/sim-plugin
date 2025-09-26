@@ -7,6 +7,7 @@
 - min-width for modal content
 
 ### Fixed
+- issue after updating all modules
 
 ### Updated
 
