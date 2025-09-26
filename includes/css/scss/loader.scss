@@ -24,12 +24,13 @@
 }
 
 @keyframes pulse {
-    50%, 75%, 100% {
-        transform: scale(1);
-        background-color: $secundary_color;
-    }
     0% {
         transform: scale(1.8);
         background-color: $primary_color;
+    }
+    
+    50%, 75%, 100% {
+        transform: scale(1);
+        background-color: $secundary_color;
     }
 }
