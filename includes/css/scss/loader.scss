@@ -8,8 +8,7 @@
 
 .loader {
     position: 			relative;
-    margin-top:         3px;
-    margin-bottom:      3px;
+    margin:             3px;
 }
 
 .dot {
@@ -25,11 +24,11 @@
 }
 
 @keyframes pulse {
-    0%, 50%, 100% {
+    50%, 75%, 100% {
         transform: scale(1);
         background-color: $secundary_color;
     }
-    75% {
+    0% {
         transform: scale(1.8);
         background-color: $primary_color;
     }
