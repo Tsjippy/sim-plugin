@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- _ for - in classnames
 
 ### Fixed
 
