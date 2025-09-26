@@ -4,11 +4,19 @@
 ### Added
 
 ### Changed
-- min-width for modal content
 
 ### Fixed
 
 ### Updated
+
+## [5.5.6] - 2025-09-26
+
+
+### Changed
+- min-width for modal content
+
+### Fixed
+- issue after updating all modules
 
 ## [5.5.5] - 2025-09-26
 
