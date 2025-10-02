@@ -5,6 +5,7 @@
 
 ### Changed
 - start of loader
+- loader in js
 
 ### Fixed
 
