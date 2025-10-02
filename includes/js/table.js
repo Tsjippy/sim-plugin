@@ -357,21 +357,33 @@ export function positionTable(){
 	});
 }
 
-const hideColumn	= async (target) => {
+export const hideColumn	= async (target) => {
 	if(target.tagName == 'SPAN'){
 		target = target.querySelector('img');
 	}
 
+	let cell;
+
 	// Table itself
 	if(target.parentNode.matches('th')){
-		let cell 	= target.parentNode;
+		cell 	= target.parentNode;
+	}else if(target.matches('th')){
+		cell	= target;
+	}
 
+	if(cell){
 		// Hide the column
-		var table		= cell.closest('table');
-		var tableRows	= table.rows;
+		let table		= cell.closest('table');
+		let tableRows	= table.rows;
 		for (const element of tableRows) {
 			element.cells[cell.cellIndex].classList.add('hidden')
 		}
+
+		// store the hidden column in a var
+		if(sim.hidden	== undefined){
+			sim.hidden	= [];
+		}
+		sim.hidden.push(cell.cellIndex);
 
 		//show the reset button
 		cell.closest('.table-wrapper').querySelectorAll('.reset-col-vis').forEach(el => el.classList.remove('hidden'));
@@ -409,7 +421,7 @@ document.addEventListener("click", event => {
 	}
 
 	//Hide column
-	else if(target.classList.contains('visibilityicon')){
+	else if(target.classList.contains('visibility-icon')){
 		hideColumn(target);
 	}
 

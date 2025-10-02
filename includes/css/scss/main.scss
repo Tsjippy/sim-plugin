@@ -19,9 +19,16 @@
 }
 
 /* Hide hidden elements*/
-.frontendform.hidden, .hidden, .stephidden, .mobile-hidden{
+.frontendform.hidden, .hidden, .stephidden{
 	display:none !important;
 }
+
+@media (max-width: $mobilewidth){
+	.mobile-hidden{
+		display:none !important;
+	}
+}
+
 
 /* Transform to capital letters */
 .capitalize{
