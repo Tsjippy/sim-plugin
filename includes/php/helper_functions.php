@@ -1063,7 +1063,6 @@ function arraySearchRecursive($needle, $haystack, $strict=true, $stack=array()) 
 function addSaveButton($elementId, $buttonText, $extraClass = ''){
 	$html = "<div class='submit-wrapper'>";
 		$html .= "<button type='button' class='button form-submit $extraClass' name='$elementId'>$buttonText</button>";
-		$html .= loaderImage(30, '', true);
 	$html .= "</div>";
 	
 	return $html;

@@ -157,7 +157,7 @@ export function displayMessage(message, icon, autoclose=false, no_ok=false, time
 	}
 }
 
-export function showLoader(element, replace=true, size=50, text='', returnHtml=false){
+export function showLoader(element, replace=true, size=50, text='', returnHtml=false, inButton=false){
 
     if(element == null && returnHtml == false){
 		return;
@@ -170,7 +170,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
     let factor		= size / 100;
 
     let wrapper		        = document.createElement('div');
-    wrapper.style.height	= (factor * 100 + 10) + 'px';
+    wrapper.style.height	= (factor * 110) + 'px';
     wrapper.classList.add('loader-wrapper');
 
     let loader		    = document.createElement('div');
@@ -185,6 +185,10 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
         dot.classList.add('dot');
         dot.style.width		= (factor * 16) + 'px';
         dot.style.height	= (factor * 16) + 'px';	
+
+        if(inButton){
+            dot.style.border= '1px solid white';
+        }
 
         switch (i) {
             case 0:
@@ -238,7 +242,16 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
     let span	= document.createElement('span');
     span.classList.add('loader-text');
     span.textContent	= text;
-    wrapper.appendChild(span);
+
+    if(inButton){
+		span.style.fontWeight 	= 'normal';
+		span.style.marginLeft 	= '0px';
+		span.style.marginRight 	= '10px';
+        
+        wrapper.prepend(span);
+    }else{
+        wrapper.appendChild(span);
+    }
 
     if(returnHtml){
         return wrapper.outerHTML;

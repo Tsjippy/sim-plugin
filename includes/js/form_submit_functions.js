@@ -47,7 +47,20 @@ export async function submitForm(target, url, extraData=''){
 	//only continue if valid
 	if(validity){
 		//Display loader
-		target.closest('.submit-wrapper').querySelectorAll('.loader-wrapper').forEach(loader=>loader.classList.remove('hidden'));
+		let buttonText 		= target.innerHTML;
+		let text			= buttonText.split(' ')[0];
+		if(text.charAt(text.length - 1) == 'e'){
+			if(text.charAt(text.length - 2) == 'i'){
+				text				= text.substring(0, text.length - 2)+'y';
+			}else{
+				text				= text.substring(0, text.length - 1);
+			}
+		}else{
+			text				= text + text.substring(text.length - 1, text.length);
+		}
+
+		text				= text+'ing...';
+		target.innerHTML	= Main.showLoader(null, false, 20, text, true, true);
 		
 		//save any tinymce forms
 		if (typeof tinymce !== 'undefined') {
@@ -102,7 +115,8 @@ export async function submitForm(target, url, extraData=''){
 
 		let response = await fetchRestApi(url, formData);
 
-		form.querySelectorAll('.submit-wrapper .loader-wrapper').forEach(loader => loader.classList.add('hidden'));
+		// Reset button
+		target.innerHTML	= buttonText;
 
 		if(form.dataset.reset != 'true'){
 			markComplete();
