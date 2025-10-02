@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- start of loader
-- loader in js
 
 ### Fixed
 
 ### Updated
+
+## [5.5.7] - 2025-10-02
+
+
+### Changed
+- start of loader
+- loader in js
 
 ## [5.5.6] - 2025-09-26
 
