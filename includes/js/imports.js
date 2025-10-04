@@ -196,37 +196,37 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
                 dot.style.left				= (factor * 44) + 'px';
                 break;
             case 1:
-                dot.style.top				= (factor * 15) + 'px';
+                dot.style.top				= (factor * 14) + 'px';
                 dot.style.left				= (factor * 78) + 'px';
                 dot.style.animationDelay	= '0.15s';	
                 break;
             case 2:
-                dot.style.top				= (factor * 44) + 'px';
+                dot.style.top				= (factor * 43) + 'px';
                 dot.style.left				= (factor * 88) + 'px';
                 dot.style.animationDelay	= '0.3s';
                 break;
             case 3:
-                dot.style.top				= (factor * 75) + 'px';
+                dot.style.top				= (factor * 74) + 'px';
                 dot.style.left				= (factor * 75) + 'px';
                 dot.style.animationDelay	= '0.45s';
                 break;
             case 4:
-                dot.style.top				= (factor * 88) + 'px';
+                dot.style.top				= (factor * 87) + 'px';
                 dot.style.left				= (factor * 44) + 'px';
                 dot.style.animationDelay	= '0.6s';
                 break;
             case 5:
-                dot.style.top				= (factor * 75) + 'px';
+                dot.style.top				= (factor * 74) + 'px';
                 dot.style.left				= (factor * 15) + 'px';
                 dot.style.animationDelay	= '0.75s';
                 break;
             case 6:
-                dot.style.top				= (factor * 44) + 'px';
+                dot.style.top				= (factor * 43) + 'px';
                 dot.style.left				= 0;
                 dot.style.animationDelay	= '0.9s';
                 break;
             case 7:
-                dot.style.top				= (factor * 15) + 'px';
+                dot.style.top				= (factor * 14) + 'px';
                 dot.style.left				= (factor * 15) + 'px';
                 dot.style.animationDelay	= '1.05s';
                 break;
