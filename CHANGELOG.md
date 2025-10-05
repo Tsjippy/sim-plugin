@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- not ading letter again when there is already 2
 
 ### Fixed
 - loader
