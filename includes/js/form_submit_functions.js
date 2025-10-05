@@ -48,14 +48,21 @@ export async function submitForm(target, url, extraData=''){
 	if(validity){
 		//Display loader
 		let buttonText 		= target.innerHTML;
+
+		// get the first word
 		let text			= buttonText.split(' ')[0];
 		if(text.charAt(text.length - 1) == 'e'){
+			// replace ie with y
 			if(text.charAt(text.length - 2) == 'i'){
-				text				= text.substring(0, text.length - 2)+'y';
-			}else{
-				text				= text.substring(0, text.length - 1);
+				text			= text.substring(0, text.length - 2)+'y';
 			}
-		}else{
+			
+			// remove the e
+			else{
+				text			= text.substring(0, text.length - 1);
+			}
+		// duplicate the last letter if not already
+		}else if(text.charAt(text.length - 2) != text.charAt(text.length - 1)){
 			text				= text + text.substring(text.length - 1, text.length);
 		}
 
