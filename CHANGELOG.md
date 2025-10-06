@@ -4,13 +4,20 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.5.8] - 2025-10-06
+
+
+### Changed
 - not ading letter again when there is already 2
 
 ### Fixed
 - loader
 - edge xcase with changing tabs
-
-### Updated
 
 ## [5.5.7] - 2025-10-02
 
