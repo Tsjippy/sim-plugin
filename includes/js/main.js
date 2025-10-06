@@ -80,7 +80,7 @@ export function displayTab(tabButton){
 	let tab;
 	// Get content area
 	if(tabButton.dataset.target == undefined){
-		tab = document.querySelector('#'+tabButton.dataset.param_val);
+		tab = document.querySelector('#'+tabButton.dataset.param_val.trim());
 	}else{
 		tab = tabButton.closest('div:not(.tablink-wrapper)').querySelector('#'+tabButton.dataset.target);
 	}
@@ -118,9 +118,9 @@ export function displayTab(tabButton){
 			if(hashField != null){
 				hashField.scrollIntoView({block: "center"});
 
-				var el			= hashField.closest('.inputwrapper');
+				var el			= hashField.closest('.input-wrapper');
 				if(el != null){
-					hashField.closest('.inputwrapper').classList.add('highlight');
+					hashField.closest('.input-wrapper').classList.add('highlight');
 				}
 				hashField.classList.add('highlight');
 				hashField.focus();
@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('.tablink').forEach(function(tabButton){
 		//Add the dataset if it does not exist yet.
 		if(tabButton.dataset.param_val == undefined){
-			tabButton.dataset.param_val = tabButton.textContent.replace(' ','_').toLowerCase();
+			tabButton.dataset.param_val = tabButton.textContent.replace(' ','_').toLowerCase().trim();
 		}
 	})
 
