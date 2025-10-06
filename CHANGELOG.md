@@ -8,6 +8,7 @@
 
 ### Fixed
 - loader
+- edge xcase with changing tabs
 
 ### Updated
 
