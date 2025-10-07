@@ -232,7 +232,7 @@ async function showFullscreen(target){
 
 	let url = new URL(window.location);
 
-	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.form-id);
+	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.form_id);
 
 	window.history.pushState({}, '', url);
 
@@ -444,9 +444,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	if(fullscreen != null){
 		try{
-			showFullscreen(document.querySelector(`table[data-form-id="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
+			showFullscreen(document.querySelector(`table[data-form_id="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
 		}catch{
-			console.error(`table[data-form-id="${fullscreen}"]`);
+			console.error(`table[data-form_id="${fullscreen}"]`);
 		}
 	}
 

@@ -12,6 +12,12 @@ namespace SIM;
 function getModuleOption($moduleName, $option, $returnBoolean=true){
 	global $Modules;
 
+	// For backwards compatibility
+	if(empty($Modules[$moduleName][$option])){
+		printArray("Please update '$option'");
+		$option	= str_replace('_', '-', $option);
+	}
+
 	if(!empty($Modules[$moduleName][$option])){
 		return $Modules[$moduleName][$option];
 	}elseif($returnBoolean){

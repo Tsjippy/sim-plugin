@@ -44,4 +44,34 @@ function afterPluginUpdate($oldVersion){
 
         }
     }
+
+    if($oldVersion < '5.5.9'){
+        foreach($Modules as $moduleName => &$settings){
+            foreach($settings as $setting => $value){
+                if(is_array($value)){
+                    foreach($value as $i => $v){
+                        $newIndex   = str_replace('_', '-', $i, $c);
+
+                        if($c > 0){
+                            $value[$newIndex]   = $v;
+
+                            unset($value[$i]);
+                        }
+                    }
+                }
+
+                unset($settings[$setting]);
+
+                $newIndex   = str_replace('_', '-', $setting);
+
+                $settings[$newIndex]   = $value;
+            }
+        }
+
+        update_option('sim_modules', $Modules);
+    }
 }
+
+add_action('init', function(){
+    //afterPluginUpdate('1.1.1');
+});

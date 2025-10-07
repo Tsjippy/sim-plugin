@@ -12,7 +12,7 @@ add_action( 'rest_api_init', function () {
 			'callback'				=> __NAMESPACE__.'\getChangelog',
 			'permission_callback' 	=> '__return_true',
             'args'					=> array(
-				'module_name'		=> array(
+				'module-name'		=> array(
 					'required'	=> true
 				)
 			)
@@ -23,7 +23,7 @@ add_action( 'rest_api_init', function () {
 function getChangelog(){
     $github		= new SIM\GITHUB\Github();
 
-    $moduleName = sanitize_text_field($_POST['module_name']);
+    $moduleName = sanitize_text_field($_POST['module-name']);
 
     $release    = $github->getFileContents('tsjippy', $moduleName, 'CHANGELOG.md');
     if($release){

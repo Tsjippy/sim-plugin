@@ -55,7 +55,7 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		/**
 		 * @var array
 		 */
-		protected $_bodyData;
+		protected $bodyData;
 
 		/**
 		 * Constructor to wire up the necessary actions
@@ -77,11 +77,11 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 			if ( empty( $this->action ) ) {
 				throw new Exception( 'Action not defined for class ' . __CLASS__ );
 			}
-			add_action( $this->action, array( $this, 'launch' ), (int) $this->priority, (int) $this->argument_count );
-			if ( $auth_level & self::LOGGED_IN ) {
+			add_action( $this->action, array( $this, 'launch' ), (int) $this->priority, (int) $this->argumentCount );
+			if ( $authLevel & self::LOGGED_IN ) {
 				add_action( "admin_post_wp_async_$this->action", array( $this, 'handlePostback' ) );
 			}
-			if ( $auth_level & self::LOGGED_OUT ) {
+			if ( $authLevel & self::LOGGED_OUT ) {
 				add_action( "admin_post_nopriv_wp_async_$this->action", array( $this, 'handle_postback' ) );
 			}
 		}
@@ -95,15 +95,15 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		public function launch() {
 			$data = func_get_args();
 			try {
-				$data = $this->prepare_data( $data );
+				$data = $this->prepareData( $data );
 			} catch ( Exception $e ) {
 				return;
 			}
 
 			$data['action'] = "wp_async_$this->action";
-			$data['_nonce'] = $this->create_async_nonce();
+			$data['nonce'] = $this->createAsyncNonce();
 
-			$this->_body_data = $data;
+			$this->bodyData = $data;
 
 			if ( ! has_action( 'shutdown', array( $this, 'launch_on_shutdown' ) ) ) {
 				add_action( 'shutdown', array( $this, 'launch_on_shutdown' ) );
@@ -125,18 +125,18 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		 * @uses admin_url()
 		 * @uses wp_remote_post()
 		 */
-		public function launch_on_shutdown() {
-			if ( ! empty( $this->_body_data ) ) {
+		public function launchOnShutdown() {
+			if ( ! empty( $this->bodyData ) ) {
 				$cookies = array();
 				foreach ( $_COOKIE as $name => $value ) {
 					$cookies[] = "$name=" . urlencode( is_array( $value ) ? serialize( $value ) : $value );
 				}
 
-				$request_args = array(
+				$requestArgs = array(
 					'timeout'   => 0.01,
 					'blocking'  => false,
 					'sslverify' => apply_filters( 'https_local_ssl_verify', true ),
-					'body'      => $this->_body_data,
+					'body'      => $this->bodyData,
 					'headers'   => array(
 						'cookie' => implode( '; ', $cookies ),
 					),
@@ -144,24 +144,24 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 
 				$url = admin_url( 'admin-post.php' );
 
-				wp_remote_post( $url, $request_args );
+				wp_remote_post( $url, $requestArgs );
 			}
 		}
 
 		/**
 		 * Verify the postback is valid, then fire any scheduled events.
 		 *
-		 * @uses $_POST['_nonce']
+		 * @uses $_POST['nonce']
 		 * @uses is_user_logged_in()
 		 * @uses add_filter()
 		 * @uses wp_die()
 		 */
-		public function handle_postback() {
-			if ( isset( $_POST['_nonce'] ) && $this->verify_async_nonce( $_POST['_nonce'] ) ) {
+		public function handlePostback() {
+			if ( isset( $_POST['nonce'] ) && $this->verifyAsyncNonce( $_POST['nonce'] ) ) {
 				if ( ! is_user_logged_in() ) {
 					$this->action = "nopriv_$this->action";
 				}
-				$this->run_action();
+				$this->runAction();
 			}
 
 			add_filter( 'wp_die_handler', function() { die(); } );
@@ -179,8 +179,8 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		 *
 		 * @return string The one-time use token
 		 */
-		protected function create_async_nonce() {
-			$action = $this->get_nonce_action();
+		protected function createAsyncNonce() {
+			$action = $this->getNonceAction();
 			$i      = wp_nonce_tick();
 
 			return substr( wp_hash( $i . $action . get_class( $this ), 'nonce' ), - 12, 10 );
@@ -196,8 +196,8 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		 *
 		 * @return bool Whether the nonce check passed or failed
 		 */
-		protected function verify_async_nonce( $nonce ) {
-			$action = $this->get_nonce_action();
+		protected function verifyAsyncNonce( $nonce ) {
+			$action = $this->getNonceAction();
 			$i      = wp_nonce_tick();
 
 			// Nonce generated 0-12 hours ago
@@ -219,7 +219,7 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		 *
 		 * @return string The nonce action for the current instance
 		 */
-		protected function get_nonce_action() {
+		protected function getNonceAction() {
 			$action = $this->action;
 			if ( substr( $action, 0, 7 ) === 'nopriv_' ) {
 				$action = substr( $action, 7 );
@@ -248,7 +248,7 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		 *
 		 * @return array The prepared data
 		 */
-		abstract protected function prepare_data( $data );
+		abstract protected function prepareData( $data );
 
 		/**
 		 * Run the do_action function for the asynchronous postback.
@@ -258,7 +258,7 @@ if ( ! class_exists( 'AsyncAction' ) ) {
 		 *
 		 * The action should be constructed as "wp_async_task_$this->action"
 		 */
-		abstract protected function run_action();
+		abstract protected function runAction();
 
 	}
 

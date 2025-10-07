@@ -268,7 +268,7 @@
 
 
 ### Fixed
-- userid prefill
+- user-id prefill
 - module description while deactivated
 
 ## [5.2.2] - 2025-01-23

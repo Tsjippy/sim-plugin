@@ -73,7 +73,11 @@ function getDefaultPageLink($moduleSlug, $optionKey){
     global $Modules;
 
     $url		= '';
-	$pageIds	= $Modules[$moduleSlug][$optionKey];
+
+	$pageIds	= SIM\getModuleOption($moduleSlug, $optionKey);
+	if(!$pageIds){
+        return false;
+    }
 
 	if(is_array($pageIds)){
 		foreach($pageIds as $key=>$pageId){

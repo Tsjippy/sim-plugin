@@ -87,7 +87,7 @@ window.addEventListener("click", async event => {
         showModal('release');
 
         let formData    = new FormData();
-        formData.append('module_name', target.dataset.name);
+        formData.append('module-name', target.dataset.name);
         
         let response    = await fetchRestApi('get-changelog', formData);
 

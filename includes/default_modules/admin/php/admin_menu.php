@@ -145,22 +145,22 @@ function buildSubMenu(){
 
 		?>
 		<div class='tablink-wrapper'>
-			<button class="tablink <?php if($tab == 'description'){echo 'active';}?>" id="show_description" data-target="description" >Description</button>
-			<button class="tablink <?php if($tab == 'settings'){echo 'active';}?>" id="show_settings" data-target="settings">Settings</button>
+			<button class="tablink <?php if($tab == 'description'){echo 'active';}?>" id="show-description" data-target="description" >Description</button>
+			<button class="tablink <?php if($tab == 'settings'){echo 'active';}?>" id="show-settings" data-target="settings">Settings</button>
 			<?php
 			if(!empty($emailSettingsTab)){
 				?>
-				<button class="tablink <?php if($tab == 'emails'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_emails" data-target="emails">E-mail settings</button>
+				<button class="tablink <?php if($tab == 'emails'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show-emails" data-target="emails">E-mail settings</button>
 				<?php
 			}
 			if(!empty($dataTab)){
 				?>
-				<button class="tablink <?php if($tab == 'data'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_data" data-target="data">Module data</button>
+				<button class="tablink <?php if($tab == 'data'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show-data" data-target="data">Module data</button>
 				<?php
 			}
 			if(!empty($functionsTab)){
 				?>
-				<button class="tablink <?php if($tab == 'functions'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_functions" data-target="functions">Functions</button>
+				<button class="tablink <?php if($tab == 'functions'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show-functions" data-target="functions">Functions</button>
 				<?php
 			}
 			?>
