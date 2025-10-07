@@ -27,7 +27,7 @@ function createProgressBar(target){
 }
 
 function addPreview(link, value){
-	let name	= fileUploadWrap.querySelector('.file-upload').name.replace('_files','');
+	let name	= fileUploadWrap.querySelector('.file-upload').name.replace('-files','');
 
 	let loaderHtml	= Main.showLoader(null, false, 50, '', true);
 
@@ -350,7 +350,7 @@ async function uploadVideo(file){
 		let postId	= uploader.storedEntry.postId;
 		// Add post id of the video to the form
 		let formData = new FormData();
-        formData.append('post_id', postId);
+        formData.append('post-id', postId);
     
         let request = new XMLHttpRequest();
         request.open('POST', `${sim.baseUrl}/wp-json${sim.restApiPrefix}/vimeo/add_uploaded_vimeo`, false);
@@ -387,7 +387,7 @@ async function uploadVideo(file){
 		var postForm = document.getElementById('postform');
 		if(postForm != null){
 			postForm.querySelector('[name="update"]').value		= 'true';
-			postForm.querySelector('[name="post_id"]').value	= postId;
+			postForm.querySelector('[name="post-id"]').value	= postId;
 		}
 
 		// Wait for the video to be processed on Vimeo

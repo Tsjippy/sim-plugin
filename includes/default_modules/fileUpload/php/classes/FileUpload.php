@@ -83,7 +83,7 @@ class FileUpload{
 		<div id="edit-image-modal" class="modal edit-image hidden">
 			<!-- Modal content -->
 			<div class="modal-content">
-				<span id="modal_close" class="close">&times;</span>
+				<span id="modal-close" class="close">&times;</span>
 
 				<div class="image-edit-container">
 					<h4>Edit your image</h4>
@@ -190,10 +190,10 @@ class FileUpload{
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload-div $class'>";
-				$this->html .= "<input class='file-upload $fileClass' type='file' name='{$documentName}_files[]' $multipleString $options>";
+				$this->html .= "<input class='file-upload $fileClass' type='file' name='{$documentName}-files[]' $multipleString $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->userId)){
-						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->userId}'>";
+						$this->html .= "<input type='hidden' name='fileupload[user-id]' 			value='{$this->userId}'>";
 					}
 					if(!empty($targetDir)){
 						$targetDir	= str_replace('\\', '/', $targetDir);
@@ -201,7 +201,7 @@ class FileUpload{
 					}
 					if(!empty($this->metakey)){
 						$this->html .= "<input type='hidden' name='fileupload[metakey]' 		value='{$this->metakey}'>";
-						$this->html .= "<input type='hidden' name='fileupload[metakey_index]' 	value='$documentName'>";
+						$this->html .= "<input type='hidden' name='fileupload[metakey-index]' 	value='$documentName'>";
 					}
 					if(!empty($this->library)){
 						$this->html .= "<input type='hidden' name='fileupload[library]' 		value='{$this->library}'>";
@@ -296,7 +296,7 @@ class FileUpload{
 
 		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
-		$this->html .= "<button type='button' class='remove-document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
+		$this->html .= "<button type='button' class='remove-document button' data-url='$documentPath' data-user-id='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
 		$this->html .= SIM\loaderImage(40);
 		$this->html .= "</div>";
 

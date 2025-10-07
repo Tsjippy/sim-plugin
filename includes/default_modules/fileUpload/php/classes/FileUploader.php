@@ -36,8 +36,8 @@ class FileUploader{
             mkdir($this->targetDir, 0777, true);
         }
         
-        if(!empty($this->fileParam['userid'])){
-            $this->userId 	    = sanitize_text_field($this->fileParam['userid']);
+        if(!empty($this->fileParam['user-id'])){
+            $this->userId 	    = sanitize_text_field($this->fileParam['user-id']);
             $this->username 	= get_userdata($this->userId)->user_login;
         }
         
@@ -45,8 +45,8 @@ class FileUploader{
             $this->metaKey 		= sanitize_text_field($this->fileParam['metakey']);
         }
     
-        if(isset($this->fileParam['metakey_index'])){
-            $this->metaKeyIndex 	= sanitize_text_field($this->fileParam['metakey_index']);
+        if(isset($this->fileParam['metakey-index'])){
+            $this->metaKeyIndex 	= sanitize_text_field($this->fileParam['metakey-index']);
         }
 
         $this->processFiles();

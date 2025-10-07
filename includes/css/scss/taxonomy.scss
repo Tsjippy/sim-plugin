@@ -53,7 +53,7 @@ article.recipe{
 	display: inline-table;
 }
 
-.recipe_icon{
+.recipe-icon{
 	@extend %icon-shared;
 }
 
@@ -62,7 +62,7 @@ article.recipe{
 }
 
 
-.location_icon{
+.location-icon{
 	@extend %icon-shared;
 }
 
@@ -90,7 +90,7 @@ article.recipe{
 	}
 }
 
-.cat_card{
+.cat-card{
 	width: 100%;
 	padding: 10px;
 }

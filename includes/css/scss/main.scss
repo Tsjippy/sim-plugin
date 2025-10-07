@@ -19,7 +19,7 @@
 }
 
 /* Hide hidden elements*/
-.frontendform.hidden, .hidden, .stephidden{
+.frontend-form.hidden, .hidden, .step-hidden{
 	display:none !important;
 }
 
@@ -52,7 +52,7 @@ div fieldset{
 	}
 }
 
-.optionlabel{
+.option-label{
 	margin-left: 5px;
 }
 
@@ -84,8 +84,8 @@ h3{
 }
 
 .error{
-	border: 3px solid $secundary_color;
-    color: $primary_color;
+	border: 3px solid $secundaryColor;
+    color: $primaryColor;
     padding: 10px;
     margin: 10px 0 20px 0;
     text-align: center;
@@ -172,12 +172,12 @@ input:invalid, .invalid{
 	border: 2px solid red !important;
 }
 
-.listselectionlist{
+.list-selection-list{
 	list-style: none;
 	padding: 0;
 	margin: 0;
 
-	.listselection{
+	.list-selection{
 		background-color: #e4e4e4;
 		border: 1px solid #aaa;
 		border-radius: 4px;
@@ -194,7 +194,7 @@ input:invalid, .invalid{
 		vertical-align: bottom;
 		white-space: nowrap;
 
-		input, .selectedname{
+		input, .selected-name{
 			padding: 0px 3px;
 		}
 	}

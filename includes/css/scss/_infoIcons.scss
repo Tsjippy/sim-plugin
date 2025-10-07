@@ -5,11 +5,11 @@
 	flex:1;
 }
 
-.infobox{
+.info-box{
 	.info-text{
 		display: none;
 		width: fit-content;
-		background-color: $primary_color;
+		background-color: $primaryColor;
 		color: #fff;
 		padding: 5px 10px;
 		border-radius: 6px;
@@ -19,7 +19,7 @@
 		max-width: 90%;
 		
 		a{
-			color:$secundary_color;
+			color:$secundaryColor;
 		}
 	}
 

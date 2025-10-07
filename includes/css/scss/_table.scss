@@ -28,7 +28,7 @@
 
 	.edit{
 		text-decoration: underline;
-		text-decoration-color: $primary_color;
+		text-decoration-color: $primaryColor;
 	}
 	
 	td{
@@ -94,7 +94,7 @@
 	}
 
 	@media (prefers-color-scheme: dark) {
-		border: 1px solid $secundary_color;
+		border: 1px solid $secundaryColor;
 		color: whitesmoke;
 
 		> thead{
@@ -221,11 +221,11 @@
 	}
 }
 
-.exportform{
+.export-form{
 	display: inline-block;
 }
 
-.statistics_table{
+.statistics-table{
 	width: fit-content;
     &,tr,td{
 		border: none;

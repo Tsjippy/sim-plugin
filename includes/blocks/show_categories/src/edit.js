@@ -75,7 +75,7 @@ const Edit = ({attributes, setAttributes}) => {
 			<div {...useBlockProps()}>
 				<aside className='event'>
 					<h4 className="title">Categories</h4>
-					<div className="upcomingevents_wrapper">
+					<div className="upcoming-events-wrapper">
 						{BuildCategoryList()}
 					</div>
 				</aside>

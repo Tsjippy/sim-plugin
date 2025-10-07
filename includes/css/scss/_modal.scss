@@ -35,7 +35,7 @@
 
 		/* The Close Button */
 		.close {
-			color: 				global.$primary_color;
+			color: 				global.$primaryColor;
 			float: 				right;
 		font-size: 				28px;
 			font-weight: 		bold;
@@ -45,7 +45,7 @@
 			&:hover,
 			&:focus 
 			{
-				color: 				global.$secundary_color;
+				color: 				global.$secundaryColor;
 				text-decoration: 	none;
 				cursor: 			pointer;
 			}

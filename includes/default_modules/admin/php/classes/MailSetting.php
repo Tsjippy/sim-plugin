@@ -111,11 +111,11 @@ abstract class MailSetting{
                     }
                 </style>
                 <div class="clone-div" data-divid="<?php echo $index;?>">
-                    <label name="Header" class=" formfield formfieldlabel">
-                        <h4 class="labeltext">Header <?php echo $index + 1;?></h4>
+                    <label name="Header" class=" formfield form-label">
+                        <h4 class="label-text">Header <?php echo $index + 1;?></h4>
                     </label>
                     <div class="button-wrapper" style="width:100%; display: flex;">
-                        <input type="text" name="emails[<?php echo $this->headerKey;?>][<?php echo $index;?>]" id="headers" class=" formfield formfieldinput" value="<?php echo $header;?>" style="width: 500px;">
+                        <input type="text" name="emails[<?php echo $this->headerKey;?>][<?php echo $index;?>]" id="headers" class=" formfield formfield-input" value="<?php echo $header;?>" style="width: 500px;">
                         <?php
                         if(count($this->headers) > 1){
                             ?>

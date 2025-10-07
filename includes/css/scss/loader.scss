@@ -26,11 +26,11 @@
 @keyframes pulse {
     0% {
         transform: scale(1.8);
-        background-color: $primary_color;
+        background-color: $primaryColor;
     }
     
     50%, 75%, 100% {
         transform: scale(1);
-        background-color: $secundary_color;
+        background-color: $secundaryColor
     }
 }

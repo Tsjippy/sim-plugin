@@ -11,15 +11,15 @@ export function changeUrl(target, secondTab=''){
 
 	//Change the url params
 	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content')){
-		//Add query_arg if it is a main tab
-		url.searchParams.set('main_tab', newParam);
-		url.searchParams.delete('second_tab');
+		//Add query-arg if it is a main tab
+		url.searchParams.set('main-tab', newParam);
+		url.searchParams.delete('second-tab');
 	}else{
-		url.searchParams.set('second_tab', newParam);
+		url.searchParams.set('second-tab', newParam);
 	}
 
 	if(secondTab != ''){
-		url.searchParams.set('second_tab', secondTab);
+		url.searchParams.set('second-tab', secondTab);
 	}
 	
 	window.history.pushState({}, '', url);
@@ -187,7 +187,7 @@ function bodyScrolling(type){
 
 export function showModal(modal){
 	if(typeof(modal) == 'string'){
-		modal = document.getElementById(modal + "_modal");
+		modal = document.getElementById(modal + "-modal");
 	}
 	
 	if(modal != null){

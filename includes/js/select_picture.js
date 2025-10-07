@@ -41,7 +41,7 @@ function selectImage(event, type='') {
 		let parent		= button.closest('.picture-selector-wrapper');
 		
 		//Store the id
-		parent.querySelector('.image_attachment_id').value = attachment.id;
+		parent.querySelector('.image-attachment-id').value = attachment.id;
 		
 		//Show the image
 		let imgdiv = parent.querySelector('.image-preview-wrapper');
@@ -49,7 +49,7 @@ function selectImage(event, type='') {
 		imgdiv.classList.remove('hidden');
 		
 		//Change button text
-		parent.querySelector('.select_image_button' ).innerHTML = parent.querySelector('.select_image_button' ).innerHTML.replace("Add", 'Replace');
+		parent.querySelector('.select-image-button' ).innerHTML = parent.querySelector('.select-image-button' ).innerHTML.replace("Add", 'Replace');
 	});
 
 	frame.open();
@@ -57,7 +57,7 @@ function selectImage(event, type='') {
 
 var button = '';
 window.addEventListener('click', event=>{
-	if(event.target.classList.contains('select_image_button')){
+	if(event.target.classList.contains('select-image-button')){
 		event.preventDefault();
 		button		= event.target;
 

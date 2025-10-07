@@ -69,13 +69,13 @@ document.addEventListener('input', (ev)=>{
 });
 
 document.addEventListener('click', (ev)=>{
-	if(ev.target.matches('.selectedname')){
-		ev.target.closest('.optionwrapper').querySelector(`input[type='text']`).value	= ev.target.closest(`.listselection`).querySelector(`input`).value;
+	if(ev.target.matches('.selected-name')){
+		ev.target.closest('.option-wrapper').querySelector(`input[type='text']`).value	= ev.target.closest(`.list-selection`).querySelector(`input`).value;
 		
 		// Show the add button
-		ev.target.closest(`.optionwrapper`).querySelector(`.add-list-selection`).classList.remove('hidden');
+		ev.target.closest(`.option-wrapper`).querySelector(`.add-list-selection`).classList.remove('hidden');
 		
-		ev.target.closest('.listselection').remove();
+		ev.target.closest('.list-selection').remove();
 
 		ev.preventDefault();
 
@@ -84,7 +84,7 @@ document.addEventListener('click', (ev)=>{
 		ev.stopImmediatePropagation();
 	}
 	else if(ev.target.matches(`.remove-list-selection`)){
-		ev.target.closest('.listselection').remove();
+		ev.target.closest('.list-selection').remove();
 	}else if(ev.target.matches(`.add-list-selection`)){
 		// add button clicked
 		doneTyping(ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.datalistinput`));
@@ -118,7 +118,7 @@ function doneTyping(el) {
 	}
 
 	let li	 		= document.createElement('li');
-	li.classList.add('listselection');
+	li.classList.add('list-selection');
 
 	let html	= `<button type="button" class="small remove-list-selection"><span class='remove-list-selection'>×</span></button>`;
 
@@ -138,11 +138,11 @@ function doneTyping(el) {
 	}
 
 	html   += `<input type='hidden' name='${el.id}[]' value='${value}'>`;
-	html   += `<span class='selectedname'>${text}</span>`
+	html   += `<span class='selected-name'>${text}</span>`
 
 	li.innerHTML	= html;
 
-	el.closest('.optionwrapper').querySelector('.listselectionlist').appendChild(li);
+	el.closest('.option-wrapper').querySelector('.list-selection-list').appendChild(li);
 
 	el.value	= '';
 }

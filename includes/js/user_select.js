@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	//userid to url
-	document.querySelectorAll('[name="user_selection"]').forEach(el=>el.addEventListener('change', function(){
+	document.querySelectorAll('[name="user-selection"]').forEach(el=>el.addEventListener('change', function(){
 		var currentUrl = window.location.href.replace(location.hash,'');
 		if (currentUrl.includes("userid=")){
 			var newUrl = currentUrl.replace(/userid=[0-9]+/g,"userid="+this.value);

@@ -1,7 +1,7 @@
 @use '../js/node_modules/croppr/dist/croppr.css';
 
-$primary_color:		#bd2919;
-$secundary_color:	#8a1a0e;
+$primaryColor:		#bd2919;
+$secundaryColor:	#8a1a0e;
 
 #edit-image-modal .modal-content{
   max-width: 90%;
@@ -74,8 +74,8 @@ $secundary_color:	#8a1a0e;
 
                 button.active{
                     color: #fff;
-                    border-color: $primary_color;
-                    background: $primary_color;
+                    border-color: $primaryColor;
+                    background: $primaryColor;
                 }
 
                 .slider{
@@ -84,13 +84,13 @@ $secundary_color:	#8a1a0e;
                     input{
                         width: 100%;
                         height: 5px;
-                        accent-color: $primary_color
+                        accent-color: $primaryColor
                     }
                 } 
             }
 
             button:hover{
-                background: $secundary_color;
+                background: $secundaryColor;
             }
         }
 
@@ -109,7 +109,7 @@ $secundary_color:	#8a1a0e;
             }
 
             .image-zoom{
-              accent-color: $primary_color;
+              accent-color: $primaryColor;
             }
         }
     }
@@ -182,8 +182,8 @@ $secundary_color:	#8a1a0e;
 
     .save-img{
         margin-left: 5px;
-        background: $primary_color;
-        border: 1px solid $primary_color;
+        background: $primaryColor;
+        border: 1px solid $primaryColor;
     }
 }
 

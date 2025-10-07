@@ -34,7 +34,10 @@ export async function submitForm(target, url, extraData=''){
 	let validity 	= true;
 	
 	//get all hidden required inputs and unrequire them
-	form.querySelectorAll('.hidden [required], select[required], .nice-select-search[required], .stephidden [required]').forEach(el=>{el.required = false});
+	form.querySelectorAll('.hidden [required], select[required], .nice-select-search[required], .step-hidden [required]').forEach(el=>{el.required = false});
+
+	// Get all multi-text inputs with a value and unrequire the main element
+	form.querySelectorAll(`.list-selection-list`).forEach(list => list.closest('.option-wrapper').querySelector(`input[type='text']`).required = false);
 
 	// enable disabled fields so it gets included and warnings are shown
 	form.querySelectorAll('[disabled][required]').forEach( el=>{
@@ -111,7 +114,7 @@ export async function submitForm(target, url, extraData=''){
 		try{
 			location['search'].split('?')[1].split('&').forEach(param=>{
 				let split	= param.split('=');
-				if(split[0] != 'formbuilder' && split[0] != 'main_tab' && split[0] != 'second_tab'){
+				if(split[0] != 'formbuilder' && split[0] != 'main-tab' && split[0] != 'second-tab'){
 					formData.append(split[0], split[1]);
 				}
 
@@ -134,9 +137,9 @@ export async function submitForm(target, url, extraData=''){
 		form.querySelectorAll(':invalid').forEach(el=>{
 			if(el.validationMessage != undefined){
 				Main.displayMessage(`${el.name} has an error:\n${el.validationMessage}`, 'error').then((value)=>{
-					form.querySelectorAll('.formstep:not(.stephidden)').forEach(formstep=>formstep.classList.add('stephidden'));
+					form.querySelectorAll('.formstep:not(.step-hidden)').forEach(formstep=>formstep.classList.add('step-hidden'));
 
-					el.closest('.stephidden').classList.remove('stephidden');
+					el.closest('.step-hidden').classList.remove('step-hidden');
 
 					el.focus();
 

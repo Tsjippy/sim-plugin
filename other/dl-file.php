@@ -42,7 +42,7 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	//If the file part contains the account statements folder
 	//and the filename does not contain the username
 	//Block access
-	if (str_contains($fileName, 'account_statements')) {
+	if (str_contains($fileName, 'account-statements')) {
 		$partnerName		= $username;
 		
 		$family = get_user_meta($user->ID,'family',true);
@@ -60,14 +60,14 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	
 	$allowedRoles	= ["medicalinfo", "administrator"];
 	//If this is a medical file it is only visible to that person and the user with the correct role
-	if(str_contains($fileName, 'medical_uploads') && !array_intersect($allowedRoles, $user->roles ) && !str_contains($fileName, $username)) {
+	if(str_contains($fileName, 'medical-uploads') && !array_intersect($allowedRoles, $user->roles ) && !str_contains($fileName, $username)) {
 		status_header(403);
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}
 	
 	$allowedRoles	= ["visainfo", "administrator"];
 	//If this is a visa file it is only visible to that person and the user with the correct role
-	if(str_contains($fileName, 'visa_uploads') && !array_intersect($allowedRoles, $user->roles ) && !str_contains($fileName, $username)) {
+	if(str_contains($fileName, 'visa-uploads') && !array_intersect($allowedRoles, $user->roles ) && !str_contains($fileName, $username)) {
 		status_header(403);
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}

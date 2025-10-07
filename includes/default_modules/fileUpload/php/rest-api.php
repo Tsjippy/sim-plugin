@@ -30,8 +30,8 @@ function validateUrl($param){
 function removeDocument(){
     $path = ABSPATH.$_POST['url'];
 
-    if(isset($_POST['userid'])){
-        $userId = sanitize_text_field($_POST["userid"]);
+    if(isset($_POST['user-id'])){
+        $userId = sanitize_text_field($_POST["user-id"]);
     }
 
     if(isset($_POST['metakey'])){

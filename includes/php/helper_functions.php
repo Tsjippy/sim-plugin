@@ -144,25 +144,25 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
  * @param	string				$class			Any extra class to be added to the dropdown default empty
  * @param	string				$id				The name or id of the dropdown, default 'user-selection'
  * @param	array				$args    		Extra query arg to get the users
- * @param	int|string|array	$userId			The current selected user id or name or array of multiple userids
+ * @param	int|string|array	$userId			The current selected user id or name or array of multiple user-ids
  * @param	array				$excludeIds		An array of user id's to be excluded
  * @param	string				$type			Html input type Either select or list
  *
  * @return	string						The html
  */
-function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId='', $multiple=false){
+function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user-selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId='', $multiple=false){
 
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
-	if(empty($userId) && !empty($_REQUEST["userid"]) && !is_numeric($userId)){
-		$userId = $_REQUEST["userid"];
+	if(empty($userId) && !empty($_REQUEST["user-id"]) && !is_numeric($userId)){
+		$userId = $_REQUEST["user-id"];
 	}
 	
 	//Get the id and the displayname of all users
 	$users 			= getUserAccounts($families, $onlyAdults, [], $args, $excludeIds, true);
 	
-	$html .= "<div class='optionwrapper'>";
+	$html .= "<div class='option-wrapper'>";
 	if(!empty($title)){
 		$html .= "<h4>$title</h4>";
 	}
@@ -177,7 +177,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			}
 		}
 
-		$html .= "<select name='$id' class='$class user_selection' value='' $multiple>";
+		$html .= "<select name='$id' class='$class user-selection' value='' $multiple>";
 			foreach($users as $key=>$user){
 				if(empty($user->first_name) || empty($user->last_name) || $families){
 					$name	= $user->display_name;
@@ -196,21 +196,21 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		$html .= '</select>';
 	}elseif($type == 'list'){
 		if($multiple){
-			$html	.= '<ul class="listselectionlist">';
+			$html	.= '<ul class="list-selection-list">';
 				// we supplied an array of users
 				if(is_array($userId)){
-					foreach($userId as $userid){
-						$html	.= "<li class='listselection'>";
+					foreach($userId as $id){
+						$html	.= "<li class='list-selection'>";
 							$html	.= "<button type='button' class='small remove-list-selection'><span class='remove-list-selection'>×</span></button>";
-						if(is_numeric($userid)){
-							$user	= get_userdata($userid);
+						if(is_numeric($id)){
+							$user	= get_userdata($id);
 							if($user){
 								$html	.= "<input type='hidden' name='{$id}[]' value='{$user->ID}'>";
 								$html	.= "<span>{$user->display_name}</span>";
 							}
 						}else{
 							$html	.= "<span>";
-								$html	.= "<input type='text' name='{$id}[]' value='$userid' readonly=readonly style='width:".strlen($userid)."ch'>";
+								$html	.= "<input type='text' name='{$id->ID}[]' value='$id->ID' readonly=readonly style='width:".strlen($id->display_name)."ch'>";
 							$html	.= "</span>";
 						}
 					}
@@ -232,7 +232,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			$listId = $id."-list";
 		}
 
-		$datalist = "<datalist id='$listId' class='$class user_selection'>";
+		$datalist = "<datalist id='$listId' class='$class user-selection'>";
 			foreach($users as $key=>$user){
 				if($families || empty($user->first_name) || empty($user->last_name)){
 					$name	= $user->display_name;
@@ -244,7 +244,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 					//Make this user the selected user
 					$value	= $user->display_name;
 				}
-				$datalist .= "<option value='$name' data-userid='$user->ID' data-value='$user->ID'>";
+				$datalist .= "<option value='$name' data-user-id='$user->ID' data-value='$user->ID'>";
 			}
 		$datalist .= '</datalist>';
 
@@ -1016,7 +1016,7 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 				$value = array_values($value)[0];
 			}else{
 				if(!isset($value[$key])){
-					$key	= str_replace('_files', '', $key);
+					$key	= str_replace('-files', '', $key);
 				}
 
 				if(isset($value[$key])){
@@ -1164,8 +1164,8 @@ function pictureSelector($key, $name, $settings, $type=''){
 		<div class='image-preview-wrapper <?php echo $hidden;?>'>
 			<img loading='lazy' class='image-preview' src='<?php echo $src;?>' alt=''>
 		</div>
-		<input type="button" class="button select_image_button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" <?php if(!empty($type)){echo "data-type='$type'";}?>/>
-		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
+		<input type="button" class="button select-image-button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" <?php if(!empty($type)){echo "data-type='$type'";}?>/>
+		<input type='hidden' class="image-attachment-id" name='picture-ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
 	</div>
 	<?php
 }
