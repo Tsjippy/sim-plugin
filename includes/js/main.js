@@ -5,7 +5,7 @@ import { displayMessage, showLoader, isMobileDevice, } from './imports.js';
 export { displayMessage, showLoader, isMobileDevice };
 
 export function changeUrl(target, secondTab=''){
-	let newParam	= target.dataset.param_val;
+	let newParam	= target.dataset.paramVal;
 	let hash		= target.dataset.hash;
 	const url 		= new URL(window.location);
 
@@ -52,7 +52,7 @@ function switchTab(event=null){
 
 	if(mainTab != null){
 		//find the tab and display it
-		document.querySelectorAll(`[data-param_val="${mainTab}"]:not(.active)`).forEach(tabbutton=>{
+		document.querySelectorAll(`[data-param-val="${mainTab}"]:not(.active)`).forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
 				let result	= displayTab(tabbutton);
@@ -66,7 +66,7 @@ function switchTab(event=null){
 	let secondTab = params.second_tab;
 	if(secondTab != null){
 		//find the tab and display it
-		document.querySelectorAll(`[data-param_val="${secondTab}"]:not(.active)`).forEach(tabbutton=>{
+		document.querySelectorAll(`[data-param-val="${secondTab}"]:not(.active)`).forEach(tabbutton=>{
 			displayTab(tabbutton);
 		});
 	}
@@ -80,7 +80,7 @@ export function displayTab(tabButton){
 	let tab;
 	// Get content area
 	if(tabButton.dataset.target == undefined){
-		tab = document.querySelector('#'+tabButton.dataset.param_val.trim());
+		tab = document.querySelector('#'+tabButton.dataset.paramVal.trim());
 	}else{
 		tab = tabButton.closest('div:not(.tablink-wrapper)').querySelector('#'+tabButton.dataset.target);
 	}
@@ -297,8 +297,8 @@ document.addEventListener("DOMContentLoaded",function() {
 	//loop over all the tab buttons
 	document.querySelectorAll('.tablink').forEach(function(tabButton){
 		//Add the dataset if it does not exist yet.
-		if(tabButton.dataset.param_val == undefined){
-			tabButton.dataset.param_val = tabButton.textContent.replace(' ','_').toLowerCase().trim();
+		if(tabButton.dataset.paramVal == undefined){
+			tabButton.dataset.paramVal = tabButton.textContent.replace(' ','_').toLowerCase().trim();
 		}
 	})
 

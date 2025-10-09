@@ -110,7 +110,7 @@ abstract class MailSetting{
                         max-width:50px;
                     }
                 </style>
-                <div class="clone-div" data-divid="<?php echo $index;?>">
+                <div class="clone-div" data-div-id="<?php echo $index;?>">
                     <label name="Header" class=" formfield form-label">
                         <h4 class="label-text">Header <?php echo $index + 1;?></h4>
                     </label>

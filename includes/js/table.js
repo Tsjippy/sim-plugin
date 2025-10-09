@@ -232,7 +232,7 @@ async function showFullscreen(target){
 
 	let url = new URL(window.location);
 
-	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.form_id);
+	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.formId);
 
 	window.history.pushState({}, '', url);
 
