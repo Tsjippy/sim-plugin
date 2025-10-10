@@ -27,6 +27,46 @@ function getModuleOption($moduleName, $option, $returnBoolean=true){
 	}
 }
 
+
+/**
+ * Removes a certain module setting
+ * @param	string 	$moduleName		The module name'
+ */
+function removeModuleOption($moduleName, $option=''){
+	global $Modules;
+
+	if(!empty($Modules[$moduleName])){
+		if($option == ''){
+			unset($Modules[$moduleName]);	
+		}else{
+			unset($Modules[$moduleName][$option]);
+		}
+
+		update_option('sim_modules', $Modules);
+	}
+}
+
+/**
+ * Update module settings
+ * @param	string 	$moduleName		The module name'
+ * @param	array	$options		The options to set
+ * 
+ * @return	array	The updated options
+ */
+function updateModuleOptions($moduleName, $options, $optionName=''){
+	global $Modules;
+
+	if($optionName	==''){
+		$Modules[$moduleName]	= $options;
+	}else{
+		$Modules[$moduleName][$optionName]	= $options;
+	}
+
+	update_option('sim_modules', $Modules);
+
+	return $Modules[$moduleName];
+}
+
 function maybeGetUserPageId($userId){
     $userPageId	= false;
 
