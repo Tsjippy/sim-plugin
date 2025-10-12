@@ -33,7 +33,7 @@ function addPreview(link, value){
 
 	let html = `
 	<div class='document'>
-		<input type='hidden' name='${name}' value='${value}' data-pending='true'>
+		<input type='hidden' name='${name}' value='${value}' data-pending=1>
 		${link}
 		${loaderHtml}
 	</div>`;
@@ -386,7 +386,7 @@ async function uploadVideo(file){
 		// check if we are uploading from frontend posting form
 		var postForm = document.getElementById('postform');
 		if(postForm != null){
-			postForm.querySelector('[name="update"]').value		= 'true';
+			postForm.querySelector('[name="update"]').value		= 1;
 			postForm.querySelector('[name="post-id"]').value	= postId;
 		}
 

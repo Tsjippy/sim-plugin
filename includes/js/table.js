@@ -189,8 +189,8 @@ export function setTableLabel() {
 		//Get all heading elements
 		let tdLabels = [];
 		table.querySelectorAll('thead th').forEach((el,index) => {
-			if(el.dataset.nicename != null){
-				tdLabels[index]	= el.dataset.nicename;
+			if(el.dataset.niceName != null){
+				tdLabels[index]	= el.dataset.niceName;
 			}else{
 				tdLabels[index]	= el.textContent;
 			}
@@ -444,9 +444,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	if(fullscreen != null){
 		try{
-			showFullscreen(document.querySelector(`table[data-form_id="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
+			showFullscreen(document.querySelector(`table[data-form-id="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
 		}catch{
-			console.error(`table[data-form_id="${fullscreen}"]`);
+			console.error(`table[data-form-id="${fullscreen}"]`);
 		}
 	}
 

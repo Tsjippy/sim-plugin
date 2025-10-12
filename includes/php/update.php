@@ -71,7 +71,3 @@ function afterPluginUpdate($oldVersion){
         update_option('sim_modules', $Modules);
     }
 }
-
-add_action('init', function(){
-    //afterPluginUpdate('1.1.1');
-});

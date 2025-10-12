@@ -382,7 +382,7 @@ function mainMenuActions(){
 			echo '<div class="error">';
 				echo "Module $slug not found on github.<br><br>";
 				if(!$github->authenticated){
-					$url            = admin_url( "admin.php?page=sim_github&main_tab=settings" );
+					$url            = admin_url( "admin.php?page=sim_github&main-tab=settings" );
 					echo " maybe you <a href='$url'>should supply a github token</a> so I can try again while logged in.";
 				}
 			echo "</div>";
@@ -410,7 +410,7 @@ function mainMenuActions(){
 			echo '<div class="error">';
 				echo "Module $slug not found on github.<br><br>";
 				if(!$github->authenticated){
-					$url            = admin_url( "admin.php?page=sim_github&main_tab=settings" );
+					$url            = admin_url( "admin.php?page=sim_github&main-tab=settings" );
 					echo " maybe you <a href='$url'>should supply a github token</a> so I can try again while logged in.";
 				}
 			echo "</div>";

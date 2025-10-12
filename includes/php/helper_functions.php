@@ -244,7 +244,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 					//Make this user the selected user
 					$value	= $user->display_name;
 				}
-				$datalist .= "<option value='$name' data-user_id='$user->ID' data-value='$user->ID'>";
+				$datalist .= "<option value='$name' data-user-id='$user->ID' data-value='$user->ID'>";
 			}
 		$datalist .= '</datalist>';
 

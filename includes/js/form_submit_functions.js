@@ -100,7 +100,7 @@ export async function submitForm(target, url, extraData=''){
 			el.classList.remove('was-disabled'); 
 		});
 
-		if(form.dataset.addempty == 'true'){
+		if(form.dataset.addEmpty == true){
 			//also append at least one off all checkboxes
 			form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(checkbox=>{
 				//if no checkbox with this name exist yet
@@ -128,7 +128,7 @@ export async function submitForm(target, url, extraData=''){
 		// Reset button
 		target.innerHTML	= buttonText;
 
-		if(form.dataset.reset != 'true'){
+		if(form.dataset.reset != true){
 			markComplete();
 		}
 
@@ -137,9 +137,11 @@ export async function submitForm(target, url, extraData=''){
 		form.querySelectorAll(':invalid').forEach(el=>{
 			if(el.validationMessage != undefined){
 				Main.displayMessage(`${el.name} has an error:\n${el.validationMessage}`, 'error').then((value)=>{
-					form.querySelectorAll('.formstep:not(.step-hidden)').forEach(formstep=>formstep.classList.add('step-hidden'));
+					form.querySelectorAll('.formstep:not(.step-hidden)').forEach(formstep => formstep.classList.add('step-hidden'));
 
-					el.closest('.step-hidden').classList.remove('step-hidden');
+					if(el.closest('.step-hidden') != null){
+						el.closest('.step-hidden').classList.remove('step-hidden');
+					}
 
 					el.focus();
 
@@ -214,6 +216,7 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 			Main.displayMessage('Please refresh the page and try again!', 'error');
 			return false;
 		}else{
+			console.error(url);
 			console.error(json);
 			if(json.data == null || json.data.status == 403){
 				Main.displayMessage(json.message);

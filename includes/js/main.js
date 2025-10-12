@@ -47,7 +47,7 @@ function switchTab(event=null){
 		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	
-	let mainTab 	= params.main_tab;
+	let mainTab 	= params.mainTab;
 	let lastTab		= '';
 
 	if(mainTab != null){
@@ -194,9 +194,10 @@ export function showModal(modal){
 		// Prevent main page scrolling
 		document.body.style.top			= `-${window.scrollY}px`;
 		document.body.style.position 	= 'fixed';
+
 		let prim						= document.getElementById('primary');
 		if(prim != null){
-			prim.style.zIndex			= 99999;
+			prim.style.zIndex			= '';
 		}
 
 		modal.classList.remove('hidden');
@@ -221,10 +222,11 @@ export function hideModals(){
 		document.body.style.position 	= '';
 		document.body.style.top 		= '';
 		window.scrollTo(0, parseInt(scrollY || '0') * -1);
-		let prim						= document.getElementById('primary');
+		
+		/* 		let prim						= document.getElementById('primary');
 		if(prim != null){
 			prim.style.zIndex			= 1;
-		}
+		} */
 	}
 }
 
@@ -298,7 +300,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('.tablink').forEach(function(tabButton){
 		//Add the dataset if it does not exist yet.
 		if(tabButton.dataset.paramVal == undefined){
-			tabButton.dataset.paramVal = tabButton.textContent.replace(' ','_').toLowerCase().trim();
+			tabButton.dataset.paramVal = tabButton.textContent.replace(' ','-').toLowerCase().trim();
 		}
 	})
 
@@ -357,7 +359,7 @@ window.addEventListener("mousedown", function(event) {
 		target.closest('#mobile-menu-control-wrapper') == null
 	){
 		document.querySelector('#mobile-menu-control-wrapper').classList.remove("toggled");
-		document.querySelector('.menu-toggle').setAttribute("aria-expanded", 'false');
+		document.querySelector('.menu-toggle').setAttribute("aria-expanded", 0);
 		document.querySelector('#site-navigation').classList.remove("toggled");
 		bodyScrolling('enable');
 	}

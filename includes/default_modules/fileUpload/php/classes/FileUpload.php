@@ -296,7 +296,7 @@ class FileUpload{
 
 		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
-		$this->html .= "<button type='button' class='remove-document button' data-url='$documentPath' data-user_id='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
+		$this->html .= "<button type='button' class='remove-document button' data-url='$documentPath' data-user-id='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
 		$this->html .= SIM\loaderImage(40);
 		$this->html .= "</div>";
 
