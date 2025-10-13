@@ -3,6 +3,7 @@
 
 ### Added
 - module functions
+- support for post types with a -
 
 ### Changed
 - classnames
