@@ -69,6 +69,8 @@ function registerPostTypeAndTax($single, $plural){
             array( "sim/{$single}meta" )
         ),
 	);
+
+	$args	= apply_filters('sim-post-type-creation-args', $args, $single);
 	
 	//Create the custom post type
 	register_post_type( $single, $args );
