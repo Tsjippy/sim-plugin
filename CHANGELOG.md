@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [5.6.0] - 2025-10-13
+
+
+### Added
 - module functions
 - support for post types with a -
 - 'sim-post-type-creation-args' filter
@@ -13,8 +24,6 @@
 
 ### Fixed
 - bugs
-
-### Updated
 
 ## [5.5.8] - 2025-10-06
 
