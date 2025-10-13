@@ -4,6 +4,7 @@
 ### Added
 - module functions
 - support for post types with a -
+- 'sim-post-type-creation-args' filter
 
 ### Changed
 - classnames
