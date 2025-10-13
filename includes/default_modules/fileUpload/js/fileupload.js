@@ -33,7 +33,7 @@ function addPreview(link, value){
 
 	let html = `
 	<div class='document'>
-		<input type='hidden' name='${name}' value='${value}' data-pending=1>
+		<input type='hidden' class='no-reset' name='${name}' value='${value}' data-pending=1>
 		${link}
 		${loaderHtml}
 	</div>`;

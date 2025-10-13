@@ -137,7 +137,7 @@ function doneTyping(el) {
 		text	= el.value
 	}
 
-	html   += `<input type='hidden' name='${el.id}[]' value='${value}'>`;
+	html   += `<input type='hidden' class='no-reset' class='no-reset' name='${el.id}[]' value='${value}'>`;
 	html   += `<span class='selected-name'>${text}</span>`
 
 	li.innerHTML	= html;

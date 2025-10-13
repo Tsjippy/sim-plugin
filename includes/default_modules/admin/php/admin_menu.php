@@ -217,11 +217,11 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<h2>Settings</h2>
 			
 		<form action="" method="post">
-			<input type='hidden' name='module' value='<?php echo esc_html($moduleSlug);?>'>
+			<input type='hidden' class='no-reset' class='no-reset' name='module' value='<?php echo esc_html($moduleSlug);?>'>
 			<?php
 			if(in_array($moduleSlug, $defaultModules)){
 				?>
-				<input type='hidden' name='enable' value='on'>
+				<input type='hidden' class='no-reset' name='enable' class='no-reset' value='on'>
 				This module is enabled by default<br><br>
 				<?php
 			}else{
@@ -281,7 +281,7 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<h2>E-mail settings</h2>
 			
 		<form action="" method="post">
-			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
+			<input type='hidden' class='no-reset' class='no-reset' name='module' value='<?php echo $moduleSlug;?>'>
 			<?php
 			echo $html;
 			?>

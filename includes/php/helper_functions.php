@@ -205,7 +205,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 						if(is_numeric($id)){
 							$user	= get_userdata($id);
 							if($user){
-								$html	.= "<input type='hidden' name='{$id}[]' value='{$user->ID}'>";
+								$html	.= "<input type='hidden' class='no-reset' class='no-reset' name='{$id}[]' value='{$user->ID}'>";
 								$html	.= "<span>{$user->display_name}</span>";
 							}
 						}else{
@@ -1165,7 +1165,7 @@ function pictureSelector($key, $name, $settings, $type=''){
 			<img loading='lazy' class='image-preview' src='<?php echo $src;?>' alt=''>
 		</div>
 		<input type="button" class="button select-image-button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" <?php if(!empty($type)){echo "data-type='$type'";}?>/>
-		<input type='hidden' class="image-attachment-id" name='picture-ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
+		<input type='hidden' class='no-reset' class='no-reset' class='no-reset' class='no-reset' class='no-reset' class='no-reset' class='no-reset' class='no-reset' class="image-attachment-id" name='picture-ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
 	</div>
 	<?php
 }
