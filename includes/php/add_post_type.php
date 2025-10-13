@@ -21,32 +21,35 @@ function registerPostTypeAndTax($single, $plural){
 
 	$Plural				= ucfirst($plural);
 	$Single				= ucfirst($single);
+
+	$PluralWithSpace	= str_replace('-', ' ', $Plural);
+	$SingleWithSpace	= str_replace('-', ' ', $Single);
 	
 	/*
 		CREATE POST TYPE
 	*/
 	//Text to show for buttons
 	$labels = array(
-		'name' 					=> $Single,
-		'singular_name' 		=> $Single,
-		'menu_name' 			=> $Plural,
-		'add_new' 				=> "Add $Single",
-		'add_new_item' 			=> "Add New $Single",
+		'name' 					=> $SingleWithSpace,
+		'singular_name' 		=> $SingleWithSpace,
+		'menu_name' 			=> $PluralWithSpace,
+		'add_new' 				=> "Add $SingleWithSpace",
+		'add_new_item' 			=> "Add New $SingleWithSpace",
 		'edit' 					=> 'Edit',
-		'edit_item' 			=> "Edit $Single",
-		'new_item' 				=> "New $Single",
-		'view' 					=> "View $Single",
-		'view_item' 			=> "View $Single",
-		'search_items' 			=> "Search $Plural",
-		'not_found' 			=> "No $Plural Found",
-		'not_found_in_trash' 	=> "No $Plural Found in Trash",
-		'parent' 				=> "Parent $Plural",
+		'edit_item' 			=> "Edit $SingleWithSpace",
+		'new_item' 				=> "New $SingleWithSpace",
+		'view' 					=> "View $SingleWithSpace",
+		'view_item' 			=> "View $SingleWithSpace",
+		'search_items' 			=> "Search $PluralWithSpace",
+		'not_found' 			=> "No $PluralWithSpace Found",
+		'not_found_in_trash' 	=> "No $PluralWithSpace Found in Trash",
+		'parent' 				=> "Parent $PluralWithSpace",
 	);
 	
 	$args = array(
 		'hierarchical' 			=> true,
 		'labels' 				=> $labels,
-		'description' 			=> "Post to display $plural",
+		'description' 			=> "Post to display $PluralWithSpace",
 		'public' 				=> true,
 		'show_ui' 				=> true,
 		'show_in_menu' 			=> true,
@@ -84,15 +87,18 @@ function registerPostTypeAndTax($single, $plural){
 function createTaxonomies($taxonomyName, $postType, $plural){
 	$taxonomyName		= strtolower($taxonomyName);
 	$Plural				= ucfirst($plural);
+
+	$PluralWithSpace	= str_replace('-', ' ', $Plural);
+
 	/*
 		CREATE CATEGORIES
 	*/
 	$labels = array(
-		'name' 							=> "$Plural Types",
-		'singular_name' 				=> "$Plural Types",
-		'search_items' 					=> "Search $Plural Types",
-		'popular_items' 				=> "Popular $Plural Types",
-		'all_items' 					=> "All $Plural Types",
+		'name' 							=> "$PluralWithSpace Types",
+		'singular_name' 				=> "$PluralWithSpace Types",
+		'search_items' 					=> "Search $PluralWithSpace Types",
+		'popular_items' 				=> "Popular $PluralWithSpace Types",
+		'all_items' 					=> "All $PluralWithSpace Types",
 		'parent_item' 					=> "Parent $postType Type",
 		'parent_item_colon' 			=> "Parent $postType Type:",
 		'edit_item' 					=> "Edit $postType Type",
