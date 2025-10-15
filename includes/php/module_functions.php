@@ -14,7 +14,9 @@ function getModuleOption($moduleName, $option, $returnBoolean=true){
 
 	// For backwards compatibility
 	if(empty($Modules[$moduleName][$option])){
-		printArray("Please update '$option'");
+		if(str_contains($option, '_')){
+			printArray("Please update '$option'");
+		}
 		$option	= str_replace('_', '-', $option);
 	}
 
