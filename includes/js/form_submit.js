@@ -60,7 +60,7 @@ document.addEventListener('input', (ev)=>{
 	if(ev.target.matches(`.datalistinput.multiple`)){
 		// if the value is found in the datalist
 		if(ev.target.list != null && ev.target.list.querySelector(`[value="${ev.target.value}"]`) != null){
-			doneTyping(ev.target);
+			addListSelection(ev.target);
 		}else{
 			// Show the add button
 			ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.add-list-selection`).classList.remove('hidden');
@@ -87,7 +87,7 @@ document.addEventListener('click', (ev)=>{
 		ev.target.closest('.list-selection').remove();
 	}else if(ev.target.matches(`.add-list-selection`)){
 		// add button clicked
-		doneTyping(ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.datalistinput`));
+		addListSelection(ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.datalistinput`));
 	}
 });
 
@@ -98,7 +98,7 @@ document.addEventListener("keyup", function(event){
 		keysPressed.Shift == undefined && 
 		document.activeElement.matches('.datalistinput')
 	) {
-		doneTyping(document.activeElement);
+		addListSelection(document.activeElement);
 	}
 
 	delete keysPressed[event.key];
@@ -110,7 +110,7 @@ document.addEventListener('keydown', (event) => {
    keysPressed[event.key] = true;
 });
 
-function doneTyping(el) {
+function addListSelection(el) {
 	el.closest(`.multi-text-input-wrapper`).querySelector(`.add-list-selection`).classList.add('hidden');
 
 	if(el.value	== ''){
@@ -144,5 +144,8 @@ function doneTyping(el) {
 
 	el.closest('.option-wrapper').querySelector('.list-selection-list').appendChild(li);
 
+	el.required = false;
+
 	el.value	= '';
+
 }
