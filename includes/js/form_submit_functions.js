@@ -6,7 +6,7 @@ export function formReset(form){
 	form.querySelectorAll('.loader-wrapper').forEach(el=>el.classList.add('hidden'));
 
 	//hide button again if needed
-	form.querySelectorAll('.multistepcontrols .form-submit').forEach(el=>el.classList.add('hidden'));
+	form.querySelectorAll('.multi-step-controls .form-submit').forEach(el=>el.classList.add('hidden'));
 	
 	//fix required fields
 	form.querySelectorAll('[required]').forEach(el=>{el.required = false;});
@@ -22,10 +22,10 @@ export function formReset(form){
 	
 	if(form.querySelector('.formstep') != null){
 		//mark all circles as not active anymore
-		form.querySelectorAll('.multistepcontrols .step.finish').forEach(el=>el.classList.remove('finish'));
+		form.querySelectorAll('.multi-step-controls .step.finish').forEach(el=>el.classList.remove('finish'));
 	
 		//go back to the first part of the form in case of multistep
-		FormFunctions.showTab(0,form);
+		FormFunctions.showFormStep(0, form);
 	}
 }
 
