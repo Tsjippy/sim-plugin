@@ -29,21 +29,32 @@ export function formReset(form){
 	}
 }
 
+/**
+ * 
+ * @param {node} wrapper 	The Wrapper element of the inputs to be prepared
+ */
+export function prepareForValidation(wrapper){
+	// make all inputs required that should be
+	wrapper.querySelectorAll('.required input, .required textarea, .required select').forEach(el => el.required = true);
+
+	//get all hidden required inputs and unrequire them
+	wrapper.querySelectorAll('.hidden [required], select[required], .nice-select-search[required], .step-hidden [required]').forEach(el=>{el.required = false});
+
+	// Get all multi-text inputs with a value and unrequire the main element
+	wrapper.querySelectorAll(`.list-selection-list > .list-selection:first-child`).forEach(list => list.closest('.option-wrapper').querySelector(`input[type='text']`).required = false);
+
+	// enable disabled fields so it gets included and warnings are shown
+	wrapper.querySelectorAll('[disabled][required]').forEach( el=>{
+		el.disabled	= false;
+		el.classList.add('was-disabled'); 
+	});
+}
+
 export async function submitForm(target, url, extraData=''){
 	let form		= target.closest('form');
 	let validity 	= true;
 	
-	//get all hidden required inputs and unrequire them
-	form.querySelectorAll('.hidden [required], select[required], .nice-select-search[required], .step-hidden [required]').forEach(el=>{el.required = false});
-
-	// Get all multi-text inputs with a value and unrequire the main element
-	form.querySelectorAll(`.list-selection-list`).forEach(list => list.closest('.option-wrapper').querySelector(`input[type='text']`).required = false);
-
-	// enable disabled fields so it gets included and warnings are shown
-	form.querySelectorAll('[disabled][required]').forEach( el=>{
-		el.disabled	= false;
-		el.classList.add('was-disabled'); 
-	});
+	prepareForValidation(form);
 
 	validity	= form.reportValidity();
 

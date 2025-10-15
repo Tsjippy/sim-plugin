@@ -1,7 +1,7 @@
 console.log('formsubmit loaded');
 
-import {formReset, submitForm, markComplete, fetchRestApi} from './form_submit_functions.js';
-export {formReset, submitForm, markComplete, fetchRestApi};
+import {formReset, submitForm, markComplete, fetchRestApi, prepareForValidation} from './form_submit_functions.js';
+export {formReset, submitForm, markComplete, fetchRestApi, prepareForValidation};
 
 document.querySelectorAll('form.sim-form-wrapper').forEach(form=>form.addEventListener("submit", markComplete));
 
