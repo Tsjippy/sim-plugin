@@ -6,9 +6,17 @@
 ### Changed
 
 ### Fixed
-- few bugs
 
 ### Updated
+
+## [5.6.3] - 2025-10-15
+
+
+### Added
+- prepareForValidation function
+
+### Fixed
+- few bugs
 
 ## [5.6.2] - 2025-10-14
 
