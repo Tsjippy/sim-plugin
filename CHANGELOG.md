@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- doneTyping function name
 
 ### Fixed
 
