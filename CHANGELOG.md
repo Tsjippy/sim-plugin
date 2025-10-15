@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- few bugs
 
 ### Updated
+
+## [5.5.9] - 2025-10-15
+
+
+### Fixed
+- few bugs
 
 ## [5.6.2] - 2025-10-14
 
