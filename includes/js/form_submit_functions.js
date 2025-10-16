@@ -65,19 +65,27 @@ export async function submitForm(target, url, extraData=''){
 
 		// get the first word
 		let text			= buttonText.split(' ')[0];
-		if(text.charAt(text.length - 1) == 'e'){
+		let vowels			= ['a', 'e', 'i', 'o', 'u'];
+		let lastChar		= text.charAt(text.length - 1);
+		let secondLatChar	= text.charAt(text.length - 2);
+		
+		if(lastChar == 'e'){
 			// replace ie with y
-			if(text.charAt(text.length - 2) == 'i'){
-				text			= text.substring(0, text.length - 2)+'y';
+			if(secondLatChar == 'i'){
+				text		= text.substring(0, text.length - 2)+'y';
 			}
 			
 			// remove the e
 			else{
-				text			= text.substring(0, text.length - 1);
+				text		= text.substring(0, text.length - 1);
 			}
-		// duplicate the last letter if not already
-		}else if(text.charAt(text.length - 2) != text.charAt(text.length - 1)){
-			text				= text + text.substring(text.length - 1, text.length);
+		// duplicate the last letter if needed
+		}else if(
+			secondLatChar != lastChar &&
+			vowels.includes(secondLatChar) &&
+			!vowels.includes(lastChar)
+		){
+			text			= text + text.substring(text.length - 1, text.length);
 		}
 
 		text				= text+'ing...';
