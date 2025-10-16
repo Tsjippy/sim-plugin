@@ -7,6 +7,7 @@
 - doneTyping function name
 
 ### Fixed
+- adding ing properly
 
 ### Updated
 
