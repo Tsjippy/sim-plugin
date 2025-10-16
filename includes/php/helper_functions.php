@@ -963,10 +963,31 @@ function cleanUpNestedArray(&$array, $delEmptyArrays=false){
 	if(!is_array($array)){
 		return;
 	}
+
+	array_map(
+		function($value){
+			if(is_string($value)){
+				return trim($value);
+			}elseif(is_array($value)){
+				cleanUpNestedArray($value);
+				return;
+			}
+
+			return $value;
+		}, 
+		$array
+	);
+
+	$array	= array_filter($array);
+
+	/* if($delEmptyArrays){
+		$array	= array_filter($array);
+	}
 	
 	foreach ($array as $key => $value){
         if(is_array($value)){
             cleanUpNestedArray($value);
+
 			if(empty($value) && $delEmptyArrays){
 				unset($array[$key]);
 			}else{
@@ -975,7 +996,7 @@ function cleanUpNestedArray(&$array, $delEmptyArrays=false){
 		}elseif(empty(trim($value))){
             unset($array[$key]);
 		}
-    }
+    } */
 }
 
 /**
