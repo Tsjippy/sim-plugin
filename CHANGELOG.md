@@ -6,6 +6,7 @@
 ### Changed
 - doneTyping function name
 - use array_filter in cleanup array function
+- file uploader fixes
 
 ### Fixed
 - adding ing properly
