@@ -39,9 +39,9 @@ function addPreview(link, value){
 	</div>`;
 
 	// insert html
-	fileUploadWrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html);
+	fileUploadWrap.querySelector('.document-preview').insertAdjacentHTML('beforeend', html);
 
-	return fileUploadWrap.querySelector('.documentpreview .document');
+	return fileUploadWrap.querySelector('.document-preview .document');
 }
 
 async function fileUpload(target){
@@ -60,6 +60,11 @@ async function fileUpload(target){
 	let form	= target.closest('form');
 	if(form != undefined){
 		form.querySelector('.button.form-submit').disabled	= true;
+	}
+	
+	//Hide upload button if only one file allowed
+	if(!fileUploadWrap.querySelector('.file-upload').multiple){
+		fileUploadWrap.querySelector('.upload-div').classList.add('hidden');
 	}
 	
 	//Create a formData element
@@ -131,8 +136,7 @@ async function fileUpload(target){
 	if (totalFiles > 1){
 		s = "s";
 	}
-	target.closest('.upload-div').querySelector('.loader-text').textContent = "Uploading document"+s;
-	document.getElementById('progress-wrapper').classList.remove('hidden');
+	Main.showLoader(document.getElementById('progress-wrapper'), false, 100, "Uploading document"+s);
 
 	request.send(formData);
 }
@@ -150,7 +154,7 @@ function fileUploadProgress(e){
 
 		if(percentage >= 99){
 			//Remove progress barr
-			document.getElementById("progress-wrapper").classList.add('hidden');
+			document.getElementById("progress-wrapper").remove();
 			
 			// process completed
 			fileUploadWrap.querySelectorAll(".loader-text").forEach(el =>{
@@ -179,12 +183,8 @@ function readyStateChanged(e){
 			Main.displayMessage(JSON.parse(request.responseText).error,'error');
 		}
 		
-		//Hide loading gif
-		document.querySelectorAll(".loader-wrapper").forEach(
-			function(loader){
-				loader.classList.add('hidden');
-			}
-		);
+		// Remove loaders
+		document.querySelectorAll(".loader-wrapper").forEach(el => el.remove());
 			
 		//Clear the input
 		fileUploadWrap.querySelector('.file-upload').value = "";
@@ -235,17 +235,15 @@ function fileUploadSucces(result){
 
 		addPreview(anchorLink, value);
 	}
+
+	// remove Loader
+	fileUploadWrap.querySelector('.progress-wrapper');
 	
 	if(imgUrls.length==1){
 		let fileName 	= src.split("/")[src.split("/").length-1];
 		Main.displayMessage(`The file ${fileName} has been uploaded succesfully.`,'success',true);
 	}else{
 		Main.displayMessage("The files have been uploaded succesfully.",'success',true);
-	}
-	
-	//Hide upload button if only one file allowed
-	if(!fileUploadWrap.querySelector('.file-upload').multiple){
-		fileUploadWrap.querySelector('.upload-div').classList.add('hidden');
 	}
 
 	// Create a custom event so others can listen to it.
@@ -257,7 +255,8 @@ function fileUploadSucces(result){
 }
 
 async function removeDocument(target){
-	let data = new FormData();		
+	let data = new FormData();	
+
 	//Loop over the dataset attributes and add them to post
 	for(let d in target.dataset){
 		if(target.dataset[d] != ''){
@@ -269,20 +268,17 @@ async function removeDocument(target){
 	target.style.display = "none";
 	
 	//add an id to the remove button so we can query for it later
-	target.parentNode.classList.add('removethisdocument');
+	target.parentNode.classList.add('remove-this-document');
+
+	let docWrapper		= target.closest('.document');
+	fileUploadWrap		= docWrapper.closest('.file-upload-wrap');
 	
 	//show loader
-	target.parentNode.querySelector('.remove-document-loader').classList.remove('hidden');
+	let loader		= Main.showLoader(target.closest('.document'), true, 100, 'Deleting Image');
 	
 	let response	= await FormSubmit.fetchRestApi('remove-document', data);
 
-	if(response){
-		let docWrapper		= target.closest('.document');
-		fileUploadWrap		= docWrapper.closest('.file-upload-wrap');
-		
-		//hide the loading gif
-		docWrapper.querySelector('.remove-document-loader').classList.add('hidden');
-			
+	if(response){			
 		// If successful
 		try{
 			//show the upload field
@@ -294,6 +290,9 @@ async function removeDocument(target){
 		
 		//remove the document/picture
 		docWrapper.remove();
+
+		//hide the loading gif
+		loader.remove();
 		
 		//var re = new RegExp('(.*)[0-9](.*)',"g");
 		//reindex documents

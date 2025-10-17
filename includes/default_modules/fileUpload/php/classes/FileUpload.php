@@ -162,7 +162,7 @@ class FileUpload{
 		}
 		
 		$this->html .= '<div class="file-upload-wrap">';
-			$this->html .= '<div class="documentpreview">';
+			$this->html .= '<div class="document-preview">';
 
 			if(is_array($documentArray) && !empty($documentArray)){
 				foreach($documentArray as $documentKey => $document){
@@ -211,8 +211,7 @@ class FileUpload{
 					}
 
 					$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[updatemeta]' 		value='{$this->updatemeta}'>";
-					
-					$this->html .= SIM\loaderImage(50, '', true);
+		
 				$this->html .= "</div>";
 			$this->html .= "</div>";
 		$this->html .= "</div>";
@@ -233,7 +232,7 @@ class FileUpload{
 			if(count($documentPath) == 1){
 				$documentPath	= array_values($documentPath)[0];
 			}else{
-				return 'please supply a string, not an array';
+				return 'Please supply a string, not an array';
 			}
 		}
 
@@ -297,7 +296,6 @@ class FileUpload{
 		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
 		$this->html .= "<button type='button' class='remove-document button' data-url='$documentPath' data-user-id='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
-		$this->html .= SIM\loaderImage(40);
 		$this->html .= "</div>";
 
 		return true;

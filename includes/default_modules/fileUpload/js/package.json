@@ -4,7 +4,8 @@
   "description": "fileupload",
   "main": "./fileupload.js",
   "scripts": {
-    "upload": "webpack --watch --entry ./fileupload.js --output-path . --output-filename fileupload.min.js --progress --mode=production --devtool source-map"
+    "upload": "webpack --watch --entry ./fileupload.js --output-path . --output-filename fileupload.min.js --progress --mode=production --devtool source-map",
+    "all": "run-p upload"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

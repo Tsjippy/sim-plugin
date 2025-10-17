@@ -47,7 +47,7 @@ function switchTab(event=null){
 		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	
-	let mainTab 	= params.mainTab;
+	let mainTab 	= params['main-tab'];
 	let lastTab		= '';
 
 	if(mainTab != null){

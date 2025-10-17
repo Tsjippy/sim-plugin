@@ -18,7 +18,7 @@ export function formReset(form){
 	form.querySelectorAll('.upload-div.hidden').forEach(el=>el.classList.remove('hidden'));
 	
 	//remove doc previews
-	document.querySelectorAll('.documentpreview .document').forEach(el=>el.remove());
+	document.querySelectorAll('.document-preview .document').forEach(el=>el.remove());
 	
 	if(form.querySelector('.formstep') != null){
 		//mark all circles as not active anymore
