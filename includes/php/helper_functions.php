@@ -554,8 +554,7 @@ function getChildTitle($userId){
  */
 function getUserFamily($userId){
 
-	$family = (array)get_user_meta( $userId, 'family', true );
-	cleanUpNestedArray($family, true);
+	$family = cleanUpNestedArray((array)get_user_meta( $userId, 'family', true ));
 
 	// If there is no family, but a family name is set
 	if(count($family) == 1 && isset($family['name'])){
@@ -959,44 +958,21 @@ function removeFromNestedArray(&$array, $arrayKeys){
  * @param	array		$array			Reference to an array
  * @param	bool		$delEmptyArrays Wheter to delete empty nested arrays or not. Default false
 */
-function cleanUpNestedArray(&$array, $delEmptyArrays=false){
+function cleanUpNestedArray($array, $delEmptyArrays=false){
 	if(!is_array($array)){
 		return;
 	}
 
-	array_map(
+	return array_filter(
+		$array,
 		function($value){
-			if(is_string($value)){
-				return trim($value);
-			}elseif(is_array($value)){
-				cleanUpNestedArray($value);
-				return;
+			if(is_array($value)){
+				return cleanUpNestedArray($value);
 			}
 
-			return $value;
-		}, 
-		$array
-	);
-
-	$array	= array_filter($array);
-
-	/* if($delEmptyArrays){
-		$array	= array_filter($array);
-	}
-	
-	foreach ($array as $key => $value){
-        if(is_array($value)){
-            cleanUpNestedArray($value);
-
-			if(empty($value) && $delEmptyArrays){
-				unset($array[$key]);
-			}else{
-				$array[$key] = $value;
-			}
-		}elseif(empty(trim($value))){
-            unset($array[$key]);
+			return !empty($value);
 		}
-    } */
+	);
 }
 
 /**
