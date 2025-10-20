@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- using array_filter
 
 ### Fixed
 
 ### Updated
+
+## [5.6.5] - 2025-10-20
+
+
+### Changed
+- using array_filter
 
 ## [5.6.4] - 2025-10-17
 
