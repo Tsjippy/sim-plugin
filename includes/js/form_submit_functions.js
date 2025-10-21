@@ -58,101 +58,7 @@ export async function submitForm(target, url, extraData=''){
 
 	validity	= form.reportValidity();
 
-	//only continue if valid
-	if(validity){
-		//Display loader
-		let buttonText 		= target.innerHTML;
-
-		// get the first word
-		let text			= buttonText.split(' ')[0];
-		let vowels			= ['a', 'e', 'i', 'o', 'u'];
-		let lastChar		= text.charAt(text.length - 1);
-		let secondLatChar	= text.charAt(text.length - 2);
-		
-		if(lastChar == 'e'){
-			// replace ie with y
-			if(secondLatChar == 'i'){
-				text		= text.substring(0, text.length - 2)+'y';
-			}
-			
-			// remove the e
-			else{
-				text		= text.substring(0, text.length - 1);
-			}
-		// duplicate the last letter if needed
-		}else if(
-			secondLatChar != lastChar &&
-			vowels.includes(secondLatChar) &&
-			!vowels.includes(lastChar)
-		){
-			text			= text + text.substring(text.length - 1, text.length);
-		}
-
-		text				= text+'ing...';
-		target.innerHTML	= Main.showLoader(null, false, 20, text, true, true);
-		
-		//save any tinymce forms
-		if (typeof tinymce !== 'undefined') {
-			tinymce.get().forEach((tn)=>{
-				// only save when the visual tab is active
-				if(!tn.hidden){
-					tn.save()
-				}
-			});
-		}
-
-		// change the name of multiselects if needed
-		document.querySelectorAll('select[multiple]:not([name$=\\[\\]])').forEach(el => {
-			console.error(`Multi select ${el.name} should have [] at the end. I have fixed it for now`);
-			el.name	= el.name+'[]';
-		})
-		
-		let formData = new FormData(form);
-		
-		if(extraData != ''){
-			formData.append('extra', extraData);
-		}
-
-		// disable fields again
-		form.querySelectorAll('.was-disabled').forEach( el=>{
-			el.disabled	= true;
-			el.classList.remove('was-disabled'); 
-		});
-
-		if(form.dataset.addEmpty == true){
-			//also append at least one off all checkboxes
-			form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(checkbox=>{
-				//if no checkbox with this name exist yet
-				if(!formData.has(checkbox.name)){
-					formData.append(checkbox.name,'');
-				}
-			});
-		}
-
-		// also add get params
-		try{
-			location['search'].split('?')[1].split('&').forEach(param=>{
-				let split	= param.split('=');
-				if(split[0] != 'formbuilder' && split[0] != 'main-tab' && split[0] != 'second-tab'){
-					formData.append(split[0], split[1]);
-				}
-
-			});
-		}catch{
-			//pass
-		};
-
-		let response = await fetchRestApi(url, formData);
-
-		// Reset button
-		target.innerHTML	= buttonText;
-
-		if(form.dataset.reset != true){
-			markComplete();
-		}
-
-		return response;
-	}else{
+	if(!validity){
 		form.querySelectorAll(':invalid').forEach(el=>{
 			if(el.validationMessage != undefined){
 				Main.displayMessage(`${el.name} has an error:\n${el.validationMessage}`, 'error').then((value)=>{
@@ -173,6 +79,108 @@ export async function submitForm(target, url, extraData=''){
 
 		return false;
 	}
+
+	// Disable the submit button
+	target.disabled	= true;
+
+	/**
+	 * Adjust the submit button text
+	 */
+	let buttonText 		= target.innerHTML;
+
+	// get the first word
+	let text			= buttonText.split(' ')[0];
+	let vowels			= ['a', 'e', 'i', 'o', 'u'];
+	let lastChar		= text.charAt(text.length - 1);
+	let secondLatChar	= text.charAt(text.length - 2);
+	
+	if(lastChar == 'e'){
+		// replace ie with y
+		if(secondLatChar == 'i'){
+			text		= text.substring(0, text.length - 2)+'y';
+		}
+		
+		// remove the e
+		else{
+			text		= text.substring(0, text.length - 1);
+		}
+	}
+
+	// duplicate the last letter if needed
+	else if(
+		secondLatChar != lastChar &&
+		vowels.includes(secondLatChar) &&
+		!vowels.includes(lastChar)
+	){
+		text			= text + text.substring(text.length - 1, text.length);
+	}
+
+	text				= text+'ing...';
+
+	target.innerHTML	= Main.showLoader(null, false, 20, text, true, true);
+	
+	//save any tinymce forms
+	if (typeof tinymce !== 'undefined') {
+		tinymce.get().forEach((tn)=>{
+			// only save when the visual tab is active
+			if(!tn.hidden){
+				tn.save()
+			}
+		});
+	}
+
+	// change the name of multiselects if needed
+	document.querySelectorAll('select[multiple]:not([name$=\\[\\]])').forEach(el => {
+		console.error(`Multi select ${el.name} should have [] at the end. I have fixed it for now`);
+		el.name	= el.name+'[]';
+	})
+	
+	let formData = new FormData(form);
+	
+	if(extraData != ''){
+		formData.append('extra', extraData);
+	}
+
+	// disable fields again
+	form.querySelectorAll('.was-disabled').forEach( el=>{
+		el.disabled	= true;
+		el.classList.remove('was-disabled'); 
+	});
+
+	if(form.dataset.addEmpty == true){
+		//also append at least one off all checkboxes
+		form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(checkbox=>{
+			//if no checkbox with this name exist yet
+			if(!formData.has(checkbox.name)){
+				formData.append(checkbox.name,'');
+			}
+		});
+	}
+
+	// also add get params
+	try{
+		location['search'].split('?')[1].split('&').forEach(param=>{
+			let split	= param.split('=');
+			if(split[0] != 'formbuilder' && split[0] != 'main-tab' && split[0] != 'second-tab'){
+				formData.append(split[0], split[1]);
+			}
+
+		});
+	}catch{
+		//pass
+	};
+
+	let response = await fetchRestApi(url, formData);
+
+	// Reset button
+	target.innerHTML	= buttonText;
+	target.disabled		= false;
+
+	if(form.dataset.reset != true){
+		markComplete();
+	}
+
+	return response;
 }
 
 /**
