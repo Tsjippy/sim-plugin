@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- disable submit button when submitting
 
 ### Fixed
 
