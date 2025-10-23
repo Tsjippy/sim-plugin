@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.6.7] - 2025-10-23
+
+
+### Changed
 - disable submit button when submitting
 
 ### Fixed
 - bug in getting user account when only needeing user ids
-
-### Updated
 
 ## [5.6.5] - 2025-10-20
 
