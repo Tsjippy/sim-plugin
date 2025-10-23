@@ -46,12 +46,9 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 	$doNotProcess 		= $excludeIds;
 	$cleanedUserArray 	= [];
 	
-	$arg = array(
-		'orderby'	=> 'meta_value',
-		'meta_key'	=> 'last_name'
-	);
+	$arg = [];
 	
-	if(is_array($fields) && count($fields)>0){
+	if(!empty($fields)){
 		$arg['fields'] = $fields;
 	}
 	
@@ -59,17 +56,24 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 	
 	$users  = get_users($arg);
 	
-	//Loop over the users
-	foreach($users as $user){//remove any user who should not be in the dropdown
+	//Loop over the users and remove any user who should not be in the dropdown
+	foreach($users as $user){
+		// If ‘fields‘ is set to any individual wp_users table field, an array of IDs will be returned.
+		// In that case the user will not be an object
+		if(is_object($user)){
+			$userId	= $user->ID;
+		}else{
+			$userId	= $user;
+		}
 		//If we should only return families
 		if($returnFamily){
 			//Current user is a child, exclude it
-			if (isChild($user->ID)){
-				$doNotProcess[] = $user->ID;
+			if (isChild($userId)){
+				$doNotProcess[] = $userId;
 			}
 
 			//Check if this adult is not already in the list
-			elseif(!in_array($user->ID, $doNotProcess)){
+			elseif(!in_array($userId, $doNotProcess)){
 				//Change the display name
 				$user->display_name = getFamilyName($user, false, $partnerId);
 
@@ -78,15 +82,22 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 				}
 			}
 		//Only returning adults, but this is a child
-		}elseif($adults && isChild($user->ID)){
-			$doNotProcess[] = $user->ID;
+		}elseif($adults && isChild($userId)){
+			$doNotProcess[] = $userId;
 		}
+	}
+
+	// Return the ids we need
+	if(is_numeric($user)){
+		sort($users);
+		
+		return array_diff( $users, $doNotProcess );
 	}
 
 	$existsArray 	= array();
 	
-	//Loop over all users again
-	foreach($users as $key=>$user){
+	//Loop over all users again to make sure we do not have duplicate names
+	foreach($users as $key => $user){
 		if(in_array($user->ID, $doNotProcess)){
 			continue;
 		}
@@ -132,6 +143,10 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 		//Add the user to the cleaned array if not in the donotprocess array
 		$cleanedUserArray[$user->ID] = $user;
 	}
+
+	usort($cleanedUserArray, function ($a, $b) {
+		return strcmp($a->last_name, $b->last_name);
+	});
 	
 	return $cleanedUserArray;
 }
