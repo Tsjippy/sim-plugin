@@ -7,6 +7,7 @@
 - disable submit button when submitting
 
 ### Fixed
+- bug in getting user account when only needeing user ids
 
 ### Updated
 
