@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- return path if path is url
 
 ### Updated
 
