@@ -1536,7 +1536,7 @@ function findUsers(&$string, $skipHyperlinks){
 	$re		= "/(*UTF8)$skipHyperlinks(?=($coupleRe|$singleRe|$familyRe))/m";	
 	preg_match_all($re, $string, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE, 0);
 
-	foreach($matches as $index=>$match){
+	foreach($matches as $index => $match){
 		if(!isset($match[1])){
 			continue;
 		}
@@ -1609,7 +1609,7 @@ function findUsers(&$string, $skipHyperlinks){
 			continue;
 		}
 
-		// if we are adding with a couple
+		// if we are dealing with a couple
 		if(isset($match[2])){
 			$firstName	= trim($match[2][0]);
 
@@ -1619,7 +1619,14 @@ function findUsers(&$string, $skipHyperlinks){
 			// check if this is an user as well
 			$extraName	= trim($exploded[0].$firstName);
 
-			$userId2	= array_search(strtolower($extraName), $displayNames);
+			// Get the last name
+			if(!empty($match[4][0])){
+				$lastName	= ' '.trim($match[4][0]);
+			}else{
+				$lastName	= '';
+			}
+
+			$userId2	= array_search(strtolower($extraName.$lastName), $displayNames);
 
 			if($userId2){
 				// Add first name to the array
