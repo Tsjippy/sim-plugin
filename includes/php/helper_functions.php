@@ -338,6 +338,11 @@ function pathToUrl($path){
 		return false;
 	}
 	
+	// Check if already an url
+	if (filter_var($path, FILTER_VALIDATE_URL)) {
+		return $path;
+	}
+
 	if(is_string($path)){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
