@@ -1899,7 +1899,7 @@ function loaderImage($size=50, $text='', $hidden=false){
 						break;
 					case 1:
 						$top	= $factor * 15;
-						$left	= $factor * 78;
+						$left	= $factor * 73;
 						$delay	= 0.15;
 						break;
 					case 2:
@@ -1908,8 +1908,8 @@ function loaderImage($size=50, $text='', $hidden=false){
 						$delay	= 0.3;
 						break;
 					case 3:
-						$top	= $factor * 75;
-						$left	= $factor * 75;
+						$top	= $factor * 73;
+						$left	= $factor * 73;
 						$delay	= 0.45;
 						break;
 					case 4:
@@ -1918,7 +1918,7 @@ function loaderImage($size=50, $text='', $hidden=false){
 						$delay	= 0.6;
 						break;
 					case 5:
-						$top	= $factor * 75;
+						$top	= $factor * 73;
 						$left	= $factor * 15;
 						$delay	= 0.75;
 						break;
@@ -1928,13 +1928,13 @@ function loaderImage($size=50, $text='', $hidden=false){
 						$delay	= 0.9;
 						break;
 					case 7:
-						$top	= $factor * 15;
-						$left	= $factor * 15;
+						$top	= $factor * 13;
+						$left	= $factor * 13;
 						$delay	= 1.05;
 						break;
 					default:
-						$top	= $factor * 15;
-						$left	= $factor * 15;
+						$top	= $factor * 13;
+						$left	= $factor * 13;
 						$delay	= 1.05;
 						break;
 				}
