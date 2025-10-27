@@ -2,6 +2,7 @@
 @use '../../../css/scss/table' as *;
 @use '../../../css/scss/modal' as *;
 @use '../../../css/scss/sliderswitch' as *;
+@use '../../../js/node_modules/nice-select2/src/scss/nice-select2';
 
 .success{
 	border: 3px solid yellowgreen;
