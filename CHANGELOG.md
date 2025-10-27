@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- loader image better circle
 
 ### Fixed
 - return path if path is url
