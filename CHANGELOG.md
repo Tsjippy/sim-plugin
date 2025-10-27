@@ -8,6 +8,7 @@
 
 ### Fixed
 - return path if path is url
+- nice select layout in admin menu
 
 ### Updated
 
