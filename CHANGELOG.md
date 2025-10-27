@@ -4,13 +4,20 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.6.8] - 2025-10-27
+
+
+### Changed
 - loader image better circle
 
 ### Fixed
 - return path if path is url
 - nice select layout in admin menu
-
-### Updated
 
 ## [5.6.7] - 2025-10-23
 
