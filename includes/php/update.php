@@ -80,6 +80,8 @@ function afterPluginUpdate($oldVersion){
             'meta_compare'  => 'EXISTS'
         ]);
 
+        $familyMetaKeys = apply_filters('sim-family-meta-keys', []);
+
         foreach($users as $user){
             $family = get_user_meta($user->ID, 'family', true);
 
@@ -97,11 +99,11 @@ function afterPluginUpdate($oldVersion){
                             break;
                         case 'picture':
                             if(is_array($value) && !empty($value[0])){
-                                $familyObject->storeFamilyMeta($user->ID, 'picture', $value[0]);
+                                $familyObject->updateFamilyMeta($user->ID, 'family_picture', $value[0]);
                             }
                             break;
                         case 'name':
-                            $familyObject->storeFamilyMeta($user->ID, 'name', $value);
+                            $familyObject->updateFamilyMeta($user->ID, 'family_name', $value);
                             break;
                         case 'siblings':
                             foreach($value as $siblingId){
@@ -110,9 +112,24 @@ function afterPluginUpdate($oldVersion){
                             break;
                     }
                 }
+        
+                foreach($familyMetaKeys as $key){
+                    $value   = get_user_meta($user->ID, $key, true);
+                    if(!empty($value)){  
+                        $familyObject->updateFamilyMeta($user->ID, $key, $value);
+                    }
+                }
+            }
+
+            foreach($familyMetaKeys as $key){
+                delete_user_meta($user->ID, $key);
             }
 
             delete_user_meta($user->ID, 'family');
         }
     }
 }
+
+add_action('init', function(){
+    //afterPluginUpdate('5.6.8');
+});

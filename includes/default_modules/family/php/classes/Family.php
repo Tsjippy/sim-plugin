@@ -59,6 +59,37 @@ class Family{
     }
 
     /**
+     * Gets the family id
+     * 
+     * @param   int|object  $userId     The wp user or user id
+     * 
+     * @return  int|false               The family id or false on not found
+     */
+    protected function getFamilyId($userId){
+        global $wpdb;
+
+        if(is_object($userId)){
+            $userId = $userId->ID;
+        }
+
+        $query   = "select family_id from $this->tableName where user_id_1='$userId' OR user_id_2='$userId' LIMIT 1";
+        
+        return $wpdb->get_var($query);
+    }
+
+    /**
+     * Checks if an user has family
+     * 
+     * @param   int|object  $userId     The wp user or user id
+     * 
+     * @return  bool                    True if user has family
+     */
+    public function hasFamily($userId){
+        
+        return !empty($this->getFamilyId($userId));
+    }
+
+    /**
      * Gets all family members of a user
      * 
      * @param   int|object  $userId     The wp user or user id
@@ -133,7 +164,7 @@ class Family{
         }
 
         $query      = "select user_id_2 from $this->tableName where user_id_1='$userId' AND relationship='child'";
-        $results    = $wpdb->get_results($query);
+        $results    = $wpdb->get_col($query);
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -156,21 +187,37 @@ class Family{
             $userId = $userId->ID;
         }
 
+        $siblings   = [];
+
         // Query all relations marked as siblings
-        $query      = "select * from $this->tableName where user_id_1='$userId' OR user_id_2='$userId' AND relationship='sibling'";
-        $siblings   = $wpdb->get_results($query);
+        $query      = "select * from $this->tableName where (user_id_1='$userId' OR user_id_2='$userId') AND relationship='sibling'";
+        $results   = $wpdb->get_results($query);
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
         }
 
+        foreach($results as $result){
+            if($result->user_id_1 == $userId){
+                $siblings[] = $result->user_id_2;
+            }else{
+                $siblings[] = $result->user_id_1;
+            }
+        }
+
         // Get all the users with the same parent
         $subQuery   = "select user_id_1 as parent from $this->tableName where user_id_2='$userId' AND relationship='child' LIMIT 1";
         $query      = "select user_id_2 from $this->tableName where user_id_1=($subQuery) AND relationship='child'";
-        $siblings   = array_merge($wpdb->get_results($query), $siblings);
+        $results    = $wpdb->get_col($query);
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
+        }
+
+        foreach($results as $userId){
+            if($result != $userId){
+                $siblings[] = $result;
+            }
         }
 
         $siblingIds = [];
@@ -206,6 +253,10 @@ class Family{
             return new \WP_Error('family', $wpdb->last_error);
         }
 
+        if(empty($results)){
+            return $results;
+        }
+
         $parents    = [];
 
         if($results[0]->user_id_1 == $userId){
@@ -221,11 +272,12 @@ class Family{
      * Get the partner of a user
      * 
      * @param   int|object  $userId     The wp user or user id
+     * @param	bool	    $returnUser	Whether to return the partners user id or the full user object default false for just the id
      * @param   bool        $returnDate Wheter to return the wedding date, default false
      * 
-     * @return  int|string              The partner user id of wedding date
+     * @return  int|object|string|false              The partner user id or user object or wedding date or false if no partner or wp error on error
      */
-    public function getPartner($userId, $returnDate=false){
+    public function getPartner($userId, $returnUser=false, $returnDate=false){
         global $wpdb;
 
         if(is_object($userId)){
@@ -239,15 +291,25 @@ class Family{
             return new \WP_Error('family', $wpdb->last_error);
         }
 
+        if(empty($results)){
+            return false;
+        }
+
         if($returnDate){
             return $results[0]->start_date;
         }
 
         if($results[0]->user_id_1 == $userId){
-            return $results[0]->user_id_2;
+            $partner    = $results[0]->user_id_2;
         }else{
-            return $results[0]->user_id_1;
+            $partner    = $results[0]->user_id_1;
         }
+
+        if($returnUser){
+            return get_userdata($partner);
+        }
+
+        return $partner;
     }
 
     /**
@@ -258,16 +320,18 @@ class Family{
      * @return  string                  The wedding date
      */
     public function getWeddingDate($userId){
-        return $this->getPartner($userId, true);
+        return $this->getPartner($userId, false, true);
     }
 
     /**
      * Get a value from the family meta db
      * 
      * @param   int|object  $userId     The wp user or user id
-     * @param   string      $key        The key to get the value for
+     * @param   string      $key        The key to get the value for, default empty for all
+     * 
+     * @return  mixed                   The value or an array of key values values
      */
-    public function getFamilyMeta($userId, $key){
+    public function getFamilyMeta($userId, $key=''){
         global $wpdb;
 
         if(is_object($userId)){
@@ -275,8 +339,78 @@ class Family{
         }
 
         $subQuery   = "select family_id from $this->tableName where user_id_1='$userId' OR user_id_2='$userId' LIMIT 1";
-        $query      = "select value from $this->metaTableName where family_id=($subQuery) AND `key`='$key'";
-        return $wpdb->get_var($query);
+        $query      = "select value from $this->metaTableName where family_id=($subQuery)";
+
+        if(!empty($key)){
+            $query      = "select value from $this->metaTableName where family_id=($subQuery) AND `key`='$key'";
+            return $wpdb->get_var($query);
+        }
+
+        $query      = "select * from $this->metaTableName where family_id=($subQuery)";
+        return $wpdb->get_results($query);
+    }
+
+    /**
+     * Function to get proper family name
+     * @param 	object|int		$user			WP User_ID or WP_User object
+     * @param	bool			$lastNameFirst	Whether we should return the names as Lastname, Firstname. Default false
+     * @param	mixed			$partnerId		Variable passed by reference to hold the partner id
+     *
+     * @return	string|false				    Family name string or last name when a single or false when not a valid user
+    */
+    function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
+        if(is_numeric($user)){
+            $user	= get_userdata($user);
+
+            if(!$user){
+                return false;
+            }
+        }
+
+        $partnerId	= $this->getPartner($user);
+
+        $familyName	= $this->getFamilyMeta($user, 'name');
+
+        // user has family
+        if(empty($partnerId)){
+            if($lastNameFirst){
+                return "$user->last_name, $user->first_name";
+            }
+
+            return $user->display_name;
+        }
+        
+        if(!empty($familyName)){
+            return $familyName.' family';
+        }
+
+        $name 	    = $user->last_name;
+        $partner    = $this->getPartner($user, true);
+
+        // user has a partner
+        if($partner){
+
+            if($partner->last_name != $user->last_name){
+                // Male name first
+                if(get_user_meta($user->ID, 'gender', true)[0] == 'Male'){
+                    $name	= $user->last_name.' - '. $partner->last_name;
+                }else{
+                    $name	= $partner->last_name.' - '. $user->last_name;
+                }
+            }
+        }
+
+        return $name.' family';
+    }
+
+    /**
+     * Function to check if a certain user is a child
+     * @param 	int		$userId	 	WP User_ID
+     *
+     * @return	bool				True if a child, false if not
+    */
+    function isChild($userId) {
+        return !empty($this->getParents($userId));
     }
 
     /**
@@ -324,8 +458,7 @@ class Family{
         }
 
         // Check if this user is already in the db
-        $query      = "select family_id from $this->tableName where user_id_1='$userId' OR user_id_2='$userId'";
-        $familyId   = $wpdb->get_var($query);
+        $familyId   = $this->getFamilyId($userId);
 
         // Create family id if needed
         if(empty($familyId)){
@@ -352,6 +485,34 @@ class Family{
     }
 
     /**
+     * Updates the date of a relationship
+     * 
+     * @param   int     $userId         The main user this relationship applies to
+     * @param   string  $weddingdate    The start of relatioship, i.e. wedding date   
+     */
+    public function updateWeddingDate($userId,  $weddingdate){
+        global $wpdb;
+
+        if(is_object($userId)){
+            $userId = $userId->ID;
+        }
+
+        if(empty($userId) || empty($weddingdate)){
+            return new \WP_Error('family', 'Please supply valid values');
+        }
+
+        // Update weddingdate
+        $query      = "UPDATE $this->tableName SET start_date='$weddingdate' WHERE (user_id_1='$userId' OR user_id_2='$userId') and `relationship`='partner'";
+        $result     = $wpdb->query($query);
+
+        if(!empty($wpdb->last_error)){
+			return new \WP_Error('family', $wpdb->last_error);
+		}
+
+		return true;
+    }
+
+    /**
      * Stores a family meta value
      * 
      * @param   int     $userId     The user this relationship applies to
@@ -360,7 +521,7 @@ class Family{
      * 
      * @return  WP_Error|int        The id or an wp error object
      */
-    public function storeFamilyMeta($userId, $key, $value){
+    public function updateFamilyMeta($userId, $key, $value){
         global $wpdb;
 
         if(is_object($userId)){
@@ -395,5 +556,113 @@ class Family{
 		}
 
 		return $wpdb->insert_id;
+    }
+
+    /**
+     * Remove relationship
+     * 
+     * @param 	object|int		$userId1			WP User_ID or WP_User object
+     * @param 	object|int		$userId2			WP User_ID or WP_User object
+     */
+    public function removeRelationShip($userId1, $userId2){
+        global $wpdb;
+
+        if(is_object($userId1)){
+            $userId1 = $userId1->ID;
+        }
+
+        if(is_object($userId2)){
+            $userId2 = $userId2->ID;
+        }
+
+        if(empty($userId1) || empty($userId2)){
+            return new \WP_Error('family', 'Please supply valid values');
+        }
+
+        $familyId   = $this->getFamilyId($userId1);
+
+        // Delete relationship
+        $query  = "DELETE FROM `$this->tableName` WHERE (`user_id_1` = $userId1 AND `user_id_2` = $userId2 ) OR (`user_id_1` = $userId2 AND `user_id_2` = $userId1 )";
+        $wpdb->query( $query);
+
+        // Check if this was the last family relationship
+        $results    = $wpdb->get_results("SELECT * FROM $this->tableName WHERE family_id=$familyId");
+
+        if(empty($results)){
+            // Delete any meta's
+            $wpdb->delete(
+                $this->metaTableName,
+                [
+                    'family_id' => $familyId
+                ],
+                [
+                    '%d'
+                ],
+            );
+        }
+    }
+
+    /**
+     * Remove family meta
+     * 
+     * @param 	object|int		$userId			WP User_ID or WP_User object
+     * @param 	string          $key            The meta key
+     */
+    public function removeFamilyMeta($userId, $key){
+        global $wpdb;
+
+        if(is_object($userId)){
+            $userId1 = $userId->ID;
+        }
+
+        $familyId   = $this->getFamilyId($userId1);
+
+        // delete meta
+        $wpdb->delete(
+			$this->metaTableName,
+			[
+                'family_id' => $familyId,
+                'key'       => $key,
+            ],
+			[
+                '%d',
+                '%s'
+            ],
+		);
+    }
+
+    /**
+     * Remove user from family
+     * 
+     * @param 	object|int		$userId			WP User_ID or WP_User object
+     */
+    function removeUser($userId) {
+        global $wpdb;
+
+        if(is_object($userId)){
+            $userId = $userId->ID;
+        }
+
+        // delete entries where the first user id is this user
+        $wpdb->delete(
+            $this->tableName,
+            [
+                'user_id_1' => $userId
+            ],
+            [
+                '%d'
+            ]
+        );
+
+        // delete entries where the second user id is this user
+        $wpdb->delete(
+            $this->tableName,
+            [
+                'user_id_2' => $userId
+            ],
+            [
+                '%d'
+            ]
+        );
     }
 }

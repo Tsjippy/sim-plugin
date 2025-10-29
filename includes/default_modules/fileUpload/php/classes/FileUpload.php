@@ -177,9 +177,12 @@ class FileUpload{
 				}
 			}
 			
-			$class = '';
+			$class 		= '';
+			$inputName	= "{$documentName}-files";
 			if($multiple){
-				$multipleString = 'multiple="multiple"';
+				$multipleString 	 = 'multiple="multiple"';
+				$inputName			.= '[]';
+
 			}else{
 				$multipleString = '';
 				if(!empty($documentArray)){
@@ -190,7 +193,7 @@ class FileUpload{
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload-div $class'>";
-				$this->html .= "<input class='file-upload $fileClass' type='file' name='{$documentName}-files[]' $multipleString $options>";
+				$this->html .= "<input class='file-upload $fileClass' type='file' name='$inputName' $multipleString $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->userId)){
 						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[user-id]' 			value='{$this->userId}'>";

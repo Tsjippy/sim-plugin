@@ -3,35 +3,6 @@ namespace SIM;
 
 use WP_Error;
 
-//Update user meta of a user and all of its relatives
-
- /**
- * Update user meta for a specific key for the current user and all of its relatives
- * @param  int		$userId 	WP_User id
- * @param  string	metaKey		The meta key to update or create
- * @param  string	value  		The new value
- */
-function updateFamilyMeta($userId, $metaKey, $value){
-	if($value == 'delete'){
-		delete_user_meta($userId, $metaKey);
-	}else{
-		update_user_meta( $userId, $metaKey, $value);
-	}
-		
-	//Update the meta key for all family members as well
-	$family = familyFlatArray($userId);
-	if (!empty($family)){
-		foreach($family as $relative){
-			if($value == 'delete'){
-				delete_user_meta($relative, $metaKey);
-			}else{
-				//Update the marker for the relative as well
-				update_user_meta($relative, $metaKey, $value);
-			}
-		}
-	}
-}
-
 /**
  * Create a dropdown with all users
  * @param	bool		$returnFamily  	Whether we should group families in one entry default false
@@ -45,8 +16,8 @@ function updateFamilyMeta($userId, $metaKey, $value){
 function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraArgs=[], $excludeIds=[1], $uniqueDisplayName=false){
 	$doNotProcess 		= $excludeIds;
 	$cleanedUserArray 	= [];
-	
-	$arg = [];
+	$family				= new FAMILY\Family();
+	$arg 				= [];
 	
 	if(!empty($fields)){
 		$arg['fields'] = $fields;
@@ -68,21 +39,21 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 		//If we should only return families
 		if($returnFamily){
 			//Current user is a child, exclude it
-			if (isChild($userId)){
+			if ($family->isChild($userId)){
 				$doNotProcess[] = $userId;
 			}
 
 			//Check if this adult is not already in the list
 			elseif(!in_array($userId, $doNotProcess)){
 				//Change the display name
-				$user->display_name = getFamilyName($user, false, $partnerId);
+				$user->display_name = $family->getFamilyName($user, false, $partnerId);
 
 				if ($partnerId){
 					$doNotProcess[] = $partnerId;
 				}
 			}
 		//Only returning adults, but this is a child
-		}elseif($adults && isChild($userId)){
+		}elseif($adults && $family->isChild($userId)){
 			$doNotProcess[] = $userId;
 		}
 	}
@@ -563,155 +534,6 @@ function getChildTitle($userId){
 	}
 	
 	return $title;
-}
-
-/**
- * Gets all family meta values
- * @param 	int		$userId	 	WP User_ID
- *
- * @return	array				All family members in one array
-*/
-function familyFlatArray($userId){
-	$family	= [];
-	
-	foreach(['siblings', 'picture', 'partner', 'children', 'name'] as $key){
-		$family[$key]	= get_user_meta( $userId, $key);
-	}
-	
-	return $family;
-}
-
-/**
- * Check if user has partner
- * @param 	int		$userId	 	WP User_ID
- * @param	bool	$returnUser	Whether to return the partners user id or the full user object default false for just the id
- *
- * @return	int|object|false			The partner user id, partner user object or false if no partner
-*/
-function hasPartner($userId, $returnUser=false) {
-	$family = get_user_meta($userId, "family", true);
-	if(is_array($family) && isset($family['partner']) && is_numeric($family['partner'])){
-		if($returnUser){
-			return get_userdata($family['partner']);
-		}
-		return $family['partner'];
-	}
-
-	return false;
-}
-
-/**
- * Get users parents
- * @param 	int		$userId	 	WP User_ID
- * @param	bool	$onlyId		Whether to return the parent user or just the user id. Default false
- *
- * @return	array|false			Array containing the id of the father and the mother, or false if no parents
-*/
-function getParents($userId, $onlyId=false){
-	$family 	= get_user_meta( $userId, 'family', true );
-	$parents 	= [];
-	foreach (["father","mother"] as $parent) {
-		if (isset($family[$parent])) {
-			$parent = get_userdata($family[$parent]);
-			if($parent){
-				if($onlyId){
-					$parents[]	= $parent->ID;
-				}else{
-					$parents[]	= $parent;
-				}
-			}
-		}
-	}
-
-	if(empty($parents)){
-		return false;
-	}
-	return $parents;
-}
-
-/**
- * Function to check if a certain user is a child
- * @param 	int		$userId	 	WP User_ID
- *
- * @return	bool				True if a child, false if not
-*/
-function isChild($userId) {
-	$family = get_user_meta($userId, "family", true);
-	if(is_array($family) && (isset($family["father"]) || isset($family["mother"]))){
-		return true;
-	}
-	return false;
-}
-
-/**
- * Function to get proper family name
- * @param 	object|int		$user			WP User_ID or WP_User object
- * @param	bool			$lastNameFirst	Whether we should return the names asl Lastname, Firstname. Default false
- * @param	mixed			$partnerId		Variable passed by reference to hold the partner id
- *
- * @return	string|false				Family name string or last name when a single or false when not a valid user
-*/
-function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
-	if(is_numeric($user)){
-		$user	= get_userdata($user);
-
-		if(!$user){
-			return false;
-		}
-	}
-
-	$partnerId	= false;
-
-	$family 	= get_user_meta($user->ID, "family", true);
-
-	if(isset($family['children']) && empty($family['children'])){
-		unset($family['children']);
-	}
-
-	if(isset($family['partner']) && is_numeric($family['partner'])){
-		$partnerId	= $family['partner'];
-	}
-
-	if(isset($family['siblings'])){
-		unset($family['siblings']);
-	}
-
-	$familyName	= '';
-	if(!empty($family['name'])){
-		$familyName	= $family['name'];
-		unset($family['name']);
-	}
-
-	// user has family
-	if(empty($family)){
-		if($lastNameFirst){
-			return "$user->last_name, $user->first_name";
-		}
-
-		return $user->display_name;
-	}
-	
-	if(!empty($familyName)){
-		return $familyName.' family';
-	}
-
-	$name 	= $user->last_name;
-
-	// user has a partner
-	if(isset($family['partner']) && is_numeric($family['partner'])){
-		$partner	= get_userdata($family['partner']);
-
-		if($partner->last_name != $user->last_name){
-			// Male name first
-			if(get_user_meta($user->ID, 'gender', true)[0] == 'Male'){
-				$name	= $user->last_name.' - '. $partner->last_name;
-			}else{
-				$name	= $partner->last_name.' - '. $user->last_name;
-			}
-		}
-	}
-
-	return $name.' family';
 }
 
 /**
@@ -1309,19 +1131,12 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
  *
  * @return	string|false					The picture html or false if no picture
  */
-function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false, $wrapInLink=true){
-	
-	$attachmentId = get_user_meta($userId, 'profile_picture', true);
+function displayProfilePicture($userId, $size=[50, 50], $showDefault = true, $famillyPicture=false, $wrapInLink=true){
+	$family			= new FAMILY\Family();
+	$attachmentId 	= get_user_meta($userId, 'profile_picture', true);
 
 	if($famillyPicture){
-		$family			= get_user_meta($userId, 'family', true);
-
-		if(isset($family['picture']) && is_numeric($family['picture'])){
-			$attachmentId	= $family['picture'];
-		}
-	}
-	if(!empty($attachmentId) && is_array($attachmentId)){
-		$attachmentId	= $attachmentId[0];
+		$attachmentId	= $family->getFamilyMeta($userId, 'picture');
 	}
 	
 	$defaultUrl		= plugins_url('pictures/usericon.png', __DIR__);
@@ -1482,7 +1297,8 @@ function clearOutput($write=false){
  * @return	array					Array of with found user ids as index and an array of the text found and its start location as value
  */
 function findUsers(&$string, $skipHyperlinks){
-	$foundUsers	= [];
+	$family			= new FAMILY\Family();
+	$foundUsers		= [];
 
 	// get all useraccounts
 	$users 		= getUserAccounts(false, false);
@@ -1496,7 +1312,7 @@ function findUsers(&$string, $skipHyperlinks){
 	foreach($users as $user){
 		// store displayname
 		$displayNames[$user->ID]	= strtolower($user->display_name);
-		$partner					= hasPartner($user->ID, true);
+		$partner					= $family->getPartner($user->ID, true);
 
 		// store firstname and partner firstname in case last name is omitted
 		if($partner){

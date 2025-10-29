@@ -45,10 +45,11 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	if (str_contains($fileName, 'account-statements')) {
 		$partnerName		= $username;
 		
-		$family = get_user_meta($user->ID,'family',true);
-		if(isset($family['partner'])){
+		$family			= new SIM\FAMILY\Family();
+		$partner		= $family->getPartner($user);
+		if($partner){
 			//The partners name
-			$partnerName	= get_userdata($family['partner'])->user_login;
+			$partnerName	= get_userdata($partner)->user_login;
 		}
 
 		//Block access if the filename does not contain the own or partners username
