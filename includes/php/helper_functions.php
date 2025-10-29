@@ -20,7 +20,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
 		
 	//Update the meta key for all family members as well
 	$family = familyFlatArray($userId);
-	if (is_array($family) && !empty($family)){
+	if (!empty($family)){
 		foreach($family as $relative){
 			if($value == 'delete'){
 				delete_user_meta($relative, $metaKey);
@@ -566,37 +566,16 @@ function getChildTitle($userId){
 }
 
 /**
- * Get the family of an user
- *
- * @param 	int	$userId		The user id to get the family for
- *
- * @return	array			The family array
- */
-function getUserFamily($userId){
-
-	$family = cleanUpNestedArray((array)get_user_meta( $userId, 'family', true ));
-
-	// If there is no family, but a family name is set
-	if(count($family) == 1 && isset($family['name'])){
-		unset($family['name']);
-	}
-
-	return $family;
-}
-
-/**
- * Gets the children array and add it to the main level of the array
+ * Gets all family meta values
  * @param 	int		$userId	 	WP User_ID
  *
  * @return	array				All family members in one array
 */
 function familyFlatArray($userId){
-	$family	= getUserFamily($userId);
-
-	//make the family array flat
-	if (isset($family["children"])){
-		$family = array_merge($family["children"], $family);
-		unset($family["children"]);
+	$family	= [];
+	
+	foreach(['siblings', 'picture', 'partner', 'children', 'name'] as $key){
+		$family[$key]	= get_user_meta( $userId, $key);
 	}
 	
 	return $family;

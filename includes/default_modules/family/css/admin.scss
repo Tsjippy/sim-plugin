@@ -1,0 +1,53 @@
+@use '../../../css/scss/global' as *;
+@use '../../../css/scss/table' as *;
+@use '../../../css/scss/modal' as *;
+@use '../../../css/scss/sliderswitch' as *;
+@use '../../../js/node_modules/nice-select2/src/scss/nice-select2';
+
+.success{
+	border: 3px solid yellowgreen;
+	text-align: center;
+	padding: 5px;
+	color: darkgreen;
+}
+
+.warning{
+	background-color: #d8a354;
+    color: black;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+
+.error{
+	border: 3px solid $secundaryColor;
+    color: $primaryColor;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+
+.module-settings{
+    margin: 20px 20px 0px 0px;
+}
+
+table{
+    td{
+        min-width: 80px;
+    }
+
+    .button.small{
+        line-height: 1.2;
+        max-height: 20px;
+        min-height: 20px;
+    }
+}
+
+.tablink.active{
+    background: firebrick;
+    color: white;
+}
+
+.hidden{
+	display:none !important;
+}

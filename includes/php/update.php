@@ -70,4 +70,49 @@ function afterPluginUpdate($oldVersion){
 
         update_option('sim_modules', $Modules);
     }
+
+    if($oldVersion < '5.6.9'){
+        $familyObject = new FAMILY\Family();
+        $familyObject->createDbTables();
+
+        $users  = get_users([
+            'meta_key'      => 'family',
+            'meta_compare'  => 'EXISTS'
+        ]);
+
+        foreach($users as $user){
+            $family = get_user_meta($user->ID, 'family', true);
+
+            // Only process adults
+            if(is_array($family) && !isset($family["father"]) && !isset($family["mother"])){
+                foreach($family as $key => $value){
+                    switch($key){
+                        case 'partner':
+                            $familyObject->storeRelationship($user->ID, $value, $key, $family['weddingdate']);
+                            break;
+                        case 'children':
+                            foreach($value as $childId){
+                                $familyObject->storeRelationship($user->ID, $childId, 'child');
+                            }
+                            break;
+                        case 'picture':
+                            if(is_array($value) && !empty($value[0])){
+                                $familyObject->storeFamilyMeta($user->ID, 'picture', $value[0]);
+                            }
+                            break;
+                        case 'name':
+                            $familyObject->storeFamilyMeta($user->ID, 'name', $value);
+                            break;
+                        case 'siblings':
+                            foreach($value as $siblingId){
+                                $familyObject->storeRelationship($user->ID, $siblingId, 'sibling');
+                            }
+                            break;
+                    }
+                }
+            }
+
+            delete_user_meta($user->ID, 'family');
+        }
+    }
 }

@@ -28,6 +28,9 @@ add_action( 'activated_plugin', function ( $plugin ) {
     }
     file_put_contents(ABSPATH.'/.htaccess', $htaccess);
 
+    $family = new FAMILY\Family();
+    $family->createDbTables();
+
     //redirect after plugin activation
     exit( wp_redirect( admin_url( esc_url('admin.php?page=sim') ) ) );
 } );
