@@ -7,6 +7,7 @@
 ### Changed
 - single name if only one file upload is allowed
 - reduce db calls by supplying file upload meta value
+- rounder loader
 
 ### Fixed
 
