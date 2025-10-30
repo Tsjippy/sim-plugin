@@ -192,7 +192,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
 
         switch (i) {
             case 0:
-                dot.style.top				= 0;
+                dot.style.top				= (factor * 3) + 'px';
                 dot.style.left				= (factor * 44) + 'px';
                 break;
             case 1:
@@ -202,7 +202,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
                 break;
             case 2:
                 dot.style.top				= (factor * 44) + 'px';
-                dot.style.left				= (factor * 88) + 'px';
+                dot.style.left				= (factor * 87) + 'px';
                 dot.style.animationDelay	= '0.3s';
                 break;
             case 3:
@@ -211,7 +211,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
                 dot.style.animationDelay	= '0.45s';
                 break;
             case 4:
-                dot.style.top				= (factor * 88) + 'px';
+                dot.style.top				= (factor * 85) + 'px';
                 dot.style.left				= (factor * 44) + 'px';
                 dot.style.animationDelay	= '0.6s';
                 break;
@@ -222,7 +222,7 @@ export function showLoader(element, replace=true, size=50, text='', returnHtml=f
                 break;
             case 6:
                 dot.style.top				= (factor * 44) + 'px';
-                dot.style.left				= 0;
+                dot.style.left				= (factor * 1) + 'px';
                 dot.style.animationDelay	= '0.9s';
                 break;
             case 7:
