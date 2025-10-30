@@ -88,7 +88,6 @@ function getFamilyMeta($value, $userId, $metaKey ){
     }elseif($metaKey == 'weddingdate'){
         return $family->getWeddingDate($userId);
     }
-    
 
     return $value;
 }
