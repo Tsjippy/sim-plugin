@@ -3,6 +3,7 @@
 
 ### Added
 - family module
+- function to get all family meta keys
 
 ### Changed
 - single name if only one file upload is allowed
