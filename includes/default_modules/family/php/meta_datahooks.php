@@ -28,6 +28,18 @@ function addFamilyData($usermeta, $userId){
 }
 
 /**
+ * Gets all the family meta keys
+ */
+function getFamilyMetaKeys( &$familyMetaKeys ){
+    $familyMetaKeys = apply_filters('sim-family-meta-keys', ['family_name', 'family_picture']);
+
+    return array_merge(
+        $familyMetaKeys, 
+        ['children', 'parents', 'siblings', 'partner', 'weddingdate']
+    );
+}
+
+/**
  * Checks if a given meta key should be processed as a family meta key
  * 
  * @param   string  $metaKey    The key to check
@@ -35,18 +47,8 @@ function addFamilyData($usermeta, $userId){
  * @return  bool                true if it is a family meta key, false otherwise
  */
 function isFamilyMetaKey($metaKey, &$familyMetaKeys){
-    $familyMetaKeys = apply_filters('sim-family-meta-keys', ['family_name', 'family_picture']);
-
     // Only run for certain keys
-    if(                     // anniversaries are usually for the whole family
-        !in_array(
-            $metaKey, 
-            array_merge(
-                $familyMetaKeys, 
-                ['children', 'parents', 'siblings', 'partner', 'weddingdate']
-            )
-        )
-    ){
+    if( !in_array( $metaKey, getFamilyMetaKeys( $familyMetaKeys ) ) ){
         return false;
     }
 
@@ -199,3 +201,8 @@ add_filter( "delete_user_metadata", function($value, $userId, $metaKey, $metaVal
     return true;
 
 }, 10, 5);
+
+// Make sure the forms module knows it as well
+add_filter('sim-forms-user-meta-keys', function($userMetaKeys){
+    return array_merge($userMetaKeys, getFamilyMetaKeys($familyMetaKeys));
+});
