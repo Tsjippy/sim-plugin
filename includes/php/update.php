@@ -144,7 +144,3 @@ function afterPluginUpdate($oldVersion){
         }
     }
 }
-
-add_action('init', function(){
-    //afterPluginUpdate('5.6.8');
-});
