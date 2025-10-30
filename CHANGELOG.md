@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- get children and other metas
 
 ### Updated
 
