@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [5.7.0] - 2025-10-30
+
+
+### Added
 - family module
 - function to get all family meta keys
 
@@ -9,10 +20,6 @@
 - single name if only one file upload is allowed
 - reduce db calls by supplying file upload meta value
 - rounder loader
-
-### Fixed
-
-### Updated
 
 ## [5.6.8] - 2025-10-27
 
