@@ -77,11 +77,11 @@ function getFamilyMeta($value, $userId, $metaKey ){
         return $family->getFamilyMeta($userId, $metaKey);
     }
 
-    if($metaKey == 'child'){
+    if($metaKey == 'children'){
         return $family->getChildren($userId);
-    }elseif($metaKey == 'parent'){
+    }elseif($metaKey == 'parents'){
         return $family->getParents($userId);
-    }elseif($metaKey == 'sibling'){
+    }elseif($metaKey == 'siblings'){
         return $family->getSiblings($userId);
     }elseif($metaKey == 'partner'){
         return $family->getPartner($userId);
