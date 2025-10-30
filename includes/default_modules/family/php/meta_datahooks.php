@@ -35,11 +35,10 @@ function addFamilyData($usermeta, $userId){
  * @return  bool                true if it is a family meta key, false otherwise
  */
 function isFamilyMetaKey($metaKey, &$familyMetaKeys){
-     $familyMetaKeys = apply_filters('sim-family-meta-keys', ['family_name', 'family_picture']);
+    $familyMetaKeys = apply_filters('sim-family-meta-keys', ['family_name', 'family_picture']);
 
     // Only run for certain keys
-    if(
-        !str_contains($metaKey, 'anniversary_event_id') &&                      // anniversaries are usually for the whole family
+    if(                     // anniversaries are usually for the whole family
         !in_array(
             $metaKey, 
             array_merge(
@@ -71,6 +70,11 @@ function getFamilyMeta($value, $userId, $metaKey ){
         return $value;
     }
 
+    // Get the meta keys for the family
+    if(in_array($metaKey, $familyMetaKeys)){
+        return $family->getFamilyMeta($userId, $metaKey);
+    }
+
     if($metaKey == 'child'){
         return $family->getChildren($userId);
     }elseif($metaKey == 'parent'){
@@ -83,10 +87,6 @@ function getFamilyMeta($value, $userId, $metaKey ){
         return $family->getWeddingDate($userId);
     }
     
-    // Get the meta keys for the family
-    if(in_array($metaKey, $familyMetaKeys)){
-        return $family->getFamilyMeta($userId, $metaKey);
-    }
 
     return $value;
 }
@@ -113,17 +113,30 @@ function addFamilyMeta($value, $userId, $metaKey, $metaValue){
         switch($metaKey){
             case 'children':
                 $metaKey    = 'child';
+                $oldValue   = $family->getChildren($userId);
                 break;
             case 'parents':
                 $metaKey    = 'parent';
+                $oldValue   = $family->getParents($userId);
                 break;
             case 'siblings':
                 $metaKey    = 'sibling';
+                $oldValue   = $family->getSiblings($userId);
                 break;
         }
 
         if(is_array($metaValue)){
-            foreach($metaValue as $value){
+            // Only add the needed ones
+            $removed    = array_diff($oldValue, $metaValue);
+	        $added		= array_diff($metaValue, $oldValue);
+
+            // Remove old relations
+            foreach($removed as $value){
+                $family->removeRelationShip($userId, $value);
+            }
+
+            // Add new relations
+            foreach($added as $value){
                 $family->storeRelationship($userId, $value, $metaKey);
             }
         }else{
@@ -143,8 +156,8 @@ function addFamilyMeta($value, $userId, $metaKey, $metaValue){
         return true;
     }
     
-    if(in_array($metaKey, $familyMetaKeys) || str_contains($metaKey, 'anniversary_event_id')){
-        return $family->getFamilyMeta($userId, $metaKey);
+    if(in_array($metaKey, $familyMetaKeys)){
+        return $family->updateFamilyMeta($userId, $metaKey, $metaValue);
     }
 
     return $value;
@@ -161,8 +174,27 @@ add_filter( "delete_user_metadata", function($value, $userId, $metaKey, $metaVal
     if(in_array($metaKey, $familyMetaKeys)){
         return $family->removeFamilyMeta($userId, $metaKey);
     }
-    
-    $family->removeRelationShip($userId, $metaValue);
+
+    // Empty value, remove all
+    if(empty($metaValue)){
+        switch($metaKey){
+            case 'children':
+                $oldValues   = $family->getChildren($userId);
+                break;
+            case 'parents':
+                $oldValues   = $family->getParents($userId);
+                break;
+            case 'siblings':
+                $oldValues   = $family->getSiblings($userId);
+                break;
+        }
+
+        foreach($oldValues as $oldValue){
+            $family->removeRelationShip($userId, $oldValue);
+        }
+    }else{
+        $family->removeRelationShip($userId, $metaValue);
+    }
 
     return true;
 

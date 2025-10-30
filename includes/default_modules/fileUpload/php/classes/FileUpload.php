@@ -4,7 +4,8 @@ use SIM;
 
 class FileUpload{
 	public $userId;
-	public $metakey;
+	public $metaKey;
+	public $metaValue;
 	public $library;
 	public $callback;
 	public $updatemeta;
@@ -14,14 +15,16 @@ class FileUpload{
 	 * Constructs the fileupload object
 	 *
 	 * @param 	int		$userId		The wp WP_User id
-	 * @param	string	$metakey	The key for storage in the user meta or options table. Default empty
+	 * @param	string	$metaKey	The key for storage in the user meta or options table. Default empty
 	 * @param	bool	$library	Whether to attach the upload to the wp library. Default false
 	 * @param	string	$callback	The callback function to call after upload. Default empty
 	 * @param	bool	$updatemeta	Whether or not to update the user meta. Default true
+	 * @param	string	$metaValue	The key for storage in the user meta or options table. Default empty
 	 */
-	public function __construct($userId, $metakey='', $library=false, $callback='', $updatemeta=true) {
+	public function __construct($userId, $metaKey='', $library=false, $callback='', $updatemeta=true, $metaValue='') {
 		$this->userId		= $userId;
-		$this->metakey		= $metakey;
+		$this->metaKey		= $metaKey;
+		$this->metaValue	= $metaValue;
 		$this->library		= $library;
 		$this->callback		= $callback;
 		$this->updatemeta	= $updatemeta;
@@ -37,19 +40,23 @@ class FileUpload{
 	}
 
 	/**
-	 * Finds the value in the user meta or options table of a given metakey
+	 * Finds the value in the user meta or options table of a given metaKey
 	 */
 	public function processMetaKey(){
-		if(empty($this->metakey)){
+		if(empty($this->metaKey)){
 			return '';
 		}
 
-		//get the basemetakey in case of an indexed one
-		if(preg_match('/(.*?)\[/', $this->metakey, $match)){
+		if(!empty($this->metaValue)){
+			return $this->metaValue;
+		}
+
+		//get the basemetaKey in case of an indexed one
+		if(preg_match('/(.*?)\[/', $this->metaKey, $match)){
 			$baseMetaKey	= $match[1];
 		}else{
 			//just use the whole, it is not indexed
-			$baseMetaKey	= $this->metakey;
+			$baseMetaKey	= $this->metaKey;
 		}
 		
 		//get the db value
@@ -60,7 +67,7 @@ class FileUpload{
 		}
 		
 		//get subvalue if needed
-		$documentArray = SIM\getMetaArrayValue($this->userId, $this->metakey, $documentArray);
+		$documentArray = SIM\getMetaArrayValue($this->userId, $this->metaKey, $documentArray);
 
 		return $documentArray;
 	}
@@ -166,13 +173,13 @@ class FileUpload{
 
 			if(is_array($documentArray) && !empty($documentArray)){
 				foreach($documentArray as $documentKey => $document){
-					if(!$this->documentPreview($document, $documentKey)){
+					if(!$this->documentPreview($document, $documentKey, $multiple)){
 						// remove from document array if the file is not valid
 						unset($documentArray[$documentKey]);
 					}
 				}
 			}elseif(!is_array($documentArray) && $documentArray != ""){
-				if(!$this->documentPreview($documentArray, -1)){
+				if(!$this->documentPreview($documentArray, -1, $multiple)){
 					$documentArray	= '';
 				}
 			}
@@ -202,8 +209,8 @@ class FileUpload{
 						$targetDir	= str_replace('\\', '/', $targetDir);
 						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[targetDir]' 		value='{$targetDir}'>";
 					}
-					if(!empty($this->metakey)){
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[metakey]' 		value='{$this->metakey}'>";
+					if(!empty($this->metaKey)){
+						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[metakey]' 		value='{$this->metaKey}'>";
 						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[metakey-index]' 	value='$documentName'>";
 					}
 					if(!empty($this->library)){
@@ -227,8 +234,9 @@ class FileUpload{
 	 *
 	 * @param	string|int	$documentPath	The url, filepath or WP attachment id of a file
 	 * @param	int			$index			The metakey sub key
+	 * @param	bool		$multiple		Whether to allow multiple files to be uploaded. Default false
 	 */
-	public function documentPreview($documentPath, $index){
+	public function documentPreview($documentPath, $index, $multiple=false){
 		$metaValue		= $documentPath;
 
 		if(is_array($documentPath)){
@@ -259,9 +267,14 @@ class FileUpload{
 		}elseif(!empty($documentPath)){
 			$url = SITEURL.'/'.str_replace(ABSPATH, '', $documentPath);
 		}
+
+		$name	= $this->metaKey;
+		if($multiple){
+			$name	.= '[]';
+		}
 		
 		$this->html .= "<div class='document'>";
-			$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='{$this->metakey}[]' value='$metaValue'>";
+			$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='$name' value='$metaValue'>";
 
 		//Check if file is an image
 		if(getimagesize(SIM\urlToPath($url)) !== false) {
@@ -274,16 +287,16 @@ class FileUpload{
 			
 			//remove the username from the filename if it is there
 			$userName 	= get_userdata($this->userId)->user_login;
-			$fileName = str_replace($userName.'-','', $fileName);
+			$fileName 	= str_replace($userName.'-','', $fileName);
 			
 			//add the hyperlink to the file to the html
 			$this->html .= '<a href="'.$url.'">'.$fileName.'</a>';
 		}
 		//Add an remove button
 		if($index == -1){
-			$metakeyString = $this->metakey;
+			$metakeyString = $this->metaKey;
 		}else{
-			$metakeyString = $this->metakey.'['.$index.']';
+			$metakeyString = $this->metaKey.'['.$index.']';
 		}
 		
 		if(!empty($libraryId)){

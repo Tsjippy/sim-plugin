@@ -457,9 +457,15 @@ class Family{
                 }
                 break;
             case 'partner':
-                if($this->getPartner($userId) == $userId2){
+                $prevPartner    = $this->getPartner($userId);
+
+                // Nothing to change
+                if($prevPartner == $userId2){
                     return true;
                 }
+
+                // there is already a different partner set, remove it
+                $this->removeRelationShip($userId, $prevPartner); 
                 break;
         }
 
