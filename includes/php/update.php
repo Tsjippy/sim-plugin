@@ -88,6 +88,10 @@ function afterPluginUpdate($oldVersion){
             // Only process adults
             if(is_array($family) && !isset($family["father"]) && !isset($family["mother"])){
                 foreach($family as $key => $value){
+                    if(empty($value)){
+                        continue;
+                    }
+
                     switch($key){
                         case 'partner':
                             $familyObject->storeRelationship($user->ID, $value, $key, $family['weddingdate']);
@@ -115,14 +119,25 @@ function afterPluginUpdate($oldVersion){
         
                 foreach($familyMetaKeys as $key){
                     $value   = get_user_meta($user->ID, $key, true);
+
+                    if(empty($value)){
+                        continue;
+                    }
+
+                    // Delete before updating otherwise it will be deleted again
+                    delete_user_meta($user->ID, $key);
+
+                    if($key == 'location' && is_array($value)){
+                        $value   = array_values($value)[0];
+                    }
                     if(!empty($value)){  
                         $familyObject->updateFamilyMeta($user->ID, $key, $value);
                     }
                 }
-            }
-
-            foreach($familyMetaKeys as $key){
-                delete_user_meta($user->ID, $key);
+            }else{
+                foreach($familyMetaKeys as $key){
+                    delete_user_meta($user->ID, $key);
+                }
             }
 
             delete_user_meta($user->ID, 'family');

@@ -95,7 +95,7 @@ class Family{
      * @param   int|object  $userId     The wp user or user id
      * @param   bool        $flat       Wheter to return a flast arary of user ids or indexed by relation type. Default false for indexed
      * 
-     * @return array                    The requested array
+     * @return array|WP_Error           The requested array
      */
     public function getFamily($userId, $flat=false){
         global $wpdb;
@@ -154,7 +154,7 @@ class Family{
      * 
      * @param   int|object  $userId     The wp user or user id
      * 
-     * @return  array                   An array of children user ids
+     * @return  array|WP_Error          An array of children user ids or wp error
      */
     public function getChildren($userId){
         global $wpdb;
@@ -178,7 +178,7 @@ class Family{
      * 
      * @param   int|object  $userId     The wp user or user id
      * 
-     * @return  array                   An array of sibling user ids
+     * @return  array|WP_Error          An array of sibling user ids
      */
     public function getSiblings($userId){
         global $wpdb;
@@ -237,7 +237,7 @@ class Family{
      * 
      * @param   int|object  $userId     The wp user or user id
      * 
-     * @return  array                   An array of parent user ids
+     * @return  array|WP_Error          An array of parent user ids
      */
     public function getParents($userId){
         global $wpdb;
@@ -271,11 +271,11 @@ class Family{
     /**
      * Get the partner of a user
      * 
-     * @param   int|object  $userId     The wp user or user id
-     * @param	bool	    $returnUser	Whether to return the partners user id or the full user object default false for just the id
-     * @param   bool        $returnDate Wheter to return the wedding date, default false
+     * @param   int|object  $userId                 The wp user or user id
+     * @param	bool	    $returnUser	            Whether to return the partners user id or the full user object default false for just the id
+     * @param   bool        $returnDate             Wheter to return the wedding date, default false
      * 
-     * @return  int|object|string|false              The partner user id or user object or wedding date or false if no partner or wp error on error
+     * @return  int|object|string|false||WP_Error   The partner user id or user object or wedding date or false if no partner or wp error on error
      */
     public function getPartner($userId, $returnUser=false, $returnDate=false){
         global $wpdb;
@@ -284,7 +284,7 @@ class Family{
             $userId = $userId->ID;
         }
 
-        $query      = "select * from $this->tableName where user_id_1='$userId' OR user_id_2='$userId' AND relationship='partner'";
+        $query      = "select * from $this->tableName where (user_id_1='$userId' OR user_id_2='$userId') AND relationship='partner'";
         $results    = $wpdb->get_results($query);
 
         if($wpdb->last_error !== ''){
@@ -317,7 +317,7 @@ class Family{
      * 
      * @param   int|object  $userId     The wp user or user id
      * 
-     * @return  string                  The wedding date
+     * @return  string|false|WP_Error   The wedding date or false if no partner or wp error on error
      */
     public function getWeddingDate($userId){
         return $this->getPartner($userId, false, true);
@@ -329,7 +329,7 @@ class Family{
      * @param   int|object  $userId     The wp user or user id
      * @param   string      $key        The key to get the value for, default empty for all
      * 
-     * @return  mixed                   The value or an array of key values values
+     * @return  mixed                   The value or an array of key values values or null if not found
      */
     public function getFamilyMeta($userId, $key=''){
         global $wpdb;
@@ -347,7 +347,13 @@ class Family{
         }
 
         $query      = "select * from $this->metaTableName where family_id=($subQuery)";
-        return $wpdb->get_results($query);
+        $results    = $wpdb->get_results($query);
+
+        if(empty($results)){
+            return null;
+        }
+
+        return $results;
     }
 
     /**
@@ -532,11 +538,13 @@ class Family{
         $v   = $this->getFamilyMeta($userId, $key);
         if($value == $v){
             return true;
+        }elseif(!empty($v)){
+            // remove the old one
+            $this->removeFamilyMeta($userId, $key);
         }
 
         // Fetch the family Id
-        $query      = "select family_id from $this->tableName where user_id_1='$userId' OR user_id_2='$userId'";
-        $familyId   = $wpdb->get_var($query);
+        $familyId   = $this->getFamilyId($userId);
 
         if(empty($familyId)){
             return new \WP_Error('family', 'No family found!');
@@ -607,15 +615,21 @@ class Family{
      * 
      * @param 	object|int		$userId			WP User_ID or WP_User object
      * @param 	string          $key            The meta key
+     * 
+     * @return  WP_Error|int|null               The amount of rows deleted or an wp error object or null if nothing happened
      */
     public function removeFamilyMeta($userId, $key){
         global $wpdb;
 
         if(is_object($userId)){
-            $userId1 = $userId->ID;
+            $userId = $userId->ID;
         }
 
-        $familyId   = $this->getFamilyId($userId1);
+        $familyId   = $this->getFamilyId($userId);
+
+        if(!$familyId){
+            return null;
+        }
 
         // delete meta
         $wpdb->delete(
@@ -629,6 +643,16 @@ class Family{
                 '%s'
             ],
 		);
+
+        if(!empty($wpdb->last_error)){
+			return new \WP_Error('family', $wpdb->last_error);
+		}
+
+        if($wpdb->rows_affected === 0){
+            return null;
+        }
+
+        return $wpdb->rows_affected;
     }
 
     /**

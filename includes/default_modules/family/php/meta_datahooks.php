@@ -2,7 +2,7 @@
 namespace SIM\FAMILY;
 use SIM;
 
-// Adds family values to the meta values of a form
+// Adds family values to the default values of a form
 add_filter('sim_forms_load_userdata', __NAMESPACE__.'\addFamilyData', 10, 2);
 function addFamilyData($usermeta, $userId){
 	$family	= new SIM\FAMILY\Family();
@@ -31,6 +31,8 @@ function addFamilyData($usermeta, $userId){
  * Checks if a given meta key should be processed as a family meta key
  * 
  * @param   string  $metaKey    The key to check
+ * 
+ * @return  bool                true if it is a family meta key, false otherwise
  */
 function isFamilyMetaKey($metaKey, &$familyMetaKeys){
      $familyMetaKeys = apply_filters('sim-family-meta-keys', ['family_name', 'family_picture']);
@@ -51,7 +53,6 @@ function isFamilyMetaKey($metaKey, &$familyMetaKeys){
 
     return true;
 }
-
 
 /**
  * Retrieves values from the family table instead of the user meta table
@@ -157,9 +158,11 @@ add_filter( "delete_user_metadata", function($value, $userId, $metaKey, $metaVal
 
     $family	= new SIM\FAMILY\Family();
 
+    if(in_array($metaKey, $familyMetaKeys)){
+        return $family->removeFamilyMeta($userId, $metaKey);
+    }
+    
     $family->removeRelationShip($userId, $metaValue);
-
-    $family->removeFamilyMeta($userId, $metaKey);
 
     return true;
 
