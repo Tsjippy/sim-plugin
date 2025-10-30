@@ -5,6 +5,7 @@
 - family module
 
 ### Changed
+- single name if only one file upload is allowed
 
 ### Fixed
 
