@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- render loader image using js
 
 ### Fixed
 - get children and other metas
