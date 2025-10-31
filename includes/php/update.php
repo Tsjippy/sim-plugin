@@ -165,7 +165,3 @@ function afterPluginUpdate($oldVersion){
         }
     }
 }
-
-add_action('init', function(){
-    //afterPluginUpdate('5.7.0');
-});

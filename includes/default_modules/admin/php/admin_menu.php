@@ -505,7 +505,7 @@ function mainMenu(){
 	<div id='release-modal' class='modal hidden'>
 		<div class="modal-content" style='width:500px;'>
 			<span id="modal-close" class="close">&times;</span>
-			<?php echo SIM\LOADERIMAGE;?>
+			<div class="loader-image-trigger"></div>
 			<div class="content"></div>
 		</div>
 	</div>

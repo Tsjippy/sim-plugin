@@ -4,7 +4,8 @@
   "description": "admin",
   "main": "./admin.js",
   "scripts": {
-    "admin": "webpack --watch --entry ./admin.js --output-path . --output-filename admin.min.js --progress --mode=production --devtool source-map"
+    "admin": "webpack --watch --entry ./admin.js --output-path . --output-filename admin.min.js --progress --mode=production --devtool source-map",
+    "all": "run-p admin"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

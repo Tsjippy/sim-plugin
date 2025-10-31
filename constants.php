@@ -8,7 +8,6 @@ define('SITEURLWITHOUTSCHEME', str_replace(['https://', 'http://'], '', SITEURL)
 define('SITENAME', get_bloginfo());
 define(__NAMESPACE__ .'\INCLUDESURL', plugins_url('includes', __FILE__));
 define(__NAMESPACE__ .'\PICTURESURL', INCLUDESURL.'/pictures');
-define(__NAMESPACE__ .'\LOADERIMAGEURL', ''); // backwards compatibility
 define(__NAMESPACE__ .'\PLUGINFOLDER', plugin_dir_path(__FILE__));
 define(__NAMESPACE__ .'\INCLUDESPATH', PLUGINFOLDER.'includes/');
 define(__NAMESPACE__ .'\MODULESPATH', str_replace('\\', '/', WP_CONTENT_DIR).'/sim-modules/');

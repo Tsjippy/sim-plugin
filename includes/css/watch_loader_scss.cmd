@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\scss\loader.scss" "loader.min.css"

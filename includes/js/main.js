@@ -1,140 +1,19 @@
 console.log("Main.js loaded");
 
 import { bind as NiceSelect } from 'nice-select2';
-import { displayMessage, showLoader, isMobileDevice, } from './imports.js';
-export { displayMessage, showLoader, isMobileDevice };
+import { isMobileDevice } from './partials/mobile.js';
+import { showLoader } from './partials/show_loader.js';
+import { displayMessage } from './partials/display_message.js';
+import { changeUrl, switchTab, displayTab } from './partials/tabs.js';
+import { showModal, hideModals } from './partials/modals.js';
+import { hasInternet, waitForInternet } from './partials/internet_connection.js';
 
-export function changeUrl(target, secondTab=''){
-	let newParam	= target.dataset.paramVal;
-	let hash		= target.dataset.hash;
-	const url 		= new URL(window.location);
 
-	//Change the url params
-	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content')){
-		//Add query-arg if it is a main tab
-		url.searchParams.set('main-tab', newParam);
-		url.searchParams.delete('second-tab');
-	}else{
-		url.searchParams.set('second-tab', newParam);
-	}
-
-	if(secondTab != ''){
-		url.searchParams.set('second-tab', secondTab);
-	}
-	
-	window.history.pushState({}, '', url);
-
-	if(hash != null){
-		window.location.hash	= hash;
-	}else{
-		window.location.hash	= '';
-	}
-
-	// switch tab when clicking on a change url link
-	if(target.tagName == 'A'){
-		switchTab();
-	}
-}
+export { displayMessage, isMobileDevice, showLoader, changeUrl, switchTab, displayTab, showModal, hideModals, hasInternet, waitForInternet };
 
 export function attachNiceSelect(element, options = {searchable: true}){
 	if(element._niceSelect == undefined){
 		NiceSelect(element, options);
-	}
-}
-
-function switchTab(event=null){
-	let params = new Proxy(new URLSearchParams(window.location.search), {
-		get: (searchParams, prop) => searchParams.get(prop),
-	});
-	
-	let mainTab 	= params['main-tab'];
-	let lastTab		= '';
-
-	if(mainTab != null){
-		//find the tab and display it
-		document.querySelectorAll(`[data-param-val="${mainTab}"]:not(.active)`).forEach(tabbutton=>{
-			//only process non-modal tabs
-			if(tabbutton.closest('.modal') == null){
-				let result	= displayTab(tabbutton);
-				if(result){
-					lastTab	= result;
-				}
-			}
-		});
-	}
-
-	let secondTab = params.second_tab;
-	if(secondTab != null){
-		//find the tab and display it
-		document.querySelectorAll(`[data-param-val="${secondTab}"]:not(.active)`).forEach(tabbutton=>{
-			displayTab(tabbutton);
-		});
-	}
-}
-
-export function displayTab(tabButton){
-
-	//remove all existing highlights
-	document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
-
-	let tab;
-	// Get content area
-	if(tabButton.dataset.target == undefined){
-		tab = document.querySelector('#'+tabButton.dataset.paramVal.trim());
-	}else{
-		tab = tabButton.closest('div:not(.tablink-wrapper)').querySelector('#'+tabButton.dataset.target);
-	}
-	
-	if(tab != null){
-		tab.classList.remove('hidden');
-
-		if(tabButton.tagName != 'A'){
-			//Mark the other tabbuttons as inactive
-			tabButton.parentNode.querySelectorAll(`:scope > .active:not(#${tabButton.id})`).forEach(child=>{
-				//Make inactive
-				child.classList.remove("active");
-					
-				//Hide the tab
-				var childTab	= child.closest('div:not(.tablink-wrapper)').querySelector('#'+child.dataset.target);
-				if(childTab == null){
-					console.error('Tab to hide not found:');
-					console.error(child.closest('div:not(.tablink-wrapper)'));
-					console.error('#'+child.dataset.target);
-				}else{
-					childTab.classList.add('hidden');
-				}
-			});
-			
-			//Mark the tabbutton as active
-			tabButton.classList.add("active");
-		}
-
-		//scroll to field
-		if (window.location.hash) {
-			var hash 		= window.location.hash.replace('#', '');
-
-			var hashField	= tab.querySelector(`[name^="${hash}"]`);
-		
-			if(hashField != null){
-				hashField.scrollIntoView({block: "center"});
-
-				var el			= hashField.closest('.input-wrapper');
-				if(el != null){
-					hashField.closest('.input-wrapper').classList.add('highlight');
-				}
-				hashField.classList.add('highlight');
-				hashField.focus();
-			}
-		}
-
-		// position any tables on this tab, as they can only be positioned when visible
-		if(typeof(SimTableFunctions) != 'undefined'){
-			SimTableFunctions.positionTable();
-		}
-
-		return tab;
-	}else{
-		return false;
 	}
 }
 
@@ -185,82 +64,6 @@ function bodyScrolling(type){
 	}
 }
 
-export function showModal(modal){
-	if(typeof(modal) == 'string'){
-		modal = document.getElementById(modal + "-modal");
-	}
-	
-	if(modal != null){
-		// Prevent main page scrolling
-		document.body.style.top			= `-${window.scrollY}px`;
-		document.body.style.position 	= 'fixed';
-
-		let prim						= document.getElementById('primary');
-		if(prim != null){
-			prim.style.zIndex			= '';
-		}
-
-		modal.classList.remove('hidden');
-
-		modal.style.display	= 'block';
-	}	
-}
-
-export function hideModals(){
-	let modals	= document.querySelectorAll('.modal:not(.hidden)');
-	if(modals.length != 0){
-		modals.forEach(modal=>{
-			modal.classList.add('hidden');
-			modal.style.removeProperty('display');
-			
-			const event = new Event('modalclosed');
-			modal.dispatchEvent(event);
-		});
-
-		// Turn main page scrolling on again
-		const scrollY					= document.body.style.top;
-		document.body.style.position 	= '';
-		document.body.style.top 		= '';
-		window.scrollTo(0, parseInt(scrollY || '0') * -1);
-		
-		/* 		let prim						= document.getElementById('primary');
-		if(prim != null){
-			prim.style.zIndex			= 1;
-		} */
-	}
-}
-
-//check internet
-async function hasInternet(){
-	if(location.href.includes('localhost')){
-		window['online'] = true;
-		return window['online'];
-	}
-
-	await fetch(location.href).then((result) => {
-		window['online'] = true;
-	}).catch(e => {
-		window['online'] = false;
-	});
-
-	return window['online'];
-}
-
-export async function waitForInternet(){
-	var internet	= await hasInternet();
-	if(!internet){
-		displayMessage('You have no internet connection, waiting till internet is back...', 'warning', true, true, 5000);
-
-		while(!internet){
-			if(window['online']){
-				break;
-			}
-
-			internet	= await hasInternet();
-		}
-	}
-}
-
 function positionSubSubMenus(){
 	const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
@@ -289,6 +92,14 @@ function positionSubSubMenus(){
 
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
+	// Display loaders
+	document.querySelectorAll(`.loader-image-trigger`).forEach( el =>{
+		let size	= el.dataset.size ? el.dataset.size : 50 ;
+		let text	= el.dataset.text ? el.dataset.text : '';
+
+		showLoader(el, true, size, text);
+	});
+
 	// remove any empty widgets
 	document.querySelectorAll('.widget').forEach(w=>{
 		if(w.innerHTML == ''){
@@ -335,7 +146,6 @@ document.addEventListener("DOMContentLoaded",function() {
 		displayMessage(params.message, type);
 	}
 });
-
 
 //Hide or show the clicked tab
 window.addEventListener("mousedown", function(event) {	

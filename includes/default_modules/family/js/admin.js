@@ -1,4 +1,5 @@
-import {changeUrl, displayTab, showModal} from './../../../../includes/js/main.js'
+import {changeUrl, displayTab} from './../../../../includes/js/partials/tabs.js'
+import {showModal} from './../../../../includes/js/partials/modals.js'
 import {fetchRestApi} from  './../../../../includes/js/form_submit_functions.js'
 import {copyFormInput, fixNumbering, removeNode} from './../../../../../../sim-modules/forms/js/form_exports.js'
 import { bind as NiceSelect } from '../../../js/node_modules/nice-select2';
