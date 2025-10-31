@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.7.1] - 2025-10-31
+
+
+### Changed
 - render loader image using js
 
 ### Fixed
 - get children and other metas
-
-### Updated
 
 ## [5.7.0] - 2025-10-30
 
