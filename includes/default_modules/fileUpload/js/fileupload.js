@@ -413,12 +413,23 @@ async function uploadVideo(file){
 	upload.start();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-	// move the modal to the top of the body so its always visible when not hidden
-	let imageEditModal	= document.querySelector('.modal.edit-image.hidden');
-	if(imageEditModal != null){
-		document.body.append(imageEditModal);
+document.addEventListener('DOMContentLoaded', async () => {
+
+	// We should load the image editor, and it is not yet there
+	if(document.querySelector(`.image-edit-modal-trigger`) != null && document.querySelector(`#edit-image-modal`) == null){
+		// immideately create an empty div to prevent duplicates
+		document.body.insertAdjacentHTML('beforeend', `<div id="edit-image-modal" class="modal edit-image hidden"></div>`);
+
+		document.querySelectorAll(`.image-edit-modal-trigger`).forEach(el => el.remove());
+
+		let response	= await FormSubmit.fetchRestApi('fetch_image_edit_modal');
+
+		if(response){
+			document.getElementById('edit-image-modal').outerHTML	= response;
+
+		}
 	}
+
 });
 
 //Remove picture on button click

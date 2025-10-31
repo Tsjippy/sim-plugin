@@ -143,4 +143,29 @@ function afterPluginUpdate($oldVersion){
             delete_user_meta($user->ID, 'family');
         }
     }
+
+    if($oldVersion < '5.7.1'){
+        $users = get_users([
+            'meta_key'      => 'profile_picture',
+            'meta_compare'  => 'EXISTS'
+        ]);
+
+        foreach($users as $user){
+            $profilePicture = get_user_meta($user->ID, 'profile_picture', true);
+
+            if(is_array($profilePicture) && isset($profilePicture[0])){
+                $profilePicture = $profilePicture[0];
+            }
+
+            if(is_numeric($profilePicture) && wp_get_attachment_image_url($profilePicture)){
+                update_user_meta($user->ID, 'profile_picture', $profilePicture);
+            }else{
+                delete_user_meta($user->ID, 'profile_picture');
+            }
+        }
+    }
 }
+
+add_action('init', function(){
+    //afterPluginUpdate('5.7.0');
+});

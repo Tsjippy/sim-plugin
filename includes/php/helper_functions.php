@@ -1133,10 +1133,11 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
  */
 function displayProfilePicture($userId, $size=[50, 50], $showDefault = true, $famillyPicture=false, $wrapInLink=true){
 	$family			= new FAMILY\Family();
-	$attachmentId 	= get_user_meta($userId, 'profile_picture', true);
 
 	if($famillyPicture){
-		$attachmentId	= $family->getFamilyMeta($userId, 'picture');
+		$attachmentId	= $family->getFamilyMeta($userId, 'family_picture');
+	}else{
+		$attachmentId 	= get_user_meta($userId, 'profile_picture', true);
 	}
 	
 	$defaultUrl		= plugins_url('pictures/usericon.png', __DIR__);

@@ -231,7 +231,7 @@ export async function addCropper(file){
         // clear the cropper
         modal._cropper.destroy();
 
-        modal.querySelector('.preview-img').innerHTML   = `<img src="" alt="preview-img" class='hidden'>`;
+        modal.querySelector('.preview-img img').outerHTML   = `<img src="" alt="preview-img" class='hidden'>`;
 
         resetFilter();
     }
