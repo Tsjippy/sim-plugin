@@ -373,21 +373,19 @@ class Family{
             }
         }
 
-        $partnerId	= $this->getPartner($user);
+        $familyName	= $this->getFamilyMeta($user, 'family_name');
 
-        $familyName	= $this->getFamilyMeta($user, 'name');
+        if(!empty($familyName)){
+            return $familyName.' family';
+        }
 
-        // user has family
-        if(empty($partnerId)){
+        // user has no family
+        if(!$this->hasFamily($user)){
             if($lastNameFirst){
                 return "$user->last_name, $user->first_name";
             }
 
             return $user->display_name;
-        }
-        
-        if(!empty($familyName)){
-            return $familyName.' family';
         }
 
         $name 	    = $user->last_name;
@@ -405,6 +403,8 @@ class Family{
                 }
             }
         }
+
+        $this->updateFamilyMeta($user, 'family_name', $name.' family');
 
         return $name.' family';
     }

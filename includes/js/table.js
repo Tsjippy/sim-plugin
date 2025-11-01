@@ -1,4 +1,4 @@
-import { getFieldValue } from './field_value.js';
+import { getFieldValue } from './partials/field_value.js';
 
 let oldValue;
 
