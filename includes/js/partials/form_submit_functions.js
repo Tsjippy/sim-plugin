@@ -43,6 +43,16 @@ export function prepareForValidation(wrapper){
 	// Get all multi-text inputs with a value and unrequire the main element
 	wrapper.querySelectorAll(`.list-selection-list > .list-selection:first-child`).forEach(list => list.closest('.option-wrapper').querySelector(`input[type='text']`).required = false);
 
+	// Get all file uploads with a value and unrequire them
+	wrapper.querySelectorAll('.required input[type="file"]').forEach(el => {
+		let elementWrapper	= el.closest('.input-wrapper');
+
+		// this file input has already files
+		if(elementWrapper.querySelector(`.document-preview input[type="hidden"]`) != null){
+			el.required	= false;
+		}
+	});
+
 	// enable disabled fields so it gets included and warnings are shown
 	wrapper.querySelectorAll('[disabled][required]').forEach( el=>{
 		el.disabled	= false;

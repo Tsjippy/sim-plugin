@@ -66,6 +66,9 @@ async function fileUpload(target){
 	if(!fileUploadWrap.querySelector('.file-upload').multiple){
 		fileUploadWrap.querySelector('.upload-div').classList.add('hidden');
 	}
+
+	// make the target no longer required
+	target.required	= false;
 	
 	//Create a formData element
 	let formData = new FormData();
@@ -73,7 +76,7 @@ async function fileUpload(target){
 	//Add the ajax action name
 	formData.append('action', 'upload-files');
 	
-	//Loop over the dataset attributes and add them to post
+	//Loop over the dataset attributes and add them to data
 	datasetString	= '';
 	target.parentNode.querySelectorAll('input').forEach( 
 		input => {

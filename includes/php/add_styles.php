@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const STYLE_VERSION		= '7.1.21';
+const STYLE_VERSION		= '7.1.23';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
@@ -52,6 +52,9 @@ function registerScripts($hook=''){
 
 	//table request shortcode
 	wp_register_script('sim_table_script', plugins_url('js/table.min.js', __DIR__), array('sortable', 'sim_formsubmit_script'), STYLE_VERSION, true);
+
+	// Debug request shortcode
+	wp_register_script('sim_debug_script', plugins_url('js/debug.js', __DIR__), [], STYLE_VERSION, false);
 
 	wp_localize_script( 'sim_script',
 		'sim',
