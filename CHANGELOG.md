@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- js debugger
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [5.7.2] - 2025-11-01
+
+
+### Added
+- js debugger
 
 ## [5.7.1] - 2025-10-31
 
