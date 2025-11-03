@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- js reordering
-- stop listening to events if we have a match
 
 ### Fixed
 
 ### Updated
+
+## [5.7.3] - 2025-11-03
+
+
+### Changed
+- js reordering
+- stop listening to events if we have a match
 
 ## [5.7.2] - 2025-11-01
 
