@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- js reordering
 
 ### Fixed
 
