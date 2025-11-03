@@ -7,6 +7,8 @@ import { bind as NiceSelect } from '../../../js/node_modules/nice-select2';
 console.log('admin.js loaded');
 
 function switchSlider(event){
+    event.stopImmediatePropagation();
+
     if(event.target.checked){
         document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'block');
     }else{
@@ -27,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.addEventListener("click", async event => {
-	let target = event.target;
+	let target  = event.target;    
         
     //add element
     if(target.matches('.add')){
@@ -44,12 +46,12 @@ window.addEventListener("click", async event => {
     }
     
     //remove element
-    if(target.matches('.remove')){
+    else if(target.matches('.remove')){
         //Remove node clicked
         removeNode(target);
     }
 
-    if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
+    else if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
         event.preventDefault();
 
         let value = '';
@@ -77,8 +79,7 @@ window.addEventListener("click", async event => {
         }
     }
 
-    if(target.matches(".tablink")){
-		event.preventDefault();
+    else if(target.matches(".tablink")){
 		//change the url in browser
 		changeUrl(target);
 
@@ -96,10 +97,14 @@ window.addEventListener("click", async event => {
 
         document.querySelector('#release-modal .content').innerHTML   = response;
         document.querySelector('#release-modal .content').classList.remove('hidden');
+    }else{
+        return;
     }
+
+    event.stopImmediatePropagation();
 });
 
-document.querySelectorAll('#release-modal').forEach(el=>el.addEventListener('modalclosed', ev=>{
+document.querySelectorAll('#release-modal').forEach(el => el.addEventListener('modalclosed', ev => {
     ev.target.querySelector('.loader-wrapper').classList.remove('hidden');
     ev.target.querySelector('.content').classList.add('hidden');
 }));

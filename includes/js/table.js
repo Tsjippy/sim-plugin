@@ -1,25 +1,13 @@
 import { getFieldValue } from './partials/field_value.js';
 
-let oldValue;
-
 console.log("Table.js loaded");
 
-function outsideClicked(event){
-	if(event.target.closest('td') == null || !event.target.closest('td').matches('.editing')){
-		event.stopPropagation();
-		
-		//remove as soon as we come here
-		document.removeEventListener('click', outsideClicked);
-		processInput(event, document.querySelector('.editing input, .editing select, .editing textarea'));
-	}
-}
-
-function addInputEventListeners(cell){
+function prepareInputs(cell){
 	let inputs	= cell.querySelectorAll('input,select,textarea');
 		
 	inputs.forEach(inputnode => {
 		//add old value
-		oldValue.split(',').forEach(val=>{
+		cell.dataset.oldText.split(',').forEach(val=>{
 			if(inputnode.type == 'checkbox' || inputnode.type == 'radio'){
 				if(inputnode.value == val.trim()){
 					inputnode.checked = true;
@@ -27,7 +15,7 @@ function addInputEventListeners(cell){
 			}else if(inputnode.type == 'select'){
 				inputnode.querySelector('option[value="'+val+'"]').selected = true;
 			}else{
-				inputnode.value	= oldValue;
+				inputnode.value	= cell.dataset.oldText;
 			}
 		});
 		
@@ -35,67 +23,107 @@ function addInputEventListeners(cell){
 			Main.attachNiceSelect(inputnode);
 		}
 		
-		//Add a keyboard
-		inputnode.addEventListener("keyup", function(event){
-			if (event.keyCode === 13) {
-				processInput(event);
-			}
-		});
-		
-		//add a listener for clicks outside the cell
-		document.addEventListener('click', outsideClicked);
-		
-		if(inputnode.type != 'checkbox' || inputs.length == 1){
-			if(inputnode.type == 'date'){
-				inputnode.addEventListener("blur", function(event){
-					//only process if we added a value
-					if(event.target.value != ''){
-						processInput(event);
-					}
-				});
-			}else{
-				inputnode.addEventListener("change", function(event){
-					//only process if we added a value
-					if(event.target.value != ''){
-						processInput(event);
-					}
-				});
-			}
-			
+		if(inputnode.type != 'checkbox' || inputs.length == 1){			
 			inputnode.focus();
 		}
 	});
 }
 
-//function to change a cells contents
+/**
+ * function to change a cells contents
+ * Overridable via the table-content-update-inputs-loaded event
+ */
 function editTd(target){
-	target.closest('td').classList.add('editing');
+	target = target.closest('td');
+
+	// First make sure we have processed all others
+	document.querySelectorAll('td.editing').forEach(td => {
+		if(td != target){
+			processInput(td);
+		}
+	});
+	
+	target.classList.add('editing');
 
 	//element is already edited
-
-	oldValue	= target.textContent;
-	if (oldValue == "Click to update" || oldValue == "X"){
-		oldValue = "";
+	target.dataset.oldHtml	= target.innerHTML;
+	target.dataset.oldText	= target.textContent;
+	if (target.textContent == "Click to update" || target.textContent == "X"){
+		target.dataset.oldText 	= "";
+		target.dataset.oldHtml	= "";
 	}
 	
-	target.innerHTML = `<input type="text" value="${oldValue}">`;
+	// insert an text input
+	target.innerHTML = `<div class='override-wrapper'><input type="text" value="${target.textContent}"></div>`;
 
-	addInputEventListeners(target);
+	let button = document.createElement('button');
+    button.innerHTML = 'Save changes';
+    button.classList.add('button', 'small','save', 'hidden');
+
+	button.addEventListener('click', ev => processInput(ev.target.closest('td')));
+
+	// Add the button
+	target.appendChild(button);
+
+	// Create an event so other scripts can change the input type if needed
+	const event = new Event('table-content-update-inputs-loaded', {bubbles: true, cancelable: true});
+    let result	= target.dispatchEvent(event);
+
+	// Do not continue if a listener called preventDefault();
+	if(!result){
+		return;
+	}
+
+	button.classList.remove('hidden');
+
+	prepareInputs(target);
 }
 
-//function to get the temp input value and save it using the rest api
-async function processInput(event, target){
-	if(typeof(target) == 'undefined'){
-		target	= event.target;
+/**
+ * function to get the temp input value and save it using the rest api
+ * 
+ */
+var running = false;
+async function processInput(target){
+	// target is an event
+	if(target.target != undefined){
+		target.stopImmediatePropagation();
+
+		target = target.target;
 	}
-	
-	let cell 			= target.closest('td');	
-	let value			= getFieldValue(target, cell, false);
-	let table			= target.closest('table');
+
+	// We are already working on this one, no need to continue
+	if( running == target ){
+		return;
+	}
+
+	// prevent doubles
+	running = target;
+	// Clear the running variable after half a second, 
+	setTimeout(function(){ running = false;}, 500);	
+
+	let cell 	= target.closest('td');	
+	let value	= getFieldValue(target, cell, false);
+	let table	= target.closest('table');
 	
 	//Only update when needed
-	if (value != oldValue){		
-		//get the updated fieldname from the column header
+	if (value != cell.dataset.oldText){
+
+		// Create an event so other scripts can do their own change logic
+		const event = new Event('table-content-before-update', {bubbles: true, cancelable: true});
+		
+		let result	= cell.dispatchEvent(event);
+
+		// Do not continue if a listener called preventDefault();
+		if(!result){
+			return;
+		}
+
+		// No need for further processing
+		if(cell.classList.contains('editing') == false){
+			return;
+		}
+		
 		let formData = new FormData();
 		formData.append('value', JSON.stringify(value));
 
@@ -108,17 +136,24 @@ async function processInput(event, target){
 		
 		Main.showLoader(cell.firstChild);
 		
-		let response = await FormSubmit.fetchRestApi(table.dataset.url, formData);
+		let url			= table.dataset.url;
+		if(url == undefined){
+			console.error('No rest api url found');
+			cell.innerHTML = target.dataset.oldHtml;
+
+			return;
+		}
+
+		let response 	= await FormSubmit.fetchRestApi(url, formData);
 
 		if(response){
 			cell.innerHTML = value;
-
-			//reset editing indicator
-			//let editedel = '';
 		}
-	}else{
-		console.log(value)
-		target.closest('td').innerHTML = oldValue;
+	}
+	
+	// Restore cell contents
+	else{
+		cell.innerHTML = target.dataset.oldHtml;
 	}
 
 	cell.classList.remove('editing');
@@ -400,20 +435,21 @@ async function showHiddenColumns(target){
 }
 
 document.addEventListener("click", event => {
-	let target = event.target;
+	let target 	= event.target;
+	let td 		= target.closest('td');
+
+	// We are editing a cell value but we clicked somewhere outside the cell
+	if(document.querySelector('.editing') && document.querySelector('.editing') != td){
+		processInput(document.querySelector('.editing'));
+	}
 	
 	if(target.tagName == 'TH'){
 		sortTable(target);
 	}
 	
 	//Edit data
-	let td = target.closest('td');
-	if(target.matches('td.edit')){
-		event.stopPropagation();
-		editTd(target);
-	}else if(td != null && td.matches('td.edit') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
-		event.stopPropagation();
-		editTd(target.closest('td'));
+	else if(td != null && td.matches('td.edit:not(.editing)') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
+		editTd(td);
 	}else if(target.matches('.show.fullscreenbutton')){
 		showFullscreen(target);
 	}else if(target.matches('.close.fullscreenbutton')){
@@ -428,7 +464,11 @@ document.addEventListener("click", event => {
 	// Show all columns again
 	else if(target.matches('.reset-col-vis')){
 		showHiddenColumns(target);
+	}else{
+		return;
 	}
+	
+	event.stopImmediatePropagation();
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -451,4 +491,23 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	setTableHeight();
+});
+
+/**
+ * Add a keyboard listener
+ */
+// Keep track of which keys are pressed
+let keysPressed = {};
+document.addEventListener('keydown', (event) => {
+   keysPressed[event.key] = true;
+});
+
+// Listen to enters but onlyif shift is not pressed
+document.addEventListener("keyup", function(event){
+	if (['Enter', 'NumpadEnter'].includes(event.key) && keysPressed.Shift == undefined) {
+
+		processInput(event);
+	}
+
+	delete keysPressed[event.key];
 });

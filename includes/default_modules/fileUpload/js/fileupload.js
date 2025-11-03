@@ -440,7 +440,7 @@ window.addEventListener("click", function(event) {
 	var target = event.target;
 	
 	if (target.matches(".remove-document")){
-		event.preventDefault();
+		event.stopImmediatePropagation();
 		removeDocument(target);
 	}
 });
@@ -449,7 +449,7 @@ window.addEventListener("change", event => {
 	let target = event.target;
 
 	if (target.className.includes("file-upload")){
-		event.preventDefault();
+		event.stopImmediatePropagation();
 		fileUpload(target);
 	}
 });

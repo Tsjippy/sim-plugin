@@ -76,19 +76,17 @@ document.addEventListener('click', (ev)=>{
 		ev.target.closest(`.option-wrapper`).querySelector(`.add-list-selection`).classList.remove('hidden');
 		
 		ev.target.closest('.list-selection').remove();
-
-		ev.preventDefault();
-
-		ev.stopPropagation();
-
-		ev.stopImmediatePropagation();
 	}
 	else if(ev.target.matches(`.remove-list-selection`)){
 		ev.target.closest('.list-selection').remove();
 	}else if(ev.target.matches(`.add-list-selection`)){
 		// add button clicked
 		addListSelection(ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.datalistinput`));
+	}else{
+		return;
 	}
+
+	ev.stopImmediatePropagation();
 });
 
 //Add a keyboard listener
@@ -110,6 +108,11 @@ document.addEventListener('keydown', (event) => {
    keysPressed[event.key] = true;
 });
 
+/**
+ * Adds a list selection when the text input has been filled
+ * @param {*} el 
+ * @returns 
+ */
 function addListSelection(el) {
 	el.closest(`.multi-text-input-wrapper`).querySelector(`.add-list-selection`).classList.add('hidden');
 
@@ -144,8 +147,10 @@ function addListSelection(el) {
 
 	el.closest('.option-wrapper').querySelector('.list-selection-list').appendChild(li);
 
+	// we have a value now, so unrequire to prevent false validation errors
 	el.required = false;
 
+	// clear the input
 	el.value	= '';
 
 }
