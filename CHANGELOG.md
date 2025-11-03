@@ -5,6 +5,7 @@
 
 ### Changed
 - js reordering
+- stop listening to events if we have a match
 
 ### Fixed
 
