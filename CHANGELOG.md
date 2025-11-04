@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- only listen to cell click, not to cell children to edit
 
 ### Fixed
 
 ### Updated
+
+## [5.7.4] - 2025-11-04
+
+
+### Changed
+- only listen to cell click, not to cell children to edit
 
 ## [5.7.3] - 2025-11-03
 
