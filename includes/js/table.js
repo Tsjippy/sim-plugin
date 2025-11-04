@@ -436,10 +436,9 @@ async function showHiddenColumns(target){
 
 document.addEventListener("click", event => {
 	let target 	= event.target;
-	let td 		= target.closest('td');
 
 	// We are editing a cell value but we clicked somewhere outside the cell
-	if(document.querySelector('.editing') && document.querySelector('.editing') != td){
+	if(document.querySelector('.editing') && document.querySelector('.editing') != target.closest('td')){
 		processInput(document.querySelector('.editing'));
 	}
 	
@@ -448,8 +447,8 @@ document.addEventListener("click", event => {
 	}
 	
 	//Edit data
-	else if(td != null && td.matches('td.edit:not(.editing)') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
-		editTd(td);
+	else if(target.matches('td.edit:not(.editing)') ){
+		editTd(target);
 	}else if(target.matches('.show.fullscreenbutton')){
 		showFullscreen(target);
 	}else if(target.matches('.close.fullscreenbutton')){
