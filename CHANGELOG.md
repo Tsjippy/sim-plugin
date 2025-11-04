@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- only listen to cell click, not to cell children to edit
 
 ### Fixed
 
