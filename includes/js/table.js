@@ -406,7 +406,12 @@ export const hideColumn	= async (target) => {
 		cell	= target;
 	}
 
-	if(cell){
+	// Create an event so other scripts can do their own change logic
+	const event = new Event('table-content-before-column-hide', {bubbles: true, cancelable: true});
+	
+	let result	= target.dispatchEvent(event);
+
+	if(result && cell){
 		// Hide the column
 		let table		= cell.closest('table');
 		let tableRows	= table.rows;
