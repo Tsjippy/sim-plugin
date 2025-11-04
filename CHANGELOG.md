@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- hide table forms
 
 ### Updated
+
+## [5.7.5] - 2025-11-04
+
+
+### Fixed
+- hide table forms
 
 ## [5.7.4] - 2025-11-04
 
