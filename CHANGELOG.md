@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- hide table forms
 
 ### Updated
 
