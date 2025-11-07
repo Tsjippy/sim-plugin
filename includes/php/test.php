@@ -11,7 +11,6 @@ add_shortcode("test", function ($atts){
 
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     require_once ABSPATH . 'wp-admin/install-helper.php';
-
 });
 
 // turn off incorrect error on localhost
