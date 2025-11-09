@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- double slash in upload path
 
 ### Updated
 
