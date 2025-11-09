@@ -25,10 +25,9 @@ class FileUploader{
         $this->metaKeyIndex = '';
         $this->filesArr     = [];
         $this->files        = $files;
+        $this->targetDir 	= wp_upload_dir()['basedir'].'/';
         if(!empty($this->fileParam['targetDir'])){
-            $this->targetDir 		= wp_upload_dir()['basedir'].'/'.sanitize_text_field($this->fileParam['targetDir']).'/';
-        }else{
-            $this->targetDir 		= wp_upload_dir()['basedir'].'/';
+            $this->targetDir .= trailingslashit(sanitize_text_field($this->fileParam['targetDir']));
         }
         
         //create folder if it does not exist
