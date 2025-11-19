@@ -403,34 +403,36 @@ function printHtml($html){
 	$tabs	= 0;
 
 	// Split on the < symbol to get a list of opening and closing tags
-	$html		= explode('>', $html);
+	$html		= explode('<', $html);
 	$newHtml	= '';
 
 	// loop over the elements
-	foreach($html as $index=>$el){
+	foreach($html as $index => $el){
+		$el = trim($el);
+
 		if(empty($el)){
 			continue;
 		}
 
 		// Split the line on a closing character </
-		$lines	= explode('</', $el);
+		$lines	= explode('>', $el);
 
 		if(!empty($lines[0])){
 			$newHtml	.= "\n";
 			
 			// write as many tabs as need
-			for ($x = 0; $x <= $tabs; $x++) {
+			for ($x = 0; $x < $tabs; $x++) {
 				$newHtml	.= "\t";
 			}
 
 			// then write the first element
-			$newHtml	.= $lines[0];
+			$newHtml	.= "<".$lines[0]."/>";
 		}
 
 		if(
 			substr($el, 0, 1) == '<' && 						// Element start with an opening symbol
-			substr($el, 0, 2) != '</' && 						// It does not start with a closing symbol
-			substr($el, 0, 6) != '<input' && 					// It does not start with <input (as that one does not have a closing />)
+			substr($el, 0, 1) != '/' && 						// It does not start with a closing symbol
+			substr($el, 0, 5) != 'input' && 					// It does not start with <input (as that one does not have a closing />)
 			(
 				substr($el, 0, 7) != '<option' || 				// It does not start with <option (as that one does not have a closing />)
 				str_contains( $html[$index+1], '</option') 		// or the next element contains a closing option

@@ -215,6 +215,11 @@ function sortTable(target){
 	}else{
 		target.classList.replace('desc', 'asc');
 	}
+
+	// Create an event so other scripts can do their own sort logic
+	const event = new Event('table-sorted', {bubbles: true, cancelable: true});
+	
+	let result	= target.dispatchEvent(event);
 }
 
 //Store the table headers as td attribute for use on smaller screens
