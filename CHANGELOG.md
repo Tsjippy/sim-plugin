@@ -9,6 +9,7 @@
 ### Fixed
 - double slash in upload path
 - bug in not returning value if cleaning non-array
+- double classes attribute
 
 ### Updated
 
