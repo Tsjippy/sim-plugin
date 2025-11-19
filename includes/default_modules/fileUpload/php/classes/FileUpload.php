@@ -126,24 +126,24 @@ class FileUpload{
 				$this->html .= "<input class='file-upload $fileClass' type='file' name='$inputName' $multipleString $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->userId)){
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[user-id]' 			value='{$this->userId}'>";
+						$this->html .= "<input type='hidden' class='no-reset' name='fileupload[user-id]' 			value='{$this->userId}'>";
 					}
 					if(!empty($targetDir)){
 						$targetDir	= str_replace('\\', '/', $targetDir);
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[targetDir]' 		value='{$targetDir}'>";
+						$this->html .= "<input type='hidden' class='no-reset' name='fileupload[targetDir]' 		value='{$targetDir}'>";
 					}
 					if(!empty($this->metaKey)){
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[metakey]' 		value='{$this->metaKey}'>";
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[metakey-index]' 	value='$documentName'>";
+						$this->html .= "<input type='hidden' class='no-reset' name='fileupload[metakey]' 		value='{$this->metaKey}'>";
+						$this->html .= "<input type='hidden' class='no-reset' name='fileupload[metakey-index]' 	value='$documentName'>";
 					}
 					if(!empty($this->library)){
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[library]' 		value='{$this->library}'>";
+						$this->html .= "<input type='hidden' class='no-reset' name='fileupload[library]' 		value='{$this->library}'>";
 					}
 					if(!empty($this->callback)){
-						$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[callback]' 		value='{$this->callback}'>";
+						$this->html .= "<input type='hidden' class='no-reset' name='fileupload[callback]' 		value='{$this->callback}'>";
 					}
 
-					$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='fileupload[updatemeta]' 		value='{$this->updatemeta}'>";
+					$this->html .= "<input type='hidden' class='no-reset' name='fileupload[updatemeta]' 		value='{$this->updatemeta}'>";
 		
 				$this->html .= "</div>";
 			$this->html .= "</div>";
@@ -197,7 +197,7 @@ class FileUpload{
 		}
 		
 		$this->html .= "<div class='document'>";
-			$this->html .= "<input type='hidden' class='no-reset' class='no-reset' name='$name' value='$metaValue'>";
+			$this->html .= "<input type='hidden' class='no-reset' name='$name' value='$metaValue'>";
 
 		//Check if file is an image
 		if(getimagesize(SIM\urlToPath($url)) !== false) {

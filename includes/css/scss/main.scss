@@ -232,3 +232,7 @@ button.remove-list-selection{
 		margin: auto 3px;
 	}
 }
+
+.nice-select.open .nice-select-dropdown {
+	z-index: 9999;
+}
