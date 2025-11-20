@@ -15,7 +15,7 @@ includes/php/test.php
 **/events/
 **/fancyEmail/
 **/forms/
-frontendPosting/
+**/frontendPosting/
 **/heicToJpeg/
 **/locations/
 **/login/
@@ -41,3 +41,8 @@ frontendPosting/
 **/vimeo/
 **/simNigeria/
 debug.log
+# Snyk Security Extension - AI Rules (auto-generated)
+.cursor/rules/snyk_rules.mdc
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.cursor\rules\snyk_rules.mdc

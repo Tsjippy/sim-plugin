@@ -161,7 +161,7 @@ function cleanOutput($response){
 // disable auto updates for this plugin on localhost
 add_filter( 'auto_update_plugin', __NAMESPACE__.'\disableAutoUpdate', 10, 2 );
 function disableAutoUpdate( $value, $item ) {
-    if ( 'sim-plugin' === $item->slug && $_SERVER['HTTP_HOST'] == 'localhost') {
+    if ( 'sim-plugin' === $item->slug && ( $_SERVER['HTTP_HOST'] == 'localhost' || str_contains($_SERVER['HTTP_HOST'], '.local'))) {
         return false; // disable auto-updates for the specified plugin
     }
 

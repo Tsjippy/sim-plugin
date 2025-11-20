@@ -82,7 +82,7 @@ function loadModules(){
     }
 
     // normal modules
-    foreach(scandir(MODULESPATH) as $key=>$dir){
+    foreach(scandir(MODULESPATH) as $key => $dir){
         if(substr($dir, 0, 2) == '__' || str_contains($dir, 'node_modules') || $dir == '.' || $dir == '..' || !is_dir(MODULESPATH.$dir)){
             continue;
         }

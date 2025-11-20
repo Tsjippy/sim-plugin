@@ -33,7 +33,7 @@ function registerScripts($hook=''){
 	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(), STYLE_VERSION,true);
 	
 	//Sweet alert https://sweetalert2.github.io/
-	if($_SERVER['HTTP_HOST'] == 'localhost') {
+	if($_SERVER['HTTP_HOST'] == 'localhost' || str_contains($_SERVER['HTTP_HOST'], '.local')) {
 		$url	= plugins_url('js/sweetalert.min.js', __DIR__);
 	}else{
 		$url	= '//cdn.jsdelivr.net/npm/sweetalert2@11';

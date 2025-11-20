@@ -23,7 +23,7 @@ function checkForModuleUpdates(){
 	global $defaultModules;
 
 	// DO not run on localhost
-	if($_SERVER['HTTP_HOST'] == 'localhost') {
+	if($_SERVER['HTTP_HOST'] == 'localhost' || str_contains($_SERVER['HTTP_HOST'], '.local')) {
 		return;
 	}
 
