@@ -3,7 +3,11 @@ namespace SIM;
 
 set_error_handler(__NAMESPACE__.'\printError');
 function printError( $errno, $errstr, $errfile, $errline ) {
-    if( $errno == E_USER_NOTICE && !str_contains($errstr, '_load_textdomain_just_in_time')) {
+    if( 
+        $errno == E_USER_NOTICE && 
+        !str_contains($errstr, '_load_textdomain_just_in_time') &&
+        !str_contains($errfile, '/lib/vendor/')
+    ) {
 
         $message = 'You have an error notice: "%s" in file "%s" at line: "%s".' ;
         $message = sprintf($message, $errstr, $errfile, $errline);

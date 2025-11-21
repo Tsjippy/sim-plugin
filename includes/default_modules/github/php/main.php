@@ -56,5 +56,6 @@ function showPluginUpdate($transient){
 
 add_action('sim-after-module-update', __NAMESPACE__.'\afterModuleUpdate', 10, 2);
 function afterModuleUpdate($repo, $oldVersion){
+	SIM\printArray($oldVersion);
 	do_action("sim_{$repo}_module_update", $oldVersion);
 }
