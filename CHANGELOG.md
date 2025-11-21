@@ -3,6 +3,7 @@
 
 ### Added
 - after table sorted js event
+- support for Local
 
 ### Changed
 
