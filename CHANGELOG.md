@@ -13,6 +13,7 @@
 - double classes attribute
 
 ### Updated
+- library
 
 ## [5.7.5] - 2025-11-04
 
