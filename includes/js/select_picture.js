@@ -41,7 +41,7 @@ function selectImage(event, type='') {
 		let parent		= button.closest('.picture-selector-wrapper');
 		
 		//Store the id
-		parent.querySelector('.image-attachment-id').value = attachment.id;
+		parent.querySelector(`[name="picture-ids[image]"]`).value = attachment.id;
 		
 		//Show the image
 		let imgdiv = parent.querySelector('.image-preview-wrapper');
