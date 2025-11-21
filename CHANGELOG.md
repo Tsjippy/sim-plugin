@@ -2,10 +2,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- after table sorted js event
-- support for Local
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.7.6] - 2025-11-21
+
+
+### Added
+- after table sorted js event
+- support for Local
 
 ### Fixed
 - double slash in upload path
@@ -13,6 +22,7 @@
 - double classes attribute
 
 ### Updated
+- library
 
 ## [5.7.5] - 2025-11-04
 
