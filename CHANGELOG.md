@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- picture selector
 
 ### Updated
 
