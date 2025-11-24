@@ -12,6 +12,18 @@ function restApiInit() {
 			'permission_callback' 	=> '__return_true',
 		)
 	);
+
+	register_rest_route( 
+		RESTAPIPREFIX, 
+		'/fetch_nonce', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				return wp_create_nonce('wp_rest');
+			},
+			'permission_callback' 	=> '__return_true',
+		)
+	);
 }
 
 function fetchImageEditModal(){

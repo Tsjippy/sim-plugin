@@ -4,6 +4,7 @@
   "description": "Pictures selector",
   "main": "",
   "scripts": {
+    "nonce": "webpack --watch --entry ./nonce.js --output-path . --output-filename nonce.min.js --progress --mode=production --devtool source-map",
     "picture": "webpack --watch --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --mode=production --devtool source-map",
     "user": "webpack --watch --entry ./user_select.js --output-path . --output-filename user_select.min.js --progress --mode=production --devtool source-map",
     "formsubmit": "webpack --watch --config formsubmit.config.js",

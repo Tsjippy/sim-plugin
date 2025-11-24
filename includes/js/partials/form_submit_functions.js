@@ -253,8 +253,6 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 			Main.displayMessage('Please refresh the page and try again!', 'error');
 			return false;
 		}else{
-			console.error(url);
-			console.error(json);
 			if(json.data == null || json.data.status == 403){
 				Main.displayMessage(json.message);
 			}else{
