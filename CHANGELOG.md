@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- refresh nonce over AJAX  to prevent caching issues
 
 ### Fixed
 - picture selector
