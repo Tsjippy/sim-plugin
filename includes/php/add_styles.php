@@ -21,15 +21,17 @@ function registerScripts($hook=''){
 	}
 
 	$runned	= true;
-	wp_enqueue_script('sim_nonce_script', plugins_url('js/nonce.min.js', __DIR__), [], STYLE_VERSION, false);
-	wp_localize_script( 'sim_nonce_script',
-		'sim',
-		array(
-			'baseUrl' 		=> get_home_url(),
-			'restApiPrefix'	=> '/'.RESTAPIPREFIX,
-			'restNonce'		=> wp_create_nonce('wp_rest')
-		)
-	);
+	if(!is_user_logged_in()){
+		wp_enqueue_script('sim_nonce_script', plugins_url('js/nonce.min.js', __DIR__), [], STYLE_VERSION, false);
+		wp_localize_script( 'sim_nonce_script',
+			'sim',
+			array(
+				'baseUrl' 		=> get_home_url(),
+				'restApiPrefix'	=> '/'.RESTAPIPREFIX,
+				'restNonce'		=> wp_create_nonce('wp_rest')
+			)
+		);
+	}
 
 	//LIBRARIES	
     //selectable select table cells https://github.com/Mobius1/Selectable
@@ -72,7 +74,8 @@ function registerScripts($hook=''){
 			"userId"		=> wp_get_current_user()->ID,
 			'baseUrl' 		=> get_home_url(),
 			'maxFileSize'	=> wp_max_upload_size(),
-			'restApiPrefix'	=> '/'.RESTAPIPREFIX
+			'restApiPrefix'	=> '/'.RESTAPIPREFIX,
+			'restNonce'		=> wp_create_nonce('wp_rest')
 		)
 	);
 	
