@@ -28,7 +28,7 @@ function checkForModuleUpdates(){
 	}
 
 	// update the plugin first
-	$url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( PLUGINNAME ) );
+	$url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( SIM\PLUGINNAME ) );
     $url    = wp_nonce_url( $url, 'bulk-update-plugins' );
 	$page 	= file_get_contents($url);
 
