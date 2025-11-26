@@ -7,6 +7,7 @@
 
 ### Fixed
 - bug in module updater
+- get current url on nginx
 
 ### Updated
 
