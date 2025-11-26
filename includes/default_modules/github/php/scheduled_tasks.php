@@ -27,8 +27,14 @@ function checkForModuleUpdates(){
 		return;
 	}
 
+	// update the plugin first
+	$url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( PLUGINNAME ) );
+    $url    = wp_nonce_url( $url, 'bulk-update-plugins' );
+	$page 	= file_get_contents($url);
+
+	// Now check for module updates
 	$github	= new Github();
-	foreach($moduleDirs as $module=>$path){
+	foreach($moduleDirs as $module => $path){
 		// Default module
 		if(in_array($module, $defaultModules)){
 			continue;
@@ -58,6 +64,7 @@ function checkForModuleUpdates(){
 		//SIM\printArray("Name: $module. Current Version $oldVersion, new version $newVersion. ");
 		if(version_compare($newVersion, $oldVersion)){
 			SIM\printArray("Updating $module");
+			
             $github->downloadFromGithub('Tsjippy', $module, $path);
         }
 	}

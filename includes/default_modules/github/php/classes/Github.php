@@ -182,6 +182,18 @@ class Github{
         
         fclose($tmpZipFile);
 
+        // Run potential pre-update functions
+        if(file_exists("$path/php/pre_update.php")){
+            // Load the file
+            require_once("$path/php/pre_update.php");
+
+            // Action should be defined in the file
+            do_action("sim-github-before-updating-module-$repo", $oldVersion, $release['tag_name']);
+
+            // Delete file so that we can suply a new one the next time
+            wp_delete_file("$path/php/pre_update.php");
+        }
+
         // run the update action. We should do so with the updated files so we do it via a single event.
         if($oldVersion > 0){
             wp_schedule_single_event(time(), 'sim-after-module-update', [$repo, $oldVersion]);
