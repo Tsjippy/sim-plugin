@@ -254,8 +254,16 @@ function currentUrl($trim=false){
 	if(defined('REST_REQUEST') && !empty($_SERVER['HTTP_REFERER'])){
 		$url		= $_SERVER['HTTP_REFERER'];
 	}else{
+		$protocol		= 'https';
+
+		if(!empty($_SERVER['REQUEST_SCHEME'])){
+			$protocol	= $_SERVER['REQUEST_SCHEME'];
+		}elseif($_SERVER['HTTP_X_FORWARDED_PROTO']){
+			$protocol	= $_SERVER['HTTP_X_FORWARDED_PROTO'];
+		}
+		 
 		$url	 = '';
-		$url 	.=	$_SERVER['REQUEST_SCHEME']."://";
+		$url 	.=	"$protocol://";
 		$url	.=	$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	}
 
