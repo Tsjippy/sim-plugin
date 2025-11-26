@@ -8,6 +8,7 @@
 
 ### Fixed
 - picture selector
+- only add nonce refresher if not logged in
 
 ### Updated
 
