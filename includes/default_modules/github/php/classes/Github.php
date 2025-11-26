@@ -16,7 +16,7 @@ class Github{
         $this->token            = '';   
         $this->authenticated    = false; 
         /** @var \Github\Api\Repository $repo **/
-        $this->repo             = $this->client->api('repo');          
+        $this->repo             = $this->client->api('repo');    
     }
 
     /**
@@ -150,6 +150,19 @@ class Github{
                 return new WP_Error('Github', "Failed to download the latest release for $author-$repo<br><br>".$e->getMessage()."<br><br>Does the zip file exist in the release?");
             }
         }
+
+        if($this->repo->contents()->exists($author, $repo, "preupdate/pre_update.php")){
+            $fileContent    = $this->repo->contents()->download($author, $repo, "preupdate/pre_update.php");
+
+            $tempFilePath = wp_tempnam(); 
+            file_put_contents($tempFilePath, $fileContent);
+            require_once($tempFilePath);
+
+            unlink($tempFilePath);
+
+            // Action should be defined in the file
+            do_action("sim-github-before-updating-module-$repo", $oldVersion, $release['tag_name']);
+        }
         
         $tmpZipFile = tmpfile();
         fwrite($tmpZipFile, $zipContent);
@@ -186,9 +199,6 @@ class Github{
         if(file_exists("$path/php/pre_update.php")){
             // Load the file
             require_once("$path/php/pre_update.php");
-
-            // Action should be defined in the file
-            do_action("sim-github-before-updating-module-$repo", $oldVersion, $release['tag_name']);
 
             // Delete file so that we can suply a new one the next time
             wp_delete_file("$path/php/pre_update.php");
