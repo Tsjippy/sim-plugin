@@ -79,15 +79,17 @@ function handlePost(){
 		$message	= "E-mail settings succesfully saved";
 	}
 
-	if(isset($_SESSION['plugin'])){
-		if(isset($_SESSION['plugin']['installed'])){
-			$name	= ucfirst($_SESSION['plugin']['installed']);
+	$pluginData	= SIM\getFromTransient('plugin');
+	if($pluginData){
+		if(isset($pluginData['installed'])){
+			$name	= ucfirst($pluginData['installed']);
 			$message	.= "<br><br>Dependend plugin '$name' succesfully installed and activated";
-		}elseif(isset($_SESSION['plugin']['activated'])){
-			$name	= ucfirst($_SESSION['plugin']['activated']);
+		}elseif(isset($pluginData['activated'])){
+			$name	= ucfirst($pluginData['activated']);
 			$message	.= "<br><br>Dependend plugin '$name' succesfully activated";
 		}
-		unset($_SESSION['plugin']);
+
+		SIM\deleteFromTransient('plugin');
 	}
 	?>
 	<div class='success'>

@@ -44,12 +44,8 @@ function installPlugin($pluginFile){
 		// Installed but not active
 		activate_plugin( $pluginFile);
 
-		if(!isset($_SESSION)){
-			session_start();
-		}
-		$_SESSION['plugin']   = ['activated' => $pluginName];
+		SIM\storeInTransient('plugin', ['activated' => $pluginName]);
 
-		session_write_close();
 		return 'Activated';
 	}
 
@@ -89,10 +85,7 @@ function installPlugin($pluginFile){
 	
 	activate_plugin( $pluginFile);
 
-	if(!isset($_SESSION)){
-		session_start();
-	}
-	$_SESSION['plugin']   = ['installed' => $pluginName];
+	SIM\storeInTransient('plugin', ['installed' => $pluginName]);
 
 	session_write_close();
 
