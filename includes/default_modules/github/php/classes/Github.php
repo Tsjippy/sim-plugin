@@ -158,10 +158,11 @@ class Github{
             file_put_contents($tempFilePath, $fileContent);
             require_once($tempFilePath);
 
-            unlink($tempFilePath);
-
             // Action should be defined in the file
             do_action("sim-github-before-updating-module-$repo", $oldVersion, $release['tag_name']);
+
+            // Remove the file
+            unlink($tempFilePath);
         }
         
         $tmpZipFile = tmpfile();
