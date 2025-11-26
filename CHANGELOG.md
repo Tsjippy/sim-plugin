@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- storeInTransient, getFromTransient and deletFromTransient
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [5.7.8] - 2025-11-26
+
+
+### Added
+- storeInTransient, getFromTransient and deletFromTransient
 
 ## [5.7.7] - 2025-11-26
 
