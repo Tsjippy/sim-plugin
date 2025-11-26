@@ -2,15 +2,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- pre update code
 
 ### Changed
 
 ### Fixed
-- bug in module updater
-- get current url on nginx
 
 ### Updated
+
+## [5.7.9] - 2025-11-26
+
+
+### Added
+- pre update code
+
+### Fixed
+- bug in module updater
+- get current url on nginx
 
 ## [5.7.8] - 2025-11-26
 
