@@ -4,14 +4,21 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [5.7.7] - 2025-11-26
+
+
+### Changed
 - refresh nonce over AJAX  to prevent caching issues
 - update plugin before updating modules, run pre update scripts for modules
 
 ### Fixed
 - picture selector
 - only add nonce refresher if not logged in
-
-### Updated
 
 ## [5.7.6] - 2025-11-21
 
