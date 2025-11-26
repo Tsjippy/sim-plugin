@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- storeInTransient, getFromTransient and deletFromTransient
 
 ### Changed
 
