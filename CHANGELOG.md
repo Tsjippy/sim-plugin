@@ -5,6 +5,7 @@
 
 ### Changed
 - refresh nonce over AJAX  to prevent caching issues
+- update plugin before updating modules, run pre update scripts for modules
 
 ### Fixed
 - picture selector
