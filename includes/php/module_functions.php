@@ -12,6 +12,8 @@ namespace SIM;
 function getModuleOption($moduleName, $option, $returnBoolean=true){
 	global $Modules;
 
+	$moduleName	= strtolower($moduleName);
+
 	// For backwards compatibility
 	if(empty($Modules[$moduleName][$option])){
 		if(str_contains($option, '_')){
