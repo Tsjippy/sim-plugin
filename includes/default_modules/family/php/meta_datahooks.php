@@ -60,7 +60,7 @@ function isFamilyMetaKey($metaKey, &$familyMetaKeys){
  */ 
 add_filter( "get_user_metadata", __NAMESPACE__.'\getFamilyMeta', 10, 3);
 function getFamilyMeta($value, $userId, $metaKey ){
-    // Only run for certain keys
+    // Only run for certain keys, familyMetaKeys is filld by reference
     if(!isFamilyMetaKey($metaKey, $familyMetaKeys)){
         return $value;
     }
@@ -73,7 +73,7 @@ function getFamilyMeta($value, $userId, $metaKey ){
     }
 
     // Get the meta keys for the family
-    if(in_array($metaKey, $familyMetaKeys)){
+    if(in_array($metaKey, (array)$familyMetaKeys)){
         return $family->getFamilyMeta($userId, $metaKey);
     }
 
@@ -98,7 +98,7 @@ function getFamilyMeta($value, $userId, $metaKey ){
 add_filter( "add_user_metadata", __NAMESPACE__.'\addFamilyMeta', 10, 4);
 add_filter( "update_user_metadata", __NAMESPACE__.'\addFamilyMeta', 10, 4);
 function addFamilyMeta($value, $userId, $metaKey, $metaValue){
-    // Only run for certain keys
+    // Only run for certain keys, familyMetaKeys is filld by reference
     if(!isFamilyMetaKey($metaKey, $familyMetaKeys)){
         return $value;
     }
@@ -157,7 +157,7 @@ function addFamilyMeta($value, $userId, $metaKey, $metaValue){
         return true;
     }
     
-    if(in_array($metaKey, $familyMetaKeys)){
+    if(in_array($metaKey, (array)$familyMetaKeys)){
         return $family->updateFamilyMeta($userId, $metaKey, $metaValue);
     }
 
@@ -172,7 +172,7 @@ add_filter( "delete_user_metadata", function($value, $userId, $metaKey, $metaVal
 
     $family	= new SIM\FAMILY\Family();
 
-    if(in_array($metaKey, $familyMetaKeys)){
+    if(in_array($metaKey, (array)$familyMetaKeys)){
         return $family->removeFamilyMeta($userId, $metaKey);
     }
 
