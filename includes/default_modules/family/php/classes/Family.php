@@ -364,7 +364,7 @@ class Family{
      *
      * @return	string|false				    Family name string or last name when a single or false when not a valid user
     */
-    function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
+    public function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
         if(is_numeric($user)){
             $user	= get_userdata($user);
 
@@ -415,7 +415,7 @@ class Family{
      *
      * @return	bool				True if a child, false if not
     */
-    function isChild($userId) {
+    public function isChild($userId) {
         return !empty($this->getParents($userId));
     }
 

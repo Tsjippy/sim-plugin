@@ -2,6 +2,8 @@
 namespace SIM\GITHUB;
 use SIM;
 use Github\Exception\ApiLimitExceedException;
+use Github\Api\Repository\Releases;
+use Github\Api\Repository\Contents;
 use Github\Client;
 use WP_Error;
 
@@ -9,14 +11,18 @@ class Github{
     public  $client;
     public  $token;
     public  $authenticated;
-    private $repo;
+    public $repo;
+    public $releases;
+    public $contents;
 
     public function __construct() {
         $this->client 	        = new \Github\Client(); 
         $this->token            = '';   
         $this->authenticated    = false; 
         /** @var \Github\Api\Repository $repo **/
-        $this->repo             = $this->client->api('repo');    
+        $this->repo             = $this->client->api('repo');
+        $this->releases         = new Releases($this->client);
+        $this->contents         = new Contents($this->client);
     }
 
     /**
@@ -65,7 +71,7 @@ class Github{
             $release    = '';
 
             try{
-                $release 	    = $this->repo->releases()->latest($author, $repo);
+                $release 	    = $this->releases->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
                 if(!$this->authenticated){
                     $this->authenticate();
@@ -131,13 +137,13 @@ class Github{
 
         // download latest release
         try{
-            $zipContent = $this->repo->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+            $zipContent = $this->releases->assets()->show($author, $repo, $release['assets'][0]['id'], true);
         }catch (\Exception $e){
             if($e->getCode() == 404){
                 // Get a new download link, bypass transient
                 $release	= $this->getLatestRelease($author, $repo, true);
                 try{
-                    $zipContent = $this->repo->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+                    $zipContent = $this->releases->assets()->show($author, $repo, $release['assets'][0]['id'], true);
                 }catch (\Exception $e){
                     SIM\printArray("Could not find asset with id {$release['assets'][0]['id']} for $author-$repo");
                     SIM\printArray($release['assets']);
@@ -151,8 +157,8 @@ class Github{
             }
         }
 
-        if($this->repo->contents()->exists($author, $repo, "preupdate/pre_update.php")){
-            $fileContent    = $this->repo->contents()->download($author, $repo, "preupdate/pre_update.php");
+        if($this->contents->exists($author, $repo, "preupdate/pre_update.php")){
+            $fileContent    = $this->contents->download($author, $repo, "preupdate/pre_update.php");
 
             $tempFilePath = wp_tempnam(); 
             file_put_contents($tempFilePath, $fileContent);
@@ -222,7 +228,7 @@ class Github{
      */
     public function getFileContents($author, $repo, $fileName){
         try{
-            $file   = $this->repo->contents()->show($author, $repo, $fileName);
+            $file   = $this->contents->show($author, $repo, $fileName);
             
             if(!empty($file)){
                 $content	= base64_decode($file['content']);
