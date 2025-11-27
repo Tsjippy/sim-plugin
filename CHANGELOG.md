@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- is child function
 
 ### Updated
+
+## [5.8.0] - 2025-11-27
+
+
+### Fixed
+- is child function
 
 ## [5.7.9] - 2025-11-26
 
