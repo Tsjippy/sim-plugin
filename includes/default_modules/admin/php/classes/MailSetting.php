@@ -110,12 +110,12 @@ abstract class MailSetting{
                         max-width:50px;
                     }
                 </style>
-                <div class="clone-div" data-div-id="<?php echo esc_attr($index);?>">
+                <div class="clone-div" data-div-id="<?php echo esc_html($index);?>">
                     <label name="Header" class=" formfield form-label">
-                        <h4 class="label-text">Header <?php echo esc_attr($index + 1);?></h4>
+                        <h4 class="label-text">Header <?php echo esc_html($index + 1);?></h4>
                     </label>
                     <div class="button-wrapper" style="width:100%; display: flex;">
-                        <input type="text" name="emails[<?php echo $this->headerKey;?>][<?php echo esc_attr($index);?>]" id="headers" class=" formfield formfield-input" value="<?php echo esc_attr($header);?>" style="width: 500px;">
+                        <input type="text" name="emails[<?php echo esc_html($this->headerKey);?>][<?php echo esc_html($index);?>]" id="headers" class=" formfield formfield-input" value="<?php echo esc_html($header);?>" style="width: 500px;">
                         <?php
                         if(count($this->headers) > 1){
                             ?>
@@ -150,7 +150,7 @@ abstract class MailSetting{
         ?>
         <label>
             E-mail subject:<br>
-            <input type='text' name="emails[<?php echo esc_attr($this->subjectKey);?>]" value="<?php echo esc_attr($subject);?>" style="width:100%;">
+            <input type='text' name="emails[<?php echo esc_html($this->subjectKey);?>]" value="<?php echo esc_html($subject);?>" style="width:100%;">
         </label>
         <br>
         <?php
@@ -178,11 +178,11 @@ abstract class MailSetting{
                 'textarea_rows'             => 10
             );
 
-            echo wp_editor(
+            echo wp_kses_post(wp_editor(
                 $message,
                 $this->messageKey,
                 $settings
-            );
+            ));
             ?>
         </label>
         <?php
@@ -213,7 +213,7 @@ abstract class MailSetting{
             foreach(array_keys($this->replaceArray) as $placeholder){
                 ?>
                 <span class='placeholders' title='Click to copy'>
-                    <?php echo esc_attr($placeholder);?>
+                    <?php echo esc_html($placeholder); ?>
                 </span>
                 <?php
             }

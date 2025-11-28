@@ -8,7 +8,15 @@ use SIM;
 function saveSettings(){
 	global $Modules;
 
-    $moduleSlug	    = $_POST['module'];
+    if(
+		!isset($_POST['module']) ||
+		!isset($_POST['nonce']) ||
+		!wp_verify_nonce(wp_unslash($_POST['nonce']), 'module-settings' )
+	){
+		return '';
+	}
+
+    $moduleSlug	    = sanitize_key(wp_unslash($_POST['module']));
     $options		= $_POST;
     unset($options['module']);
 
@@ -46,6 +54,14 @@ function saveSettings(){
 
 function saveEmails(){
 	global $Modules;
+
+    if(
+		!isset($_POST['module']) ||
+		!isset($_POST['nonce']) ||
+		!wp_verify_nonce(wp_unslash($_POST['nonce']), 'module-settings' )
+	){
+		return '';
+	}
 
     $moduleSlug	    = $_POST['module'];
     $options		= $_POST['emails'];

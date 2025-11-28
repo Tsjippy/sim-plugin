@@ -11,7 +11,7 @@
 
  //Do not check if logged when requests comes from the server
 $whitelist = ['127.0.0.1','::1'];
-if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+if(!empty($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	showFile();
 }else{
 	ob_start();
@@ -22,13 +22,13 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	require("wp-load.php");
 	require_once ABSPATH . WPINC . '/functions.php';
 
-	$discard = ob_get_clean();
+	$discard 			= ob_get_clean();
 
-	$fileName	= sanitize_text_field($_GET['file']);
+	$fileName			= isset($_GET['file']) ? sanitize_text_field(wp_unslash( $_GET['file'])) : '';
 
 	$allowedWithHash	= false;
 	if(!empty($_REQUEST['imagehash'])){
-		$allowedWithHash	= get_transient( $_REQUEST['imagehash']);
+		$allowedWithHash	= get_transient( wp_unslash( $_REQUEST['imagehash']));
 	}
 
 	if(!is_user_logged_in() && $allowedWithHash != $fileName && !auth_redirect()){
@@ -77,8 +77,9 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 }
 
 function showFile(){
-	$file	= __DIR__ . '/wp-content/uploads/private/'.(isset($_GET['file']) ? $_GET['file'] : '');
-	$file	= realpath($file);
+	$fileName	= isset($_GET['file']) ? sanitize_text_field(wp_unslash( $_GET['file'])) : '';
+	$file		= __DIR__ . "/wp-content/uploads/private/$fileName";
+	$file		= realpath($file);
 
 	if ($file === FALSE || !is_file($file)) {
 		require("wp-load.php");
@@ -98,7 +99,7 @@ function showFile(){
 	}
 
 	header( 'Content-Type: ' . $mimetype ); // always send this
-	if ( !str_contains( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS' ) ){
+	if ( !empty($_SERVER['SERVER_SOFTWARE']) && !str_contains( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS' ) ){
 		header( 'Content-Length: ' . filesize( $file ) );
 	}
 

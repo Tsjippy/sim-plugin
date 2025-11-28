@@ -71,10 +71,10 @@ class Family{
         if(is_object($userId)){
             $userId = $userId->ID;
         }
-
-        $query   = "select family_id from $this->tableName where user_id_1='$userId' OR user_id_2='$userId' LIMIT 1";
         
-        return $wpdb->get_var($query);
+        return $wpdb->get_var(
+            $wpdb->prepare("select family_id from %i where user_id_1=%d OR user_id_2=%d LIMIT 1", $this->tableName, $userId, $userId)
+        );
     }
 
     /**
@@ -104,8 +104,9 @@ class Family{
             $userId = $userId->ID;
         }
 
-        $query      = "select * from $this->tableName where user_id_1='$userId' or user_id_2='$userId'";
-        $results    = $wpdb->get_results($query);
+        $results    = $wpdb->get_results(
+            $wpdb->prepare("select * from %i where user_id_1=%d or user_id_2=%d", $this->tableName, $userId, $userId)
+        );
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -163,8 +164,9 @@ class Family{
             $userId = $userId->ID;
         }
 
-        $query      = "select user_id_2 from $this->tableName where user_id_1='$userId' AND relationship='child'";
-        $results    = $wpdb->get_col($query);
+        $results    = $wpdb->get_col(
+            $wpdb->prepare("select user_id_2 from %i where user_id_1=%d AND relationship='child'", $this->tableName, $userId)
+        );
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -190,8 +192,9 @@ class Family{
         $siblings   = [];
 
         // Query all relations marked as siblings
-        $query      = "select * from $this->tableName where (user_id_1='$userId' OR user_id_2='$userId') AND relationship='sibling'";
-        $results   = $wpdb->get_results($query);
+        $results   = $wpdb->get_results(
+            $wpdb->prepare("select * from %i where (user_id_1=%d OR user_id_2=%d) AND relationship='sibling'", $this->tableName, $userId, $userId)
+        );
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -206,9 +209,10 @@ class Family{
         }
 
         // Get all the users with the same parent
-        $subQuery   = "select user_id_1 as parent from $this->tableName where user_id_2='$userId' AND relationship='child' LIMIT 1";
-        $query      = "select user_id_2 from $this->tableName where user_id_1=($subQuery) AND relationship='child'";
-        $results    = $wpdb->get_col($query);
+        $subQuery   = $wpdb->prepare("select user_id_1 from %i where user_id_2=%d AND relationship='child' LIMIT 1", $this->tableName, $userId);
+        $results    = $wpdb->get_col(
+            $wpdb->prepare("select user_id_2 from %i where user_id_1=(%s) AND relationship='child'", $this->tableName, $subQuery)
+        );
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -246,8 +250,9 @@ class Family{
             $userId = $userId->ID;
         }
 
-        $query      = "select user_id_1 from $this->tableName where user_id_2='$userId' AND relationship='child'";
-        $results    = $wpdb->get_results($query);
+        $results    = $wpdb->get_results(
+            $wpdb->prepare("select user_id_1 from %i where user_id_2=%d AND relationship='child'", $this->tableName, $userId)
+        );
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -284,8 +289,9 @@ class Family{
             $userId = $userId->ID;
         }
 
-        $query      = "select * from $this->tableName where (user_id_1='$userId' OR user_id_2='$userId') AND relationship='partner'";
-        $results    = $wpdb->get_results($query);
+        $results    = $wpdb->get_results(
+            $wpdb->prepare("select * from %i where (user_id_1=%d OR user_id_2=%d) AND relationship='partner'", $this->tableName, $userId, $userId)
+        );
 
         if($wpdb->last_error !== ''){
             return new \WP_Error('family', $wpdb->last_error);
@@ -338,16 +344,15 @@ class Family{
             $userId = $userId->ID;
         }
 
-        $subQuery   = "select family_id from $this->tableName where user_id_1='$userId' OR user_id_2='$userId' LIMIT 1";
-        $query      = "select value from $this->metaTableName where family_id=($subQuery)";
-
         if(!empty($key)){
-            $query      = "select value from $this->metaTableName where family_id=($subQuery) AND `key`='$key'";
-            return $wpdb->get_var($query);
+            return $wpdb->get_var(
+                $wpdb->prepare("select value from %i where family_id=%d AND `key`=%s", $this->metaTableName, $this->getFamilyId($userId), $key)
+            );
         }
 
-        $query      = "select * from $this->metaTableName where family_id=($subQuery)";
-        $results    = $wpdb->get_results($query);
+        $results    = $wpdb->get_results(
+            $wpdb->prepare("select * from %i where family_id=%d", $this->metaTableName, $this->getFamilyId($userId))
+        );
 
         if(empty($results)){
             return null;
@@ -474,8 +479,10 @@ class Family{
 
         // Create family id if needed
         if(empty($familyId)){
-            $query      = "SELECT MAX(family_id) FROM $this->tableName;";
-            $familyId   = $wpdb->get_var($query) + 1;
+            $query      = "";
+            $familyId   = $wpdb->get_var(
+                $wpdb->prepare("SELECT MAX(family_id) FROM %i", $this->tableName)
+            ) + 1;
         }
 
         $wpdb->insert(
@@ -514,8 +521,9 @@ class Family{
         }
 
         // Update weddingdate
-        $query      = "UPDATE $this->tableName SET start_date='$weddingdate' WHERE (user_id_1='$userId' OR user_id_2='$userId') and `relationship`='partner'";
-        $result     = $wpdb->query($query);
+        $result     = $wpdb->query(
+            $wpdb->prepare("UPDATE %i SET start_date=%s WHERE (user_id_1=%d OR user_id_2=%d) and `relationship`='partner'", $this->tableName, $weddingdate, $userId, $userId)
+        );
 
         if(!empty($wpdb->last_error)){
 			return new \WP_Error('family', $wpdb->last_error);
@@ -596,11 +604,14 @@ class Family{
         $familyId   = $this->getFamilyId($userId1);
 
         // Delete relationship
-        $query  = "DELETE FROM `$this->tableName` WHERE (`user_id_1` = $userId1 AND `user_id_2` = $userId2 ) OR (`user_id_1` = $userId2 AND `user_id_2` = $userId1 )";
-        $wpdb->query( $query);
+        $wpdb->query( 
+            $wpdb->prepare("DELETE FROM %i WHERE (`user_id_1` = %d AND `user_id_2` = %d ) OR (`user_id_1` = %d AND `user_id_2` = %d )", $this->tableName, $userId1, $userId2, $userId2, $userId1)
+        );
 
         // Check if this was the last family relationship
-        $results    = $wpdb->get_results("SELECT * FROM $this->tableName WHERE family_id=$familyId");
+        $results    = $wpdb->get_results(
+            $wpdb->prepare("SELECT * FROM %i WHERE family_id=%d", $this->tableName, $familyId)
+        );
 
         if(empty($results)){
             // Delete any meta's

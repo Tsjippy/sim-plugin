@@ -33,7 +33,7 @@ function registerScripts($hook=''){
 		);
 	}
 
-	//LIBRARIES	
+	//LIBRARIES 
     //selectable select table cells https://github.com/Mobius1/Selectable
 	wp_register_script('selectable', plugins_url('js/selectable.min.js', __DIR__), array(), null, true);
 

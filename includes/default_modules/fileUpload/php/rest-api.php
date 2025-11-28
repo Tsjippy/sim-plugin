@@ -28,7 +28,16 @@ function validateUrl($param){
 }
 
 function removeDocument(){
-    $path = ABSPATH.$_POST['url'];
+
+    if(!empty($_POST['nonce']) && !wp_verify_nonce($_POST['nonce'], 'file-delete')){
+        return new \WP_Error('file uploader', 'Please reload the page and try again');
+    }
+
+    if(empty($url)){
+        return false;
+    }
+
+    $path = ABSPATH.wp_unslash($_POST['url']);
 
     if(isset($_POST['user-id'])){
         $userId = sanitize_text_field($_POST["user-id"]);
@@ -45,7 +54,7 @@ function removeDocument(){
     if(isset($_POST['libraryid']) && is_numeric($_POST['libraryid'])){
         wp_delete_attachment($_POST['libraryid']);
     }else{
-        unlink($path);
+        wp_delete_file($path);
     }
     
     //Remove the path from db 

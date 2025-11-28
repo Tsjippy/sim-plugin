@@ -26,7 +26,7 @@ function scheduleTask($taskName, $recurrence){
 			while(!in_array($month, [1,4,7,10])){
 				$monthCount++;
 				$time	= strtotime("first day of +$monthCount month");
-				$month = date('n', $time);
+				$month	= gmdate('n', $time);
 			}
 			break;
 		case 'sixmonthly':
@@ -36,7 +36,7 @@ function scheduleTask($taskName, $recurrence){
 				while(!in_array($month, [1,7])){
 					$monthCount++;
 					$time	= strtotime("first day of +$monthCount month");
-					$month	= date('n', $time);
+					$month	= gmdate('n', $time);
 				}
 				break;
 		case 'yearly':

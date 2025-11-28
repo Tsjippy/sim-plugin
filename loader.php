@@ -137,8 +137,7 @@ foreach ($files as $file) {
     if(is_wp_error($result)){
         ?>
         <div class='error' style='background-color:white;'>
-            <?php esc_attr($result->get_error_message());
-            ?>
+            <?php echo esc_html($result->get_error_message());?>
         </div>
         <?php
     }

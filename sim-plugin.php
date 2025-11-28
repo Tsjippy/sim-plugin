@@ -7,11 +7,11 @@ namespace SIM;
  * Version:      		5.8.0
  * Author:       		Ewald Harmsen
  * AuthorURI:			harmseninnigeria.nl
- * Requires at least:	6.0
- * Requires PHP: 		8.0
- * Tested up to: 		6.6.2
+ * Requires at least:	6.3
+ * Requires PHP: 		8.4
+ * Tested up to: 		6.8.3
  * Plugin URI:			https://github.com/Tsjippy/sim-plugin/
- * Tested:				6.5.0	
+ * Tested:				6.8.3	
  * TextDomain:			sim-plugin
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html

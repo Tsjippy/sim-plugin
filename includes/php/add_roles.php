@@ -23,10 +23,10 @@ function extraUserRoles( $user ) {
                     
                     ?>
                     <label>
-                        <input type='checkbox' name='roles[<?php echo esc_attr($role);?>]' value='<?php echo esc_attr($role);?>' <?php echo esc_attr($checked);?>>
-                        <?php echo esc_attr($name['name']);?>
+                        <input type='checkbox' name='roles[<?php esc_html($role);?>]' value='<?php echo esc_attr($role);?>' <?php echo esc_html($checked);?>>
+                        <?php echo esc_html($name['name']);?>
                         <i>
-                            <?php echo esc_attr(apply_filters('sim_role_description', '', $role));?>
+                            <?php echo esc_html(apply_filters('sim_role_description', '', $role));?>
                         </i>
                     </label><br>
                     <?php

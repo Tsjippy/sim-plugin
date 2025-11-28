@@ -25,9 +25,10 @@ class FileUploader{
         $this->metaKeyIndex = '';
         $this->filesArr     = [];
         $this->files        = $files;
-        $this->targetDir 	= wp_upload_dir()['basedir'].'/';
         if(!empty($this->fileParam['targetDir'])){
-            $this->targetDir .= trailingslashit(sanitize_text_field($this->fileParam['targetDir']));
+            $this->targetDir 		= wp_upload_dir()['basedir'].'/'.sanitize_text_field($this->fileParam['targetDir']).'/';
+        }else{
+            $this->targetDir 		= wp_upload_dir()['basedir'].'/';
         }
         
         //create folder if it does not exist
@@ -105,7 +106,12 @@ class FileUploader{
     public function moveFile(){
         //Move the file if it does not already exist
         if(!file_exists($this->targetFile)){
-            $moved = move_uploaded_file($this->files['tmp_name'][$this->key], $this->targetFile);
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            WP_Filesystem();
+
+            global $wp_filesystem;
+
+            $moved = $wp_filesystem->move( $this->files['tmp_name'][$this->key], $this->targetFile);
 
             if(!$moved){
                 header('HTTP/1.1 500 Internal Server Booboo');

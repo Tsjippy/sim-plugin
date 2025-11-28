@@ -61,10 +61,10 @@ function fetchImageEditModal(){
 						<div class="rotate">
 							<label class="title">Rotate</label>
 							<div class="options">
-								<button id="left" type="button"><img src='<?php echo esc_attr($basePicturesUrl);?>rotate-left-solid.svg' alt='rotate left'></button>
-								<button id="right" type="button"><img src='<?php echo esc_attr($basePicturesUrl);?>rotate-right-solid.svg' alt='rotate right'></i></button>
-								<button id="horizontal" type="button"><img src='<?php echo esc_attr($basePicturesUrl);?>reflect-vertical.svg' alt='reflect vertical'></button>
-								<button id="vertical" type="button"><img src='<?php echo esc_attr($basePicturesUrl);?>reflect-horizontal.svg' alt='reflect horizontal'></button>
+								<button id="left" type="button"><img src='<?php echo esc_url($basePicturesUrl);?>rotate-left-solid.svg' alt='rotate left'></button>
+								<button id="right" type="button"><img src='<?php echo esc_url($basePicturesUrl);?>rotate-right-solid.svg' alt='rotate right'></i></button>
+								<button id="horizontal" type="button"><img src='<?php echo esc_url($basePicturesUrl);?>reflect-vertical.svg' alt='reflect vertical'></button>
+								<button id="vertical" type="button"><img src='<?php echo esc_url($basePicturesUrl);?>reflect-horizontal.svg' alt='reflect horizontal'></button>
 							</div>
 						</div>
 					</div>

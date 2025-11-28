@@ -141,8 +141,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
-	if(empty($userId) && !empty($_REQUEST["user-id"]) && !is_numeric($userId)){
-		$userId = $_REQUEST["user-id"];
+	if(
+		empty($userId) && 
+		!empty($_GET["user-id"]) && 
+		is_numeric($_GET["user-id"])
+	){
+		$userId = $_GET["user-id"];
 	}
 	
 	//Get the id and the displayname of all users
@@ -270,7 +274,8 @@ function currentUrl($trim=false){
 	if($trim){
 		$url	 = trim(explode('?', $url)[0], "/");
 	}
-	return $url;
+
+	return sanitize_url($url);
 }
 
 /**
@@ -393,14 +398,20 @@ function printArray($message, $display=false, $printFunctionHiearchy=false){
 	if(is_array($message) || is_object($message)){
 		error_log(print_r($message, true));
 	}else{
-		error_log(date(DATEFORMAT.' '.TIMEFORMAT, time()).' - '.$message);
+		error_log(gmdate(DATEFORMAT.' '.TIMEFORMAT, time()).' - '.$message);
 	}
 	
 	if($display){
-		echo "<pre>";
-		echo "Called from file {$caller['file']} line {$caller['line']}<br><br>";
-		print_r($message);
-		echo "</pre>";
+		?>
+		<pre>
+			Called from file <?php echo esc_html($caller['file']);?> line <?php echo esc_html($caller['line']);?>
+			<br>
+			<br>
+			<?php 
+			echo wp_kses_post(print_r($message));
+			?>
+		</pre>
+		<?php
 	}
 }
 
@@ -411,7 +422,7 @@ function printHtml($html){
 	$tabs	= 0;
 
 	// Split on the < symbol to get a list of opening and closing tags
-	$html		= explode('<', $html);
+	$html		= explode('>', $html);
 	$newHtml	= '';
 
 	// loop over the elements
@@ -423,24 +434,24 @@ function printHtml($html){
 		}
 
 		// Split the line on a closing character </
-		$lines	= explode('>', $el);
+		$lines	= explode('</', $el);
 
 		if(!empty($lines[0])){
 			$newHtml	.= "\n";
 			
 			// write as many tabs as need
-			for ($x = 0; $x < $tabs; $x++) {
+			for ($x = 0; $x <= $tabs; $x++) {
 				$newHtml	.= "\t";
 			}
 
 			// then write the first element
-			$newHtml	.= "<".$lines[0]."/>";
+			$newHtml	.= $lines[0];
 		}
 
 		if(
 			substr($el, 0, 1) == '<' && 						// Element start with an opening symbol
-			substr($el, 0, 1) != '/' && 						// It does not start with a closing symbol
-			substr($el, 0, 5) != 'input' && 					// It does not start with <input (as that one does not have a closing />)
+			substr($el, 0, 2) != '</' && 						// It does not start with a closing symbol
+			substr($el, 0, 6) != '<input' && 					// It does not start with <input (as that one does not have a closing />)
 			(
 				substr($el, 0, 7) != '<option' || 				// It does not start with <option (as that one does not have a closing />)
 				str_contains( $html[$index+1], '</option') 		// or the next element contains a closing option
@@ -574,10 +585,10 @@ function getAge($userId, $numeric=false){
 
 	$birthDate = explode("-", $birthday);
 
-	if (date("md", date("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > date("md")){
-		$age = (date("Y") - $birthDate[0]) - 1;
+	if (gmdate("md", gmdate("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > gmdate("md")){
+		$age = (gmdate("Y") - $birthDate[0]) - 1;
 	}else{
-		$age = (date("Y") - $birthDate[0]);
+		$age = (gmdate("Y") - $birthDate[0]);
 	}
 	
 	if($numeric){
@@ -674,7 +685,7 @@ function numberToWords($number) {
     if (($number >= 0 && (int) $number < 0) || (int) $number < 0 - PHP_INT_MAX) {
         // overflow
         trigger_error(
-                'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX, E_USER_WARNING
+                esc_html('convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX, E_USER_WARNING)
         );
         return false;
     }
@@ -989,11 +1000,11 @@ function pictureSelector($key, $name, $settings, $type=''){
 	}
 	?>
 	<div class='picture-selector-wrapper'>
-		<div class='image-preview-wrapper <?php echo esc_attr($hidden);?>'>
+		<div class='image-preview-wrapper <?php echo esc_html($hidden);?>'>
 			<img loading='lazy' class='image-preview' src='<?php echo esc_url($src);?>' alt=''>
 		</div>
 		<input type="button" class="button select-image-button" value="<?php echo esc_attr($text);?> picture for <?php echo esc_attr(strtolower($name));?>" <?php if(!empty($type)){echo esc_attr("data-type='$type'");}?>/>
-		<input type='hidden' class='no-reset'  class='no-reset'  class="image-attachment-id" name='picture-ids[<?php echo esc_attr($key);?>]' value='<?php echo esc_attr($id);?>'>
+		<input type='hidden' class='no-reset image-attachment-id" name='picture-ids[<?php echo esc_html($key);?>]' value='<?php echo esc_attr($id);?>'>
 	</div>
 	<?php
 }
@@ -1004,6 +1015,13 @@ function pictureSelector($key, $name, $settings, $type=''){
 */
 function removeFiles($target){
 	if(is_dir($target)){
+		// Ensure the WordPress Filesystem API is loaded
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+		// Initialize the filesystem object
+		WP_Filesystem();
+
+		global $wp_filesystem;
 
 		$files = glob( $target . '*', GLOB_MARK );
 
@@ -1011,9 +1029,9 @@ function removeFiles($target){
 			removeFiles( $file );
 		}
 
-		rmdir( $target );
+		$wp_filesystem->rmdir( $target );
 	} elseif(is_file($target)) {
-		unlink( $target );
+		wp_delete_file( $target );
 	}
 }
 
@@ -1223,6 +1241,14 @@ function removeDuplicateTags($matches){
 }
 
 function readTextFile($path){
+	// Ensure the WordPress Filesystem API is loaded
+	require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+	// Initialize the filesystem object
+	WP_Filesystem();
+
+	global $wp_filesystem;
+
 	$ext 	= pathinfo($path, PATHINFO_EXTENSION);
 		
 	if($ext == 'docx'){
@@ -1238,9 +1264,9 @@ function readTextFile($path){
 	}
 	
 	if($reader == 'plain'){
-		$file = fopen($path, "r");
-		$contents =  fread($file,filesize($path));
-		fclose($file);
+		$file = $wp_filesystem->fopen($path, "r");
+		$contents =  $wp_filesystem->fread($file,filesize($path));
+		$wp_filesystem->fclose($file);
 		
 		return str_replace("\n", '<br>', $contents);
 	}else{
@@ -1294,7 +1320,7 @@ function clearOutput($write=false){
             break;
         }
 		if($write){
-			echo $result;
+			echo wp_kses_post($result);
 		}
     }
 }
@@ -1613,18 +1639,18 @@ function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
 
     $out 	= [];
 
-    $sql	= "show tables";
-    $tables	= $wpdb->get_results($sql, ARRAY_N);
+    $tables	= $wpdb->get_results("show tables", ARRAY_N);
     if(!empty($tables)){
         foreach($tables as $table){
 			if(in_array($table[0], $excludedTables)){
 				continue;
 			}
 
-            $sqlSearch 			= "select * from `".$table[0]."` where ";
             $sqlSearchFields 	= [];
-            $sql2 				= "SHOW COLUMNS FROM `".$table[0]."`";
-            $columns 			= $wpdb->get_results($sql2);
+            
+            $columns 			= $wpdb->get_results(
+				$wpdb->prepare("SHOW COLUMNS FROM %i", $table[0])
+			);
             if(!empty($columns)){
                 foreach($columns as $column){
 					if(in_array($column->Field, $excludedColumns)){
@@ -1634,8 +1660,9 @@ function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
                     $sqlSearchFields[] = "`".$column->Field."` like('%".$wpdb->_real_escape($search)."%')";
                 }
             }
-            $sqlSearch 		.= implode(" OR ", $sqlSearchFields);
-            $results		= $wpdb->get_results($sqlSearch);
+            $results		= $wpdb->get_results(
+				$wpdb->prepare("select * from %i where %s", $table[0], implode(" OR ", $sqlSearchFields))
+			);
 			if(!empty($results)){
 				foreach($results as $result){
 					foreach($result as $column=>$value){
