@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- compliance with wp rules
 
 ### Fixed
 
