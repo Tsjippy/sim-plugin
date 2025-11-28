@@ -110,12 +110,12 @@ abstract class MailSetting{
                         max-width:50px;
                     }
                 </style>
-                <div class="clone-div" data-div-id="<?php echo $index;?>">
+                <div class="clone-div" data-div-id="<?php echo esc_attr($index);?>">
                     <label name="Header" class=" formfield form-label">
-                        <h4 class="label-text">Header <?php echo $index + 1;?></h4>
+                        <h4 class="label-text">Header <?php echo esc_attr($index + 1);?></h4>
                     </label>
                     <div class="button-wrapper" style="width:100%; display: flex;">
-                        <input type="text" name="emails[<?php echo $this->headerKey;?>][<?php echo $index;?>]" id="headers" class=" formfield formfield-input" value="<?php echo $header;?>" style="width: 500px;">
+                        <input type="text" name="emails[<?php echo $this->headerKey;?>][<?php echo esc_attr($index);?>]" id="headers" class=" formfield formfield-input" value="<?php echo esc_attr($header);?>" style="width: 500px;">
                         <?php
                         if(count($this->headers) > 1){
                             ?>
@@ -150,7 +150,7 @@ abstract class MailSetting{
         ?>
         <label>
             E-mail subject:<br>
-            <input type='text' name="emails[<?php echo $this->subjectKey;?>]" value="<?php echo $subject;?>" style="width:100%;">
+            <input type='text' name="emails[<?php echo esc_attr($this->subjectKey);?>]" value="<?php echo esc_attr($subject);?>" style="width:100%;">
         </label>
         <br>
         <?php
@@ -211,8 +211,14 @@ abstract class MailSetting{
 		    These ones are available (click on any of them to copy):<br>
             <?php
             foreach(array_keys($this->replaceArray) as $placeholder){
-                echo "<span class='placeholders' title='Click to copy'>$placeholder</span>";
+                ?>
+                <span class='placeholders' title='Click to copy'>
+                    <?php echo esc_attr($placeholder);?>
+                </span>
+                <?php
             }
-        echo '</p>';
+            ?>
+        </p>
+        <?php
     }
 }

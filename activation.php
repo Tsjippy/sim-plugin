@@ -12,7 +12,7 @@ add_action( 'activated_plugin', function ( $plugin ) {
     // Create private upload folder
     $path   = wp_upload_dir()['basedir'].'/private';
     if (!is_dir($path)) {
-        mkdir($path, 0777, true);
+        wp_mkdir_p($path);
     }
 
     // Copy dl-file.php
@@ -32,7 +32,7 @@ add_action( 'activated_plugin', function ( $plugin ) {
     $family->createDbTables();
 
     //redirect after plugin activation
-    exit( wp_redirect( admin_url( esc_url('admin.php?page=sim') ) ) );
+    exit( esc_url(wp_redirect( admin_url( esc_url('admin.php?page=sim') ) ) ) );
 } );
 
 //Add setting link

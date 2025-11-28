@@ -32,7 +32,7 @@ class FileUploader{
         
         //create folder if it does not exist
         if (!is_dir($this->targetDir)) {
-            mkdir($this->targetDir, 0777, true);
+            wp_mkdir_p($this->targetDir);
         }
         
         if(!empty($this->fileParam['user-id'])){
@@ -59,7 +59,7 @@ class FileUploader{
         foreach ($this->files['name'] as $this->key => $this->fileName) {
             //check file size
             if($this->files['size'][$this->key] > $this->maxSize){
-                wp_die('File to big, max file size is '.$this->maxSize/1024/1024 .'MB');
+                wp_die(esc_html('File to big, max file size is '.$this->maxSize/1024/1024 .'MB'));
             }
 
             $this->findFileName();

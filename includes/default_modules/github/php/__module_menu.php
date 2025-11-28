@@ -29,7 +29,7 @@ function subMenuOptions($optionsHtml, $settings){
 	<label>
 		Github access token. Needed to access private repositories.<br>
 		Create one <a href='https://github.com/settings/tokens/new'>here</a>.<br>
-		<input type='text' name='token' value='<?php echo $settings['token'];?>' style='min-width:300px'>
+		<input type='text' name='token' value='<?php echo esc_attr($settings['token']);?>' style='min-width:300px'>
 	</label>
 	<br>
 	<br>

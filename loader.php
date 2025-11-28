@@ -135,6 +135,11 @@ foreach ($files as $file) {
     $result = require_once($file);
 
     if(is_wp_error($result)){
-        echo "<div class='error' style='background-color:white;'>".$result->get_error_message()."</div>";
+        ?>
+        <div class='error' style='background-color:white;'>
+            <?php esc_attr($result->get_error_message());
+            ?>
+        </div>
+        <?php
     }
 }

@@ -186,7 +186,7 @@ class Github{
         }
 
         // recreate the folder
-        mkdir($path);
+        wp_mkdir_p($path);
 
         // Extract the zipfile
         $result = $zip->extractTo($path);

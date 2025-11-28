@@ -6,12 +6,12 @@ function recurrenceSelector($curFreq){
 	$selected	= 'selected="selected"';
 	?>
 	<option value=''>---</option>
-	<option value='daily' <?php if($curFreq == 'daily'){echo $selected;}?>>Daily</option>
-	<option value='weekly' <?php if($curFreq == 'weekly'){echo $selected;}?>>Weekly</option>
-	<option value='monthly' <?php if($curFreq == 'monthly'){echo $selected;}?>>Monthly</option>
-	<option value='threemonthly' <?php if($curFreq == 'threemonthly'){echo $selected;}?>>Every quarter</option>
-	<option value='sixmonthly' <?php if($curFreq == 'sixmonthly'){echo $selected;}?>>Every half a year</option>
-	<option value='yearly' <?php if($curFreq == 'yearly'){echo $selected;}?>>Yearly</option>
+	<option value='daily' <?php if($curFreq == 'daily'){echo esc_attr($selected);}?>>Daily</option>
+	<option value='weekly' <?php if($curFreq == 'weekly'){echo esc_attr($selected);}?>>Weekly</option>
+	<option value='monthly' <?php if($curFreq == 'monthly'){echo esc_attr($selected);}?>>Monthly</option>
+	<option value='threemonthly' <?php if($curFreq == 'threemonthly'){echo esc_attr($selected);}?>>Every quarter</option>
+	<option value='sixmonthly' <?php if($curFreq == 'sixmonthly'){echo esc_attr($selected);}?>>Every half a year</option>
+	<option value='yearly' <?php if($curFreq == 'yearly'){echo esc_attr($selected);}?>>Yearly</option>
 	<?php
 }
 
@@ -95,11 +95,13 @@ function installPlugin($pluginFile){
 }
 
 function printJs(){
-	echo "<script>";
-		echo "document.addEventListener('DOMContentLoaded',function() {";
-			echo "document.querySelector('.wrap').remove();";
-			echo "document.getElementById('wpfooter').remove();";
-		echo "});";
-	echo "</script>";
+	?>
+	<script>
+		document.addEventListener('DOMContentLoaded',function() {
+			document.querySelector('.wrap').remove();
+			document.getElementById('wpfooter').remove();
+		});
+	</script>
+	<?php
 }
 

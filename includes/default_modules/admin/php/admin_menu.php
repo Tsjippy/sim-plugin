@@ -228,7 +228,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 				<?php
 			}else{
 				?>
-				Enable <?php esc_html_e($moduleName);?> module
+				Enable <?php echo esc_attr($moduleName);?> module
 				<label class="switch">
 					<input type="checkbox" name="enable" <?php if(isset($settings['enable'])){echo 'checked';}?>>
 					<span class="slider round"></span>
@@ -257,7 +257,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 				?>
 				<br>
 				<br>
-				<input type="submit" value="Save <?php echo $moduleName;?> settings">
+				<input type="submit" value="Save <?php echo esc_attr($moduleName);?> settings">
 				<?php
 			}
 			?>
@@ -283,13 +283,13 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<h2>E-mail settings</h2>
 			
 		<form action="" method="post">
-			<input type='hidden' class='no-reset' name='module' value='<?php echo $moduleSlug;?>'>
+			<input type='hidden' class='no-reset' name='module' value='<?php echo esc_attr($moduleSlug);?>'>
 			<?php
 			echo $html;
 			?>
 			<br>
 			<br>
-			<input type="submit" name="save-email-settings" value="Save <?php echo $moduleName;?> e-mail settings">
+			<input type="submit" name="save-email-settings" value="Save <?php echo esc_attr($moduleName);?> e-mail settings">
 		</form>
 		<br>
 	</div>
@@ -371,23 +371,29 @@ function mainMenuActions(){
 		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug, true);
 
 		if(is_wp_error($result)){
-			echo "<div class='error'>".$result->get_error_message()."</div>";
+			echo "<div class='error'>".esc_html($result->get_error_message())."</div>";
 		}elseif($result){
 			?>
 			<div class="success">
-				Module <?php echo $slug;?> succesfully updated
+				Module <?php echo esc_attr($slug);?> succesfully updated
 			</div>
 			<?php
 
 			$moduleDirs[$slug]	= $slug;
 		}else{
-			echo '<div class="error">';
-				echo "Module $slug not found on github.<br><br>";
+			?>
+			<div class="error">';
+				Module <?php echo esc_attr($slug);?> not found on github.<br><br>
+				<?php
 				if(!$github->authenticated){
 					$url            = admin_url( "admin.php?page=sim_github&main-tab=settings" );
-					echo " maybe you <a href='$url'>should supply a github token</a> so I can try again while logged in.";
+					?>
+					maybe you <a href='<?php echo esc_url($url);?>'>should supply a github token</a> so I can try again while logged in.
+					<?php
 				}
-			echo "</div>";
+				?>
+			</div>
+			<?php
 		}
 	}
 
@@ -399,23 +405,28 @@ function mainMenuActions(){
 		$result		= $github->downloadFromGithub('Tsjippy', $slug, SIM\MODULESPATH.$slug, true);
 
 		if(is_wp_error($result)){
-			echo "<div class='error'>".$result->get_error_message()."</div>";
+			echo "<div class='error'>".esc_attr($result->get_error_message())."</div>";
 		}elseif($result){
 			?>
 			<div class="success">
-				Module <?php echo $slug;?> succesfully downloaded
+				Module <?php echo esc_attr($slug);?> succesfully downloaded
 			</div>
 			<?php
 
 			$moduleDirs[$slug]	= $slug;
 		}else{
-			echo '<div class="error">';
-				echo "Module $slug not found on github.<br><br>";
+			?>
+			<div class="error">
+				Module <?php echo esc_attr($slug);?> not found on github.<br><br>
+				<?php
 				if(!$github->authenticated){
 					$url            = admin_url( "admin.php?page=sim_github&main-tab=settings" );
-					echo " maybe you <a href='$url'>should supply a github token</a> so I can try again while logged in.";
+					?> maybe you <a href='<?php echo esc_url($url);?>'>should supply a github token</a> so I can try again while logged in.
+					<?php
 				}
-			echo "</div>";
+				?>
+			</div>
+			<?php
 		}
 	}
 
@@ -439,13 +450,13 @@ function mainMenuActions(){
 				
 				?>
 				<div class="success">
-					Module <?php echo $slug;?> succesfully removed
+					Module <?php echo esc_attr($slug);?> succesfully removed
 				</div>
 				<?php
 			}else{
 				?>
 				<div class="error">
-					Module <?php echo $slug;?> removal unsuccesfull
+					Module <?php echo esc_attr($slug);?> removal unsuccesfull
 				</div>
 				<?php
 			}
@@ -563,14 +574,20 @@ function mainMenu(){
 					}
 				}
 
-				echo "<tr>";
-					echo "<td><a href='{$url}_$slug'>$name</a></td>";
-						if($update){
-							$updatesAvailable	= true;
-							$content 		   .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
-							$content 		   .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
-						}
-						echo "<td>$content</td>";
+				?>
+				<tr>
+					<td>
+						<a href='<?php echo esc_url("{$url}_$slug");?>'>
+							<?php echo esc_attr($name);?>
+						</a>
+					</td>
+					<?php
+					if($update){
+						$updatesAvailable	= true;
+						$content 		   .= " <a href='$url&update=$slug' class='button sim small' style='margin-left:15px;margin-right:15px;'>Update to version {$release['tag_name']}</a>";
+						$content 		   .= "<button type='button' class='sim small release' data-name='$slug'>Show info</button>";
+					}
+					echo "<td>$content</td>";
 				echo "</tr>";
 			}
 			?>
@@ -620,9 +637,9 @@ function mainMenu(){
 						$url2	= admin_url("admin.php?page={$_GET['page']}&remove=$slug");
 						?>
 						<tr>
-							<td><?php echo ucfirst($slug);?></td>
-							<td><a href='<?php echo $url; ?>' class='button sim small'>Download</a></td>
-							<td><a href='<?php echo $url2; ?>' class='button sim small'>Delete</a></td>
+							<td><?php echo esc_attr(ucfirst($slug));?></td>
+							<td><a href='<?php echo esc_url($url); ?>' class='button sim small'>Download</a></td>
+							<td><a href='<?php echo esc_url($url2); ?>' class='button sim small'>Delete</a></td>
 						</tr>
 						<?php
 					}
@@ -637,7 +654,7 @@ function mainMenu(){
 	$tableHtml	= ob_get_clean();
 	if($updatesAvailable){
 		?>
-		<a href='<?php echo SIM\getCurrentUrl();?>&update=all' class='button sim small'>Update all</a>
+		<a href='<?php echo esc_url(SIM\getCurrentUrl());?>&update=all' class='button sim small'>Update all</a>
 		<?php
 	}
 	echo $tableHtml;

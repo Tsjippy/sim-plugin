@@ -20,11 +20,16 @@ function extraUserRoles( $user ) {
                     }else{
                         $checked    = '';
                     }
-                    echo "<label>";
-                        echo "<input type='checkbox' name='roles[$role]' value='$role' $checked>";
-                        echo " {$name['name']}";
-                        echo '   <i>'.apply_filters('sim_role_description', '', $role).'</i>';
-                    echo "</label><br>";
+                    
+                    ?>
+                    <label>
+                        <input type='checkbox' name='roles[<?php echo esc_attr($role);?>]' value='<?php echo esc_attr($role);?>' <?php echo esc_attr($checked);?>>
+                        <?php echo esc_attr($name['name']);?>
+                        <i>
+                            <?php echo esc_attr(apply_filters('sim_role_description', '', $role));?>
+                        </i>
+                    </label><br>
+                    <?php
                 }
             ?>
             </td>

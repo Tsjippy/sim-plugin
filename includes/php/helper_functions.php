@@ -989,11 +989,11 @@ function pictureSelector($key, $name, $settings, $type=''){
 	}
 	?>
 	<div class='picture-selector-wrapper'>
-		<div class='image-preview-wrapper <?php echo $hidden;?>'>
-			<img loading='lazy' class='image-preview' src='<?php echo $src;?>' alt=''>
+		<div class='image-preview-wrapper <?php echo esc_attr($hidden);?>'>
+			<img loading='lazy' class='image-preview' src='<?php echo esc_url($src);?>' alt=''>
 		</div>
-		<input type="button" class="button select-image-button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" <?php if(!empty($type)){echo "data-type='$type'";}?>/>
-		<input type='hidden' class='no-reset' class='no-reset' class='no-reset' class='no-reset' class="image-attachment-id" name='picture-ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
+		<input type="button" class="button select-image-button" value="<?php echo esc_attr($text);?> picture for <?php echo esc_attr(strtolower($name));?>" <?php if(!empty($type)){echo esc_attr("data-type='$type'");}?>/>
+		<input type='hidden' class='no-reset'  class='no-reset'  class="image-attachment-id" name='picture-ids[<?php echo esc_attr($key);?>]' value='<?php echo esc_attr($id);?>'>
 	</div>
 	<?php
 }
