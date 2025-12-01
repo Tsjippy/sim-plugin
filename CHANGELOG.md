@@ -6,6 +6,7 @@
 ### Changed
 - compliance with wp rules
 - update libraries
+- better username replacements
 
 ### Fixed
 
