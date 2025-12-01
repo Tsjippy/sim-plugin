@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- downloading module updates
 
 ### Updated
+
+## [5.8.2] - 2025-12-01
+
+
+### Fixed
+- downloading module updates
 
 ## [5.8.1] - 2025-12-01
 
