@@ -2,7 +2,7 @@
 namespace SIM;
 
 /**
- * Plugin Name:  		Base Functionality Needed for running modules
+ * Plugin Name:  		Base Functionality Needed for running SIM Modules
  * Description:  		A bundle of 33 modules to add AJAX login, forms and other functionality
  * Version:      		5.8.0
  * Author:       		Ewald Harmsen
@@ -12,7 +12,7 @@ namespace SIM;
  * Tested up to: 		6.8.3
  * Plugin URI:			https://github.com/Tsjippy/sim-plugin/
  * Tested:				6.8.3	
- * TextDomain:			sim-base
+ * TextDomain:			sim-plugin
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
