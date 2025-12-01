@@ -14,17 +14,20 @@ DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
  */
 add_action( 'admin_menu', __NAMESPACE__.'\adminMenu');
 function adminMenu() {
+	
 	global $moduleDirs;
 	global $Modules;
+	
+	if($_GET['page'] == 'sim'){
+		$message = handlePost();
 
-	$message = handlePost();
-
-	?>
-	<div class='success'>
-		<?php echo esc_html($message);?>
-	</div>
-	<?php
-
+		?>
+		<div class='success'>
+			<?php echo esc_html($message);?>
+		</div>
+		<?php
+	}
+ 
 	do_action('sim_module_actions');
 
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
@@ -99,15 +102,16 @@ function handlePost(){
 	}
 	
 	// Build the message
-	if(isset($_SESSION['plugin'])){
-		if(isset($_SESSION['plugin']['installed'])){
-			$name		 = ucfirst($_SESSION['plugin']['installed']);
+	$plugin	= SIM\getFromTransient('plugin');
+	if(isset($plugin)){
+		if(isset($plugin['installed'])){
+			$name		 = ucfirst($plugin['installed']);
 			$message	.= "<br><br>Dependend plugin '$name' succesfully installed and activated";
-		}elseif(isset($_SESSION['plugin']['activated'])){
-			$name		 = ucfirst($_SESSION['plugin']['activated']);
+		}elseif(isset($plugin['activated'])){
+			$name		 = ucfirst($plugin['activated']);
 			$message	.= "<br><br>Dependend plugin '$name' succesfully activated";
 		}
-		unset($_SESSION['plugin']);
+		SIM\deleteFromTransient('plugin');
 	}
 	
 	return $message;

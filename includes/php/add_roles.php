@@ -49,14 +49,14 @@ add_action( 'edit_user_profile_update', __NAMESPACE__.'\saveExtraUserRoles');
 function saveExtraUserRoles( $userId, $newRoles=[] ) {
     $user 		= get_userdata($userId);
     $userRoles 	= $user->roles;
-    if(empty($newRoles)){
-		$newRoles	= (array)$_POST['roles'];
+    if(empty($newRoles) && !empty($_POST['roles'])){
+        $newRoles = array_map('sanitize_text_field', (array)$_POST['roles']);
 	}
 
     do_action('sim_roles_changed', $user, $newRoles);
     
     //add new roles
-    foreach($newRoles as $key=>$role){
+    foreach($newRoles as $key => $role){
         //If the role is set, and the user does not have the role currently
         if(!in_array($key, $userRoles)){
             $user->add_role( $key );

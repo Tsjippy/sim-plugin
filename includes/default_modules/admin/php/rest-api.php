@@ -21,9 +21,13 @@ add_action( 'rest_api_init', function () {
 });
 
 function getChangelog(){
+	if(empty($_POST['module-name'])){
+		return;
+	}
+
     $github		= new SIM\GITHUB\Github();
 
-    $moduleName = sanitize_text_field($_POST['module-name']);
+    $moduleName = sanitize_text_field(wp_unslash($_POST['module-name']));
 
     $release    = $github->getFileContents('tsjippy', $moduleName, 'CHANGELOG.md');
     if($release){

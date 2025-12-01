@@ -123,6 +123,10 @@ class Github{
             return new WP_Error('Github', 'Path canot be empty');
         }
 
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        WP_Filesystem();
+        global $wp_filesystem;
+
         $oldVersion	= -1;
         if (defined("SIM\\$repo\\MODULE_VERSION")) {
             $oldVersion	= constant("SIM\\$repo\\MODULE_VERSION");
@@ -168,20 +172,17 @@ class Github{
             do_action("sim-github-before-updating-module-$repo", $oldVersion, $release['tag_name']);
 
             // Remove the file
-            unlink($tempFilePath);
+            wp_delete_file($tempFilePath);
         }
         
         $tmpZipFile = tmpfile();
-        fwrite($tmpZipFile, $zipContent);
+        $wp_filesystem->put_contents($tmpZipFile, $zipContent);
         $zipFile    = stream_get_meta_data($tmpZipFile)['uri'];
         $zip = new \ZipArchive();
         $zip->open($zipFile);
 
         // if the folder already exists, remove it, to accomodate file deletions
         if(is_dir($path)){
-            require_once(ABSPATH . 'wp-admin/includes/file.php');
-            WP_Filesystem();
-			global $wp_filesystem;
 			$result				= $wp_filesystem->rmdir($path, true);
         }
 
@@ -199,8 +200,6 @@ class Github{
             
             return new WP_Error('Github', "Unzip failed for $repo" );
         }
-        
-        fclose($tmpZipFile);
 
         // Run potential pre-update functions
         if(file_exists("$path/php/pre_update.php")){

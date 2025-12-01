@@ -8,7 +8,6 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
@@ -19,10 +18,7 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'PhpOffice\\PhpWord\\' => 18,
-        ),
-        'L' => 
-        array (
-            'Laminas\\Escaper\\' => 16,
+            'PhpOffice\\Math\\' => 15,
         ),
         'G' => 
         array (
@@ -46,9 +42,9 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
         ),
-        'Laminas\\Escaper\\' => 
+        'PhpOffice\\Math\\' => 
         array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
+            0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
