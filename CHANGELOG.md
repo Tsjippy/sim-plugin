@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- downloading module updates
 
 ### Updated
 
