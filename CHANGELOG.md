@@ -4,13 +4,19 @@
 ### Added
 
 ### Changed
-- compliance with wp rules
-- update libraries
-- better username replacements
 
 ### Fixed
 
 ### Updated
+
+## [5.8.1] - 2025-12-01
+
+
+### Changed
+- compliance with wp rules
+- update libraries
+- better username replacements
+- prepare for plugin name change
 
 ## [5.8.0] - 2025-11-27
 
