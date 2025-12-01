@@ -35,6 +35,14 @@ spl_autoload_register(function ($classname) {
     }
 
     $moduleDir  = $moduleDirs[strtolower($path[1])];
+    
+    $classFile	= INCLUDESPATH."php/classes/{$path[1]}.php";
+    if(file_exists($classFile)){
+		require_once($classFile);
+        return;
+	}
+
+
     $moduleName = getModuleName($moduleDir);
 
     if(!isset($Modules[$moduleName]) && (empty($_GET['page']) || $_GET['page'] != "sim_$moduleName")){

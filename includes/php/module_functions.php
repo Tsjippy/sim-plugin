@@ -82,11 +82,7 @@ function maybeGetUserPageId($userId){
 }
 
 function maybeGetUserPageUrl($userId){
-	$url	= false;
-
-	if(function_exists('SIM\USERPAGES\getUserPageUrl')){
-		$url = USERPAGES\getUserPageUrl($userId);
-	}
+	$url	= apply_filters('sim-user-page-url', false, $userId);
 
 	return $url;
 }
