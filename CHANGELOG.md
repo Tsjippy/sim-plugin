@@ -7,6 +7,7 @@
 - compliance with wp rules
 - update libraries
 - better username replacements
+- prepare for plugin name change
 
 ### Fixed
 
