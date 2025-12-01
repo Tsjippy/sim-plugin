@@ -174,12 +174,13 @@ class Github{
             // Remove the file
             wp_delete_file($tempFilePath);
         }
-        
-        $tmpZipFile = tmpfile();
+
+        // Create a temporary file in that directory
+        $tmpZipFile   = wp_tempnam();
         $wp_filesystem->put_contents($tmpZipFile, $zipContent);
-        $zipFile    = stream_get_meta_data($tmpZipFile)['uri'];
-        $zip = new \ZipArchive();
-        $zip->open($zipFile);
+
+        $zip            = new \ZipArchive();
+        $zip->open($tmpZipFile);
 
         // if the folder already exists, remove it, to accomodate file deletions
         if(is_dir($path)){
