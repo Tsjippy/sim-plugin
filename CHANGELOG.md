@@ -5,6 +5,7 @@
 
 ### Changed
 - compliance with wp rules
+- update libraries
 
 ### Fixed
 
