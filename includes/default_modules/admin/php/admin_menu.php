@@ -118,7 +118,7 @@ function handlePost(){
 }
 
 /**
- *Builds the submenu for each module
+ * Builds the submenu for each module
  */
 function buildSubMenu($message=''){
 	global $Modules;
@@ -130,8 +130,8 @@ function buildSubMenu($message=''){
 	
 	$requestedModule	= sanitize_key($_GET['page']);
 
-	$moduleSlug	= str_replace('sim_', '', $requestedModule); 
-	$moduleName	= SIM\getModuleName($moduleDirs[$moduleSlug], ' ');
+	$moduleSlug			= str_replace('sim_', '', $requestedModule); 
+	$moduleName			= SIM\getModuleName($moduleDirs[$moduleSlug], ' ');
 
 	if(empty($moduleName)){
 		$moduleName	= ucfirst(str_replace('_', ' ', $moduleSlug));
@@ -145,7 +145,9 @@ function buildSubMenu($message=''){
 
 	?>
 	<div class="module-settings">	
-		<h1><?php echo esc_html($moduleName);?> module</h1>
+		<h1>
+			<?php echo esc_html($moduleName);?> module
+		</h1>
 
 		<?php
 		
@@ -156,13 +158,9 @@ function buildSubMenu($message=''){
 			$tab	= 'settings';
 		}
 
-		$descriptionsTab	= descriptionsTab($moduleSlug, $moduleName, $tab);
-
 		$emailSettingsTab	= '';
 		$dataTab			= '';
 		$functionsTab		= '';
-		
-		$settingsTab		= settingsTab($moduleSlug, $moduleName, $settings, $tab);
 
 		// Only load if the module is enabled
 		if(isset($settings['enable'])){
@@ -195,18 +193,19 @@ function buildSubMenu($message=''){
 		</div>
 		<?php
 
-		echo esc_html($message);
+		echo $message;
 
-		echo wp_kses_post($descriptionsTab);
-		echo wp_kses_post($settingsTab);
+		descriptionsTab($moduleSlug, $moduleName, $tab);
+		settingsTab($moduleSlug, $moduleName, $settings, $tab);
+
 		if(!empty($emailSettingsTab)){
-			echo wp_kses_post($emailSettingsTab);
+			echo $emailSettingsTab;
 		}
 		if(!empty($dataTab)){
-			echo wp_kses_post($dataTab);
+			echo $dataTab;
 		}
 		if(!empty($functionsTab)){
-			echo wp_kses_post($functionsTab);
+			echo $functionsTab;
 		}
 }
 
@@ -220,7 +219,6 @@ function descriptionsTab($moduleSlug, $moduleName, $tab){
 
 	$description = apply_filters("sim_submenu_{$moduleSlug}_description", $description, $moduleSlug, $moduleName);
 
-	ob_start();
 	if(!empty($description)){
 		?>
 		<div class='tabcontent <?php if($tab != 'description'){echo 'hidden';}?>' id='description'>
@@ -232,14 +230,11 @@ function descriptionsTab($moduleSlug, $moduleName, $tab){
 		</div>
 		<?php
 	}
-	
-	return ob_get_clean();
 }
 
 function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 	global $defaultModules;
 
-	ob_start();
 	?>
 	<div class='tabcontent <?php if($tab != 'settings'){echo 'hidden';}?>' id='settings'>
 		<h2>Settings</h2>
@@ -258,7 +253,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 				?>
 				Enable <?php echo esc_html($moduleName);?> module
 				<label class="switch">
-					<input type="checkbox" name="enable" <?php if(isset($settings['enable'])){echo 'checked';}?>>
+					<input type="checkbox" name="enable" value='on' <?php if(isset($settings['enable'])){echo 'checked';}?> >
 					<span class="slider round"></span>
 				</label>
 				<br>
@@ -277,7 +272,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 					</div>
 					<?php
 				}else{
-					echo wp_kses_post($options);
+					echo $options;
 				}
 				
 				?>
@@ -297,8 +292,6 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<br>
 	</div>
 	<?php
-
-	return ob_get_clean();
 }
 
 function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
@@ -317,7 +310,7 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
 		<form action="" method="post">
 			<input type='hidden' class='no-reset' name='module' value='<?php echo esc_html($moduleSlug);?>'>
 			<?php
-			echo wp_kses_post($html);
+			echo $html;
 			?>
 			<br>
 			<br>
@@ -346,7 +339,7 @@ function dataTab($moduleSlug, $moduleName, $settings, $tab){
 	?>
 	<div class='tabcontent <?php if($tab != 'data'){echo 'hidden';}?>' id='data'>
 		<?php
-		echo wp_kses_post($html);
+		echo $html;
 		?>
 	</div>
 	<?php
@@ -370,7 +363,7 @@ function functionsTab($moduleSlug, $moduleName, $settings, $tab){
 	?>
 	<div class='tabcontent <?php if($tab != 'functions'){echo 'hidden';}?>' id='functions'>
 		<?php
-		echo wp_kses_post($html);
+		echo $html;
 		?>
 	</div>
 	<?php
