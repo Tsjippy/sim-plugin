@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- admin menu pages
 
 ### Updated
+
+## [6.0.0] - 2025-12-17
+
+
+### Fixed
+- admin menu pages
 
 ## [5.8.2] - 2025-12-01
 
