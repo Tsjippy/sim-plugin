@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- plugin name to sim-base
 
 ### Fixed
 
