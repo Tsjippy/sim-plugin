@@ -2,7 +2,7 @@
 namespace SIM;
 
 // Define constants
-define(__NAMESPACE__ .'\PLUGINNAME', 'sim-plugin');
+define(__NAMESPACE__ .'\PLUGINNAME', 'sim-base');
 define('SITEURL', site_url( '', 'https' ));
 define('SITEURLWITHOUTSCHEME', str_replace(['https://', 'http://'], '', SITEURL));
 define('SITENAME', get_bloginfo());

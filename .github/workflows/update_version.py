@@ -4,7 +4,7 @@ from pathlib import Path
 import datetime
 
 # load plugin file
-txt = Path('sim-plugin.php').read_text()
+txt = Path('sim-base.php').read_text()
 newVersion  = sys.argv[1]
 
 # get old version
@@ -17,7 +17,7 @@ except Exception as e:
 txt = txt.replace(oldVersion, newVersion)
 
 # Write changes
-f = open('sim-plugin.php', "w")
+f = open('sim-base.php', "w")
 f.write(txt)
 f.close()
 

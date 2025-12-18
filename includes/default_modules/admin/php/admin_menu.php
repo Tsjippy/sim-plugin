@@ -18,7 +18,7 @@ function adminMenu() {
 	global $moduleDirs;
 	global $Modules;
 	
-	if($_GET['page'] == 'sim'){
+	if($_GET['page'] == 'sim' || str_contains($_GET['page'], 'sim_')){
 		$message = handlePost();
 
 		?>

@@ -10,9 +10,9 @@ namespace SIM;
  * Requires at least:	6.3
  * Requires PHP: 		8.4
  * Tested up to: 		6.8.3
- * Plugin URI:			https://github.com/Tsjippy/sim-plugin/
+ * Plugin URI:			https://github.com/Tsjippy/sim-base/
  * Tested:				6.8.3	
- * TextDomain:			sim-plugin
+ * TextDomain:			sim-base
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *

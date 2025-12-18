@@ -30,7 +30,7 @@ sodium #not sure if we need this
 
 download wp 
 download website code into plugins folder
-cd D:\Local_websites\htdocs\simgen\wp-content\plugins\sim-plugin\includes\js
+cd D:\Local_websites\htdocs\simgen\wp-content\plugins\sim-base\includes\js
 npm update
 npm install webpack webpack-cli --save-dev
 
