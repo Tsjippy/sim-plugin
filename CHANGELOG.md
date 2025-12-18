@@ -4,7 +4,6 @@
 ### Added
 
 ### Changed
-- plugin name to sim-base
 
 ### Fixed
 
@@ -12,6 +11,8 @@
 
 ## [6.0.0] - 2025-12-17
 
+### Changed
+- plugin name to sim-base
 
 ### Fixed
 - admin menu pages
