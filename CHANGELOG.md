@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- ratelimit issues
 
 ### Updated
+
+## [6.0.2] - 2025-12-18
+
+
+### Fixed
+- ratelimit issues
 
 ## [6.0.1] - 2025-12-18
 
