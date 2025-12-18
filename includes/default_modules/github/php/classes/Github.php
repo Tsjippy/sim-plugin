@@ -25,6 +25,12 @@ class Github{
         $this->contents         = new Contents($this->client);
     }
 
+    public function handleRateLimitExceeded(){
+        if(!$this->authenticated){
+            $this->authenticate();
+        }
+    }
+
     /**
      * Authenticate using a token
      * Create a token here: https://github.com/settings/tokens/new
@@ -73,12 +79,10 @@ class Github{
             try{
                 $release 	    = $this->releases->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
-                if(!$this->authenticated){
-                    $this->authenticate();
+                $this->handleRateLimitExceeded();
 
-                    if($this->authenticated){
-                        return $this->getLatestRelease($author, $repo, $force);
-                    }
+                if($this->authenticated){
+                    return $this->getLatestRelease($author, $repo, $force);
                 }
             }catch(\Exception $e){
                 if($e->getMessage() == 'Not Found'){
@@ -142,6 +146,8 @@ class Github{
         // download latest release
         try{
             $zipContent = $this->releases->assets()->show($author, $repo, $release['assets'][0]['id'], true);
+        } catch (ApiLimitExceedException $e) {
+            $this->handleRateLimitExceeded();
         }catch (\Exception $e){
             if($e->getCode() == 404){
                 // Get a new download link, bypass transient
@@ -236,6 +242,8 @@ class Github{
                 $parser 	= new \Michelf\MarkdownExtra;
                 $content	= $parser->transform($content);
             }
+        } catch (ApiLimitExceedException $e) {
+            $this->handleRateLimitExceeded();
         }catch (\Exception $e) {
             // 404 is not found
             if($e->getCode() != 404){

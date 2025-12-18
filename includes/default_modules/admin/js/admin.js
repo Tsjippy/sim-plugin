@@ -1,6 +1,7 @@
 import {changeUrl, displayTab} from './../../../../includes/js/partials/tabs.js'
 import {showModal} from './../../../../includes/js/partials/modals.js'
 import {fetchRestApi} from  './../../../../includes/js/partials/form_submit_functions.js'
+import { showLoader } from  './../../../../includes/js/partials/show_loader.js';
 import {copyFormInput, fixNumbering, removeNode} from './../../../../../../sim-modules/forms/js/form_exports.js'
 import { bind as NiceSelect } from '../../../js/node_modules/nice-select2';
 
@@ -26,6 +27,14 @@ document.addEventListener("DOMContentLoaded", function() {
 		    NiceSelect(select, {searchable: true});
         }
 	});
+
+    // Display loaders
+    document.querySelectorAll(`.loader-image-trigger`).forEach( el =>{
+        let size	= el.dataset.size ? el.dataset.size : 50 ;
+        let text	= el.dataset.text ? el.dataset.text : '';
+
+        showLoader(el, true, size, text);
+    });
 });
 
 window.addEventListener("click", async event => {
@@ -92,8 +101,6 @@ window.addEventListener("click", async event => {
         formData.append('module-name', target.dataset.name);
         
         let response    = await fetchRestApi('get-changelog', formData);
-
-        document.querySelector('#release-modal .loader-wrapper').classList.add('hidden');
 
         document.querySelector('#release-modal .content').innerHTML   = response;
         document.querySelector('#release-modal .content').classList.remove('hidden');

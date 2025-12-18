@@ -8,7 +8,6 @@ import { changeUrl, switchTab, displayTab } from './partials/tabs.js';
 import { showModal, hideModals } from './partials/modals.js';
 import { hasInternet, waitForInternet } from './partials/internet_connection.js';
 
-
 export { displayMessage, isMobileDevice, showLoader, changeUrl, switchTab, displayTab, showModal, hideModals, hasInternet, waitForInternet };
 
 export function attachNiceSelect(element, options = {searchable: true}){
