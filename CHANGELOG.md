@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- do not show empty messages
 
 ### Updated
 
