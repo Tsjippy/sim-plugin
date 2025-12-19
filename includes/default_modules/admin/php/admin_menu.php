@@ -21,11 +21,13 @@ function adminMenu() {
 	if($_GET['page'] == 'sim' || str_contains($_GET['page'], 'sim_')){
 		$message = handlePost();
 
-		?>
-		<div class='success'>
-			<?php echo esc_html($message);?>
-		</div>
-		<?php
+		if(!empty($message)){
+			?>
+			<div class='success'>
+				<?php echo esc_html($message);?>
+			</div>
+			<?php
+		}
 	}
  
 	do_action('sim_module_actions');
