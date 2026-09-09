@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- required input parsing
 
 ### Updated
 
