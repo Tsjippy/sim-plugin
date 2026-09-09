@@ -67,21 +67,8 @@ export function prepareForValidation(wrapper) {
       (list) =>
         (list
           .closest(".option-wrapper")
-          .querySelector(`input[type='text']`).required = false),
+          .querySelectorAll(`:required`).forEach(el => el.required = false)),
     );
-
-  // Get all file uploads with a value and unrequire them
-  wrapper.querySelectorAll('.required input[type="file"]').forEach((el) => {
-    let elementWrapper = el.closest(".input-wrapper");
-
-    // this file input has already files
-    if (
-      elementWrapper.querySelector(`.document-preview input[type="hidden"]`) !=
-      null
-    ) {
-      el.required = false;
-    }
-  });
 
   // enable disabled fields so it gets included and warnings are shown
   wrapper.querySelectorAll("[disabled][required]").forEach((el) => {

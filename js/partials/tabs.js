@@ -115,11 +115,6 @@ export function displayTab(tabButton) {
 
       if (hashField != null) {
         hashField.scrollIntoView({ block: "center" });
-
-        var el = hashField.closest(".input-wrapper");
-        if (el != null) {
-          hashField.closest(".input-wrapper").classList.add("highlight");
-        }
         hashField.classList.add("highlight");
         hashField.focus();
       }

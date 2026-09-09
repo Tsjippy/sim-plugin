@@ -205,7 +205,7 @@ add_filter("delete_user_metadata", function ($value, $userId, $metaKey, $metaVal
         return $value;
     }
 
-    $family    = new TSJIPPY\FAMILY\Family();
+    $family         = new TSJIPPY\FAMILY\Family();
 
     $familyMetaKeys = getFamilyMetaKeys();
 
