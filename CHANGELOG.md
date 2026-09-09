@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- required input parsing
 
 ### Updated
+
+## [11.1.5] - 2026-09-09
+
+
+### Fixed
+- required input parsing
 
 ## [11.1.4] - 2026-09-03
 
