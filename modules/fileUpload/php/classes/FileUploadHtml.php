@@ -52,7 +52,7 @@ class FileUploadHtml
 
         //get subvalue if needed
         if(!empty($this->metaKeyIndex)){
-            $this->value = TSJIPPY\getMetaArrayValue($this->userId, $this->metaKey, $this->value);
+            $this->value = $this->value[$this->metaKeyIndex] ?? '';
         }
     }
 
