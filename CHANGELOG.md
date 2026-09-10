@@ -7,14 +7,9 @@
 ### Changed
 
 ### Fixed
+- indexed mata value
 
 ### Updated
-
-## [11.1.6] - 2026-09-10
-
-
-### Fixed
-- indexed mata value
 
 ## [11.1.5] - 2026-09-09
 
